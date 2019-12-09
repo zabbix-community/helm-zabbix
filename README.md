@@ -1,7 +1,7 @@
 # helm-zabbix
 Helm Chart For Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release)
 
 ## Introduction
 
@@ -90,7 +90,6 @@ The following table lists the configurable parameters of the zabbix chart and th
 | `ingress.path`                                                              | Path to access frontend                                                                                            | `/`                             |
 | `ingress.hosts`                                                             | Ingress hosts                                                                                                      | `nil`                           |
 | `ingress.tls`                                                               | Ingress TLS configuration                                                                                          | `[]`                            |
-
 | **Resources**                                                               |
 | `resources`                                                                 | CPU/Memory resource requests/limits                                                                                | `{}`                            |
 | **nodeSelector**                                                            |
