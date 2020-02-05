@@ -2,65 +2,23 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 3
-
-image:
-  repository: monitoringartist/zabbix-xxl
-  tag: latest
-  pullPolicy: IfNotPresent
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name:
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-service:
-  type: NodePort
-  port: 80
-
-zabbixWeb:
-  ZS_DBUser: zabbix
-  ZS_DBPassword: my_password
-  ZS_DBHost: fadi-zabbix-db
-  ZW_ZBX_SERVER: fadi-zabbix-server
-  ZS_enabled: "false"
-  ZA_enabled: "false"
-  ZW_enabled: "true"
-  XXL_apiuser: zabbix
-  XXL_apipass: my_password
-
-zabbixDB:
-  name: zabbix-db
-  image:
-    repository: monitoringartist/zabbix-db-mariadb
-  MARIADB_USER: zabbix
-  MARIADB_PASS: my_password
-
 zabbixServer:
-  ZS_DBUser: zabbix
-  ZS_DBPassword: my_password
-  ZS_DBHost: 10.110.209.94
-  ZS_enabled: "true"
-  ZA_enabled: "true"
-  ZW_enabled: "false"
-  SNMPTRAP_enabled: "true"
+  replicaCount: 1
+  image:
+    repository: zabbix/zabbix-server-pgsql
+    tag: ubuntu-4.4.5
+    pullPolicy: IfNotPresent
+  DB_SERVER_HOST: "zabbix-postgresql"
+  POSTGRES_USER: "zabbix"
+  POSTGRES_PASSWORD: "zabbix_pwd"
+  POSTGRES_DB: "zabbix"
+
+postgresql:
+  enabled: true
+  postgresqlUsername: zabbix
+  postgresqlPassword: zabbix_pwd
+  postgresqlDatabase: zabbix
+  postgresqlPostgresPassword: zabbix_pwd
 
 ingress:
   enabled: false

@@ -1,41 +1,13 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-zabbix-web
-  labels:
-{{ include "zabbix.labels" . | indent 4 }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
-  selector:
-    app.kubernetes.io/name: {{ include "zabbix.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-zabbix-db
+  name: {{ template "zabbix.fullname" . }}-server
   labels:
-    app: zabbix
-    tier: db
-spec:
-  ports:
-    - port: 3306
-      targetPort: 3306
-      name: zabbix-db
-  selector:
-    name: {{ .Release.Name }}-zabbix-db
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-zabbix-server
-  labels:
-    app: zabbix
+    app: {{ include "zabbix.name" . | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   ports:
     - port: 10051
