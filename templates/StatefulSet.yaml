@@ -40,3 +40,50 @@ spec:
               value: {{ .Values.zabbixServer.POSTGRES_PASSWORD }}
             - name: POSTGRES_DB
               value: {{ .Values.zabbixServer.POSTGRES_DB }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "zabbix.fullname" . }}-web
+  labels:
+    app: {{ include "zabbix.name" . | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  replicas: 1
+  serviceName: {{ template "zabbix.fullname" . }}-web
+  selector:
+    matchLabels:
+      app:  {{ template "zabbix.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "zabbix.name" . | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
+    spec:
+      containers:
+        - name: zabbix-web
+          image: {{ .Values.zabbixWeb.image.repository }}:{{ .Values.zabbixWeb.image.tag }}
+          ports:
+            - containerPort: {{ .Values.zabbixWeb.service.port }}
+              name: http
+              protocol: TCP
+          env:
+            - name: ZBX_SERVER_HOST
+              value: {{ .Values.zabbixWeb.ZBX_SERVER_HOST | quote }}
+            - name: ZBX_SERVER_PORT
+              value: {{ .Values.zabbixWeb.ZBX_SERVER_PORT | quote }}
+            - name: DB_SERVER_HOST
+              value: {{ .Values.zabbixWeb.DB_SERVER_HOST | quote }}
+            - name: DB_SERVER_PORT
+              value: {{ .Values.zabbixWeb.DB_SERVER_PORT | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.zabbixWeb.POSTGRES_USER | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.zabbixWeb.POSTGRES_PASSWORD | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.zabbixWeb.POSTGRES_DB }}

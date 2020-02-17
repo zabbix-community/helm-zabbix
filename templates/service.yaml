@@ -9,6 +9,7 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 spec:
+  type: {{ .Values.zabbixServer.service.type }}
   ports:
     - port: 10051
       targetPort: 10051
@@ -18,3 +19,21 @@ spec:
       name: zabbix-jmx
   selector:
     name: zabbix-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-web
+  labels:
+    app: {{ include "zabbix.name" . | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  type: {{ .Values.zabbixWeb.service.type }}
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+  selector:
+    name: zabbix-web

@@ -12,6 +12,24 @@ zabbixServer:
   POSTGRES_USER: "zabbix"
   POSTGRES_PASSWORD: "zabbix_pwd"
   POSTGRES_DB: "zabbix"
+  service:
+    type: ClusterIP
+
+zabbixWeb:
+  image:
+    repository: zabbix/zabbix-web-apache-pgsql #zabbix/zabbix-web-apache-pgsql
+    tag: ubuntu-4.4.5
+    pullPolicy: IfNotPresent
+  ZBX_SERVER_HOST: server # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
+  ZBX_SERVER_PORT: 10051 # " fadi-zabbix-proxy-mysql " This variable is unique, case sensitive hostname.
+  DB_SERVER_HOST: zabbix-postgresql
+  DB_SERVER_PORT: 5432
+  POSTGRES_USER: zabbix
+  POSTGRES_PASSWORD: zabbix_pwd
+  POSTGRES_DB: zabbix
+  service:
+    port: 80
+    type: NodePort
 
 postgresql:
   enabled: true
