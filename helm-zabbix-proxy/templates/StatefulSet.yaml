@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "proxy.fullname" . }}
+  labels:
+    app: {{ include "proxy.name" . | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  replicas: {{ .Values.zabbixproxy.replicaCount }}
+  serviceName: {{ template "proxy.fullname" . }}
+  selector:
+    matchLabels:
+      app:  {{ template "proxy.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "proxy.name" . | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
+    spec:
+      containers:
+        - name: zabbix-proxy
+          image: {{ .Values.zabbixproxy.image.repository }}:{{ .Values.zabbixproxy.image.tag }}
+          ports:
+            - containerPort: 10051
+              name: standard
+          env:
+            - name: ZBX_PROXYMODE
+              value: {{ .Values.zabbixproxy.ZBX_PROXYMODE | quote }}
+            - name: ZBX_HOSTNAME
+              value: {{ .Values.zabbixproxy.ZBX_HOSTNAME | quote }}
+            - name: ZBX_SERVER_HOST
+              value: {{ .Values.zabbixproxy.ZBX_SERVER_HOST | quote }}
+            - name: ZBX_SERVER_PORT
+              value: {{ .Values.zabbixproxy.ZBX_SERVER_PORT | quote }}
+            - name: DB_SERVER_HOST
+              value: {{ .Values.zabbixproxy.DB_SERVER_HOST | quote }}
+            - name: DB_SERVER_PORT
+              value: {{ .Values.zabbixproxy.DB_SERVER_PORT | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.zabbixproxy.MYSQL_USER | quote }}
+            # - name: MYSQL_USER_FILE
+            #  value: value: {{ .Values.zabbixproxy.POSTGRES_USER_FILE }}
+            - name: MYSQL_PASSWORD
+              value: {{ .Values.zabbixproxy.MYSQL_PASSWORD | quote }}
+            #- name: MYSQL_PASSWORD_FILE
+            #  value: value: {{ .Values.zabbixproxy.MYSQL_PASSWORD_FILE }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.zabbixproxy.MYSQL_DATABASE | quote }}

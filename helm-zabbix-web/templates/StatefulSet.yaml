@@ -1,0 +1,83 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "web.fullname" . }}
+  labels:
+    app: {{ include "web.name" . | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ template "web.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ template "web.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "web.name" . | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
+    spec:
+      containers:
+        - name: zabbix-web
+          image: {{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: http
+              protocol: TCP
+          env:
+            - name: ZBX_SERVER_HOST
+              value: {{ .Values.zabbixweb.ZBX_SERVER_HOST | quote }}
+            - name: ZBX_SERVER_PORT
+              value: {{ .Values.zabbixweb.ZBX_SERVER_PORT | quote }}
+            - name: DB_SERVER_HOST
+              value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
+            - name: DB_SERVER_PORT
+              value: {{ .Values.zabbixweb.DB_SERVER_PORT | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.zabbixweb.POSTGRES_USER | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.zabbixweb.POSTGRES_PASSWORD | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.zabbixweb.POSTGRES_DB }}
+            #- name: POSTGRES_USER_FILE
+            #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE }}
+            #- name: POSTGRES_PASSWORD_FILE
+            #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE }}
+#          volumeMounts:
+#          - name: web-ssl-crt
+#            mountPath: /etc/ssl/nginx/ssl.crt
+#            subPath: ssl.crt
+#            readOnly: false
+#          - name: web-ssl-key
+#            mountPath: /etc/ssl/nginx/ssl.key
+#            subPath: ssl.crt
+#            readOnly: false
+#          - name: web-ssl-dhparam
+#            mountPath: /etc/ssl/nginx/dhparam.pem
+#            subPath: ssl.crt
+#            readOnly: false
+#      volumes:
+#        - name: web-ssl-crt
+#          configMap:
+#            name: {{ template "web.fullname" . }}-ssl
+#            items:
+#              - key: sslcert
+#                path: sslcert
+#        - name: web-ssl-key
+#          configMap:
+#            name: {{ template "web.fullname" . }}-ssl
+#            items:
+#              - key: sslkey
+#                path: sslkey
+#        - name: web-ssl-dhparam
+#          configMap:
+#          name: {{ template "web.fullname" . }}-ssl
+#          items:
+#            - key: dhparam.pem
+#              path: dhparam.pem
