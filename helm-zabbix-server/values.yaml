@@ -51,17 +51,21 @@ zabbixagent:
     tag: ubuntu-4.4.5
     pullPolicy: IfNotPresent
   ZBX_HOSTNAME: zabbix-agent
-  ZBX_SERVER_HOST: 127.0.0.1
+  ZBX_SERVER_HOST: 127.0.0.1 #zabbix-server
   ZBX_SERVER_PORT: 10051
-  #ZBX_PASSIVE_ALLOW: true # This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
-  #ZBX_PASSIVESERVERS: zabbix-server #, proxy-zabbix-proxy # The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container.
-  #ZBX_ACTIVE_ALLOW: true # This variable is boolean (true or false) and enables or disables feature of active checks
+  ZBX_PASSIVE_ALLOW: true # This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
+  ZBX_PASSIVESERVERS: 127.0.0.1 #, proxy-zabbix-proxy # The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container.
+  ZBX_ACTIVE_ALLOW: true # This variable is boolean (true or false) and enables or disables feature of active checks
   #ZBX_ACTIVESERVERS: zabbix-server:10051 #,proxy-zabbix-proxy:10072 # The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. You may specify port.
   # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
   ZBX_DEBUGLEVEL: 3 # The variable is used to specify debug level, from 0 to 5
   # ZBX_TIMEOUT: 4 # The variable is used to specify timeout for processing checks. By default, value is 4.
   # ZBX_JAVAGATEWAY_ENABLE: false # The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
   ZBX_VMWARECACHESIZE: 128M
+  service:
+    type: ClusterIP
+    port: 10050
+
 
 zabbixweb:
   enabled: false
@@ -76,6 +80,7 @@ zabbixweb:
   POSTGRES_USER: admin
   POSTGRES_PASSWORD: password1
   POSTGRES_DB: postgres
+
 
 ingress:
   enabled: false
