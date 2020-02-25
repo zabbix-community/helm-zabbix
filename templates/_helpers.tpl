@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "proxy.name" -}}
+{{- define "zabbix.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "proxy.fullname" -}}
+{{- define "zabbix.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -27,16 +27,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "proxy.chart" -}}
+{{- define "zabbix.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels
 */}}
-{{- define "proxy.labels" -}}
-app.kubernetes.io/name: {{ include "proxy.name" . }}
-helm.sh/chart: {{ include "proxy.chart" . }}
+{{- define "zabbix.labels" -}}
+app.kubernetes.io/name: {{ include "zabbix.name" . }}
+helm.sh/chart: {{ include "zabbix.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -47,9 +47,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "proxy.serviceAccountName" -}}
+{{- define "zabbix.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "proxy.fullname" .) .Values.serviceAccount.name }}
+    {{ default (include "zabbix.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}

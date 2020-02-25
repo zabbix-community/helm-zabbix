@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "server.fullname" . }}
+  name: {{ template "zabbix.fullname" . }}
   labels:
-    app: {{ include "server.name" . | quote }}
+    app: {{ include "zabbix.name" . | quote }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 spec:
   replicas: 1
-  serviceName: {{ template "server.fullname" . }}
+  serviceName: {{ template "zabbix.fullname" . }}
   selector:
     matchLabels:
-      app:  {{ template "server.name" . }}
+      app:  {{ template "zabbix.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "server.name" . | quote }}
+        app: {{ include "zabbix.name" . | quote }}
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: {{ .Release.Name | quote }}
         heritage: {{ .Release.Service | quote }}
@@ -116,27 +116,27 @@ spec:
         - name: zabbix-web
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.zabbixproxy.image.repository }}:{{ .Values.zabbixproxy.image.tag }}"
-          imagePullPolicy: {{ .Values.zabbixServer.image.pullPolicy }}
+          image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}"
+          imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
           env:
             - name: ZBX_SERVER_HOST
-              value: {{ .Values.zabbixproxy.ZBX_SERVER_HOST | quote }}
+              value: {{ .Values.zabbixweb.ZBX_SERVER_HOST | quote }}
             - name: ZBX_SERVER_PORT
-              value: {{ .Values.zabbixproxy.ZBX_SERVER_PORT | quote }}
+              value: {{ .Values.zabbixweb.ZBX_SERVER_PORT | quote }}
             - name: DB_SERVER_HOST
-              value: {{ .Values.zabbixproxy.DB_SERVER_HOST | quote }}
+              value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
             - name: DB_SERVER_PORT
-              value: {{ .Values.zabbixproxy.DB_SERVER_PORT | quote }}
+              value: {{ .Values.zabbixweb.DB_SERVER_PORT | quote }}
             - name: POSTGRES_USER
-              value: {{ .Values.zabbixproxy.POSTGRES_USER | quote }}
+              value: {{ .Values.zabbixweb.POSTGRES_USER | quote }}
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.zabbixproxy.POSTGRES_PASSWORD | quote }}
+              value: {{ .Values.zabbixweb.POSTGRES_PASSWORD | quote }}
             - name: POSTGRES_DB
-              value: {{ .Values.zabbixproxy.POSTGRES_DB }}
+              value: {{ .Values.zabbixweb.POSTGRES_DB }}
             # - name: POSTGRES_USER_FILE
-            #  value: value: {{ .Values.zabbixproxy.POSTGRES_USER_FILE }}
+            #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE }}
             #- name: POSTGRES_PASSWORD_FILE
-            #  value: value: {{ .Values.zabbixproxy.POSTGRES_PASSWORD_FILE }}
+            #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE }}
           ports:
             - name: http
               containerPort: 80

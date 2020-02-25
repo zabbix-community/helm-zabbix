@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-server
+  labels:
+    app: {{ include "zabbix.name" . | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  ports:
+    - port: 10051
+      targetPort: 10051
+      name: zabbix-trapper
+    - port: 10052
+      targetPort: 10052
+      name: zabbix-jmx
+  selector:
+    name: zabbix-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-agent
+  labels:
+    app: "agent"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  ports:
+    - port: {{ .Values.zabbixagent.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    name: zabbix-agent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-web
+  labels:
+    app: "web"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  type: {{ .Values.zabbixweb.service.type }}
+  ports:
+    - port: {{ .Values.zabbixweb.service.port }}
+      targetPort: {{ .Values.zabbixweb.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    name: zabbix-web

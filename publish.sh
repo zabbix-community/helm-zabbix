@@ -49,12 +49,11 @@ apk add ca-certificates git openssh
 
 echo '>> Installing Helm...'
 cd /tmp/helm/bin
-wget "https://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz"
+wget "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz"
 tar -zxf "helm-v${HELM_VERSION}-linux-amd64.tar.gz"
 chmod +x linux-amd64/helm
 alias helm=/tmp/helm/bin/linux-amd64/helm
-helm version -c
-helm init -c
+helm version
 
 echo ">> Checking out $GITHUB_PAGES_BRANCH branch from $GITHUB_PAGES_REPO"
 cd /tmp/helm/publish
@@ -64,7 +63,11 @@ git clone -b "$GITHUB_PAGES_BRANCH" "git@github.com:$GITHUB_PAGES_REPO.git" .
 
 echo '>> Add helm repos...'
 helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com
+helm repo add stable https://kubernetes-charts.storage.googleapis.com
 helm repo update
+
+echo '>>> helm dependency update'
+helm dep up "$HELM_CHARTS_SOURCE"
 
 echo '>> Building chart...'
 echo ">>> helm lint $HELM_CHARTS_SOURCE"
@@ -93,4 +96,3 @@ git add .
 git status
 git commit -m "Published by CircleCI $CIRCLE_BUILD_URL"
 git push origin "$GITHUB_PAGES_BRANCH"
-
