@@ -14,7 +14,11 @@ source:
   - https://github.com/cetic/helm-zabbix
 maintainers:
   - name: AyadiAmen
+    email: amen.ayadi@cetic.be
+    url: https://github.com/AyadiAmen
   - name: alexnuttinck
+    email: alexandre.nuttinck@cetic.be
+    url: https://github.com/alexnuttinck
 dependencies:
   - name: postgresql
     version: ~8.3.0
