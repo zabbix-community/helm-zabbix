@@ -1,5 +1,4 @@
-# helm-zabbix
-Helm Chart For Zabbix.
+# Helm Chart For Zabbix
 
 [![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release)
 
@@ -10,7 +9,7 @@ This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https:
 ## Prerequisites
 
 - Kubernetes cluster 1.10+
-- Helm 2.8.0+
+- Helm 3.0+
 - PV provisioner support in the underlying infrastructure.
 
 ## Installation
