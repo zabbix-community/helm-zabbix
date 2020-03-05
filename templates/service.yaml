@@ -50,8 +50,23 @@ spec:
   type: {{ .Values.zabbixweb.service.type }}
   ports:
     - port: {{ .Values.zabbixweb.service.port }}
-      targetPort: {{ .Values.zabbixweb.service.port }}
+      targetPort: {{ .Values.zabbixweb.service.targetPort }}
       protocol: TCP
       name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-proxy
+  labels:
+    app: {{ include "zabbix.name" . | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  ports:
+    - port: {{ .Values.zabbixproxy.service.port }}
+      targetPort: {{ .Values.zabbixproxy.service.targetPort }}
+      name: http
   selector:
-    name: zabbix-web
+    name: zabbix-proxy
