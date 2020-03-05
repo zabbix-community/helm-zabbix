@@ -42,10 +42,10 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-web
   labels:
-    app: "web"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+      app.kubernetes.io/name: {{ include "zabbix.name" . }}
+      helm.sh/chart: {{ include "zabbix.chart" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.zabbixweb.service.type }}
   ports:
@@ -53,6 +53,9 @@ spec:
       targetPort: {{ .Values.zabbixweb.service.targetPort }}
       protocol: TCP
       name: http
+  selector:
+    app.kubernetes.io/name: {{ include "zabbix.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service

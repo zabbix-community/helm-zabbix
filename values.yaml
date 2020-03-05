@@ -86,7 +86,7 @@ zabbixweb:
   POSTGRES_DB: zabbix
   service:
     type: NodePort
-    targetPort: 80
+    targetPort: http
     port: 80
 
 ingress:
