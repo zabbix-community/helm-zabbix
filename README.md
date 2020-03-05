@@ -9,7 +9,7 @@ This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https:
 
 ### Important note
 
->**This helm chart is still under developpement and it still lacks some functionalities such as the zabbix-proxy ( it doesn't work for now ).**
+>**This helm chart is still under developpement**
 
 ## Prerequisites
 
@@ -159,10 +159,6 @@ The following table lists the configurable parameters of the zabbix chart and th
 | `tolerations`                                                               | tolerations                                                                                                        | `{}`                            |
 | **affinity**                                                                |
 | `affinity`                                                                  | affinity                                                                                                           | `{}`                            |
-
-## Credits
-
-Initially inspired from https://github.com/monitoringartist/kubernetes-zabbix.
 
 
 ## License
