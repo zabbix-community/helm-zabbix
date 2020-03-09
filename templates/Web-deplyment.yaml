@@ -1,0 +1,62 @@
+  {{- if .Values.zabbixweb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zabbix-web
+  labels:
+    app: zabbix-web
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  zabbix-web
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: zabbix-web
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
+    spec:
+      containers:
+      - name: zabbix-web
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}"
+        imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
+        env:
+          - name: ZBX_SERVER_HOST
+            value: {{ .Values.zabbixweb.ZBX_SERVER_HOST | quote }}
+          - name: ZBX_SERVER_PORT
+            value: {{ .Values.zabbixweb.ZBX_SERVER_PORT | quote }}
+          - name: DB_SERVER_HOST
+            value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
+          - name: DB_SERVER_PORT
+            value: {{ .Values.zabbixweb.DB_SERVER_PORT | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.zabbixweb.POSTGRES_USER | quote }}
+          - name: POSTGRES_PASSWORD
+            value: {{ .Values.zabbixweb.POSTGRES_PASSWORD | quote }}
+          - name: POSTGRES_DB
+            value: {{ .Values.zabbixweb.POSTGRES_DB }}
+          # - name: POSTGRES_USER_FILE
+          #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE }}
+          #- name: POSTGRES_PASSWORD_FILE
+          #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE }}
+        ports:
+          - name: zabbix-web
+            containerPort: 80
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+        {{- end }}

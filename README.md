@@ -71,7 +71,7 @@ The following items can be set via `--set` flag during installation or configure
 Install the Zabbix helm chart with a release name `my-release`:
 
 ```bash
-helm install --name my-release cetic/helm-zabbix
+helm install --name my-release cetic/zabbix
 ```
 
 ## Uninstallation
@@ -84,13 +84,13 @@ helm delete my-release
 
 ## How to access
 
-After deploying the chart in your cluster, forward the port 80 to a different port like 8080 ( you can't use the port 80 ) using: 
+After deploying the chart in your cluster, yu can use the following command to access the zabbix frontend service: 
 
 ```bash
-kubectl port-forward zabbix-0 8080:80
+minikube service zabbix-web
 ```
 
-then on your browser go to `localhost:8080`, the default username/password are `Admin`/`zabbix`
+The default username/password are `Admin`/`zabbix`
 
 ## Configuration
 
