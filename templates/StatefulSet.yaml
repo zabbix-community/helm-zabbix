@@ -4,7 +4,7 @@ kind: StatefulSet
 metadata:
   name: {{ template "zabbix.fullname" . }}
   labels:
-    app: {{ include "zabbix.name" . | quote }}
+    app: zabbix-server
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
@@ -13,12 +13,12 @@ spec:
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
     matchLabels:
-      app:  {{ template "zabbix.name" . }}
+      app:  zabbix-server
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "zabbix.name" . | quote }}
+        app: zabbix-server
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: {{ .Release.Name | quote }}
         heritage: {{ .Release.Service | quote }}
@@ -40,8 +40,10 @@ spec:
               value: {{ .Values.zabbixServer.POSTGRES_PASSWORD }}
             - name: POSTGRES_DB
               value: {{ .Values.zabbixServer.POSTGRES_DB }}
-        {{- if .Values.zabbixagent.enabled }}
+          {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
           imagePullPolicy: {{ .Values.zabbixServer.image.pullPolicy }}
           env:
@@ -66,10 +68,10 @@ spec:
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: zabbix-agent
+              containerPort: 10050
               protocol: TCP
-        {{- end }}
+          {{- end }}
         {{- if .Values.zabbixproxy.enabled }}
         - name: zabbix-proxy
           securityContext:
@@ -109,36 +111,6 @@ spec:
               value: {{ .Values.zabbixproxy.ZBX_VMWARECACHESIZE }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 10051
               protocol: TCP
         {{- end }}
-        {{- if .Values.zabbixweb.enabled }}
-        - name: zabbix-web
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}"
-          imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
-          env:
-            - name: ZBX_SERVER_HOST
-              value: {{ .Values.zabbixweb.ZBX_SERVER_HOST | quote }}
-            - name: ZBX_SERVER_PORT
-              value: {{ .Values.zabbixweb.ZBX_SERVER_PORT | quote }}
-            - name: DB_SERVER_HOST
-              value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
-            - name: DB_SERVER_PORT
-              value: {{ .Values.zabbixweb.DB_SERVER_PORT | quote }}
-            - name: POSTGRES_USER
-              value: {{ .Values.zabbixweb.POSTGRES_USER | quote }}
-            - name: POSTGRES_PASSWORD
-              value: {{ .Values.zabbixweb.POSTGRES_PASSWORD | quote }}
-            - name: POSTGRES_DB
-              value: {{ .Values.zabbixweb.POSTGRES_DB }}
-            # - name: POSTGRES_USER_FILE
-            #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE }}
-            #- name: POSTGRES_PASSWORD_FILE
-            #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          {{- end }}
