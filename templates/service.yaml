@@ -21,7 +21,7 @@ spec:
   selector:
     app: zabbix-server
 ---
-  {{- if .Values.zabbixagent.sp.enabled }}
+  {{- if .Values.zabbixagent.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
