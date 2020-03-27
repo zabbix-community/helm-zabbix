@@ -87,7 +87,7 @@ helm delete my-release
 After deploying the chart in your cluster, yu can use the following command to access the zabbix frontend service: 
 
 ```bash
-minikube service zabbix-web
+minikube service <release-name>-zabbix-web
 ```
 
 The default username/password are `Admin`/`zabbix`
