@@ -47,7 +47,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: zabbix-web
+  name: {{ .Release.Name }}-zabbix-web
   labels:
       app: zabbix-web
       app.kubernetes.io/name: zabbix-web
@@ -69,17 +69,18 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "zabbix.fullname" . }}-proxy
+  name: zabbix-proxy
   labels:
-    app: {{ include "zabbix.name" . | quote }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+    app: zabbix-proxy
+    app.kubernetes.io/name: zabbix-proxy
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-proxy
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-proxy
 spec:
   ports:
     - port: {{ .Values.zabbixproxy.service.port }}
       targetPort: {{ .Values.zabbixproxy.service.targetPort }}
-      name: http
+      name: zabbix-proxy
   selector:
-    name: zabbix-proxy
+    app: zabbix-proxy
     {{- end }}
