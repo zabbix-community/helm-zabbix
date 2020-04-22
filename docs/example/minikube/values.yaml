@@ -1,0 +1,112 @@
+# Default values for zabbix.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+zabbixServer:
+  replicaCount: 1
+  image:
+    repository: zabbix/zabbix-server-pgsql
+    tag: ubuntu-4.4.7
+    pullPolicy: IfNotPresent
+  DB_SERVER_HOST: "zabbix-postgresql"
+  POSTGRES_USER: "zabbix"
+  POSTGRES_DB: "zabbix"
+  service:
+    type: NodePort
+    port: 10051
+
+postgresql:
+  enabled: true
+  postgresqlUsername: zabbix
+  postgresqlDatabase: zabbix
+
+# not functional for the moment, work is still in progress.
+zabbixproxy:
+  enabled: false
+  image:
+    repository: zabbix/zabbix-proxy-mysql
+    tag: ubuntu-4.4.7
+    pullPolicy: IfNotPresent
+  ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
+  ZBX_HOSTNAME: zabbix-proxy # " fadi-zabbix-proxy-mysql " This variable is unique, case sensitive hostname.
+  ZBX_SERVER_HOST: zabbix-server
+  ZBX_SERVER_PORT: 10051
+  DB_SERVER_PORT: 3306
+  DB_SERVER_HOST: maria-mariadb
+  MYSQL_USER: admin
+  MYSQL_DATABASE: my_database # default to zabbix ( to be precised later )
+  # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
+  # ZBX_DEBUGLEVEL: 4 # The variable is used to specify debug level, from 0 to 5
+  # ZBX_TIMEOUT: 4 # The variable is used to specify timeout for processing checks. By default, value is 4.
+  # ZBX_JAVAGATEWAY_ENABLE: false # The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
+  ZBX_VMWARECACHESIZE: 128M
+
+zabbixagent:
+  enabled: true
+  image:
+    repository: zabbix/zabbix-agent
+    tag: ubuntu-4.4.7
+    pullPolicy: IfNotPresent
+  ZBX_HOSTNAME: zabbix-agent
+  ZBX_SERVER_HOST: 127.0.0.1
+  ZBX_SERVER_PORT: 10051
+  ZBX_PASSIVE_ALLOW: true # This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
+  ZBX_PASSIVESERVERS: 127.0.0.1  # The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container.
+  ZBX_ACTIVE_ALLOW: true # This variable is boolean (true or false) and enables or disables feature of active checks
+  #ZBX_ACTIVESERVERS: zabbix-server:10051 #,proxy-zabbix-proxy:10072 # The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. You may specify port.
+  # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
+  ZBX_DEBUGLEVEL: 3 # The variable is used to specify debug level, from 0 to 5
+  # ZBX_TIMEOUT: 4 # The variable is used to specify timeout for processing checks. By default, value is 4.
+  # ZBX_JAVAGATEWAY_ENABLE: false # The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
+  ZBX_VMWARECACHESIZE: 128M
+  service:
+    type: ClusterIP
+    port: 10050
+
+
+zabbixweb:
+  enabled: true
+  image:
+    repository: zabbix/zabbix-web-apache-pgsql
+    tag: ubuntu-4.4.7
+    pullPolicy: IfNotPresent
+  ZBX_SERVER_HOST: zabbix-server
+  ZBX_SERVER_PORT: 10051
+  DB_SERVER_HOST: zabbix-postgresql
+  DB_SERVER_PORT: 5432
+  POSTGRES_USER: zabbix
+  POSTGRES_DB: zabbix
+  service:
+    type: NodePort
+    port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
+    cpu: 1000m
+    memory: 1024Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
