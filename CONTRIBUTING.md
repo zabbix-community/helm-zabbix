@@ -6,7 +6,7 @@
 
 # Contributing
 
-* Install the follow packages: git, kubectl, helm. See this [tutorial](docs/requirements.md)
+* Install the follow packages: git, kubectl, helm. See this [tutorial](docs/requirements.md).
 * Create a fork this repository.
 * Clone the forked repository to your local system.
 * Add a Git remote for the original repository.
@@ -19,19 +19,20 @@ git remote -v
 
 * Create a branch using the pattern: `git checkout -b US-${DEV_NAME}`. Example: *git checkout -b US-AECIO*
 * Make your changes to the new branch.
-* Test your changes in 'development' environment
+* Test your changes in 'development' environment.
 * Commit the changes to the branch.
 * Push files to repository remote with command `git push --set-upstream origin US-${DEV_NAME}`. Example: *git push --set-upstream origin US-AECIO*
-* Create Pull Request (PR) to the `master` branch. See [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
-* Update the content with the suggestions of the reviewer (if necessary)
+* Create Pull Request (PR) to the `master` branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+* Update the content with the suggestions of the reviewer (if necessary).
 * After your pull request is merged, update your local clone.
 
 ```bash
+git checkout master
 git pull upstream master
 ```
 
 * Clean up after your pull request is merged with command `git branch -d <branch name>`. Example: *git branch -d US-AECIO*
-* Then you can update the master branch in your forked repository.
+* Then you can update the ``master`` branch in your forked repository.
 
 ```bash
 git push origin master
