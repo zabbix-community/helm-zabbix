@@ -6,10 +6,11 @@ zabbixServer:
   replicaCount: 1
   image:
     repository: zabbix/zabbix-server-pgsql
-    tag: ubuntu-4.4.7
+    tag: ubuntu-5.0.4
     pullPolicy: IfNotPresent
   DB_SERVER_HOST: "zabbix-postgresql"
   POSTGRES_USER: "zabbix"
+  POSTGRES_PASSWORD: zabbix
   POSTGRES_DB: "zabbix"
   service:
     type: NodePort
@@ -18,14 +19,16 @@ zabbixServer:
 postgresql:
   enabled: true
   postgresqlUsername: zabbix
+  postgresqlPassword: zabbix
   postgresqlDatabase: zabbix
+  postgresqlPostgresPassword: zabbix_pwd
 
 # not functional for the moment, work is still in progress.
 zabbixproxy:
   enabled: false
   image:
     repository: zabbix/zabbix-proxy-mysql
-    tag: ubuntu-4.4.7
+    tag: ubuntu-5.0.4
     pullPolicy: IfNotPresent
   ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
   ZBX_HOSTNAME: zabbix-proxy # " fadi-zabbix-proxy-mysql " This variable is unique, case sensitive hostname.
@@ -45,7 +48,7 @@ zabbixagent:
   enabled: true
   image:
     repository: zabbix/zabbix-agent
-    tag: ubuntu-4.4.7
+    tag: ubuntu-5.0.4
     pullPolicy: IfNotPresent
   ZBX_HOSTNAME: zabbix-agent
   ZBX_SERVER_HOST: 127.0.0.1
@@ -68,13 +71,14 @@ zabbixweb:
   enabled: true
   image:
     repository: zabbix/zabbix-web-apache-pgsql
-    tag: ubuntu-4.4.7
+    tag: ubuntu-5.0.4
     pullPolicy: IfNotPresent
   ZBX_SERVER_HOST: zabbix-server
   ZBX_SERVER_PORT: 10051
   DB_SERVER_HOST: zabbix-postgresql
   DB_SERVER_PORT: 5432
   POSTGRES_USER: zabbix
+  POSTGRES_PASSWORD: zabbix
   POSTGRES_DB: zabbix
   service:
     type: NodePort
@@ -102,8 +106,8 @@ resources:
     cpu: 1000m
     memory: 1024Mi
   requests:
-    cpu: 1000m
-    memory: 1024Mi
+    cpu: 500m
+    memory: 512Mi
 
 nodeSelector: {}
 
