@@ -1,5 +1,4 @@
 <!-- TOC -->
-
 - [About](#about)
 - [Prerequisites to develop and test Helm Charts](#prerequisites-to-develop-and-test-helm-charts)
 - [Example to install Zabbix in Kubernetes](#example-to-install-zabbix-in-kubernetes)
