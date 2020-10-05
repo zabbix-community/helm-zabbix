@@ -95,7 +95,7 @@ helm install --name my-release cetic/zabbix -n monitoring
 
 See the example of installation in minikube in this [tutorial](docs/example/README.md).
 
-See section [Basic Commands of Helm 3](docs/basic-helm3.md) for more information about commands of helm.
+See section [Basic Commands of Helm 3](docs/basics-helmv3.md) for more information about commands of helm.
 
 # Uninstallation
 
