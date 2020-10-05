@@ -1,8 +1,8 @@
 ---
 apiVersion: v2
 name: zabbix
-version: 0.1.2
-appVersion: 4.4.5
+version: 0.2.0
+appVersion: 5.0.4
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 keywords:
   - zabbix
@@ -19,6 +19,9 @@ maintainers:
   - name: alexnuttinck
     email: alexandre.nuttinck@cetic.be
     url: https://github.com/alexnuttinck
+  - name: Aecio Pires
+    email: aeciopires@gmail.com
+    url: https://github.com/aeciopires
 dependencies:
   - name: postgresql
     version: ~8.3.0

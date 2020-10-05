@@ -49,14 +49,24 @@ spec:
           #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE }}
         ports:
           - name: zabbix-web
-            containerPort: 80
+            containerPort: 8080
             protocol: TCP
         livenessProbe:
           httpGet:
-            path: /
-            port: 80
+            path: {{ .Values.livenessProbe.path }}
+            port: zabbix-web
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
         readinessProbe:
           httpGet:
-            path: /
-            port: 80
+            path: {{ .Values.readinessProbe.path }}
+            port: zabbix-web
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
         {{- end }}
