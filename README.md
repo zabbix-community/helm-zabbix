@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -168,8 +168,9 @@ The following tables lists the configurable parameters of the chart and their de
 | readinessProbe.initialDelaySeconds | int | `5` | Number of seconds after the container has started before readiness |
 | readinessProbe.path | string | `"/"` | Path of health check of application |
 | readinessProbe.periodSeconds | int | `10` | Specifies that the kubelet should perform a readiness probe every N seconds |
-| readinessProbe.successThreshold | int | `1` |  |
+| readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
 | readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
+| resources | object | `{}` | We usually recommend not to specify default resources and to leave this as a conscious choice for the user. This also increases chances charts run on environments with little resources, such as Minikube. If you do want to specify resources, uncomment the following lines, adjust them as necessary, and remove the curly braces after 'resources:'. |
 | tolerations | list | `[]` | Tolerations configurations |
 | zabbixServer.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixServer.POSTGRES_DB | string | `"zabbix"` | Name of database |
