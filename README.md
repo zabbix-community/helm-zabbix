@@ -178,7 +178,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.POSTGRES_USER | string | `"zabbix"` | User of database |
 | zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
-| zabbixServer.image.tag | string | `"ubuntu-5.0.4"` | Tag of Docker image of Zabbix server |
+| zabbixServer.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix server |
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
 | zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
@@ -193,7 +193,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.enabled | bool | `true` | Enables use of Zabbix agent |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name |
-| zabbixagent.image.tag | string | `"ubuntu-5.0.4"` | Tag of Docker image of Zabbix agent |
+| zabbixagent.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix agent |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
 | zabbixagent.service.targetPort | int | `10050` | Port of application pod |
 | zabbixagent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
@@ -211,7 +211,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix proxy** |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-mysql"` | Zabbix proxy Docker image name |
-| zabbixproxy.image.tag | string | `"ubuntu-5.0.4"` | Tag of Docker image of Zabbix proxy |
+| zabbixproxy.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix proxy |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.targetPort | int | `10051` | Port of application pod |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
@@ -225,7 +225,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.enabled | bool | `true` | Enables use of Zabbix web |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
-| zabbixweb.image.tag | string | `"ubuntu-5.0.4"` | Tag of Docker image of Zabbix web |
+| zabbixweb.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix web |
 | zabbixweb.service.port | int | `80` | Port to expose service |
 | zabbixweb.service.targetPort | int | `8080` | Port of application pod |
 | zabbixweb.service.type | string | `"NodePort"` | Type of service for Zabbix web |

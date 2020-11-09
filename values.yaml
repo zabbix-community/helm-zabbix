@@ -10,7 +10,7 @@ zabbixServer:
     # -- Zabbix server Docker image name
     repository: zabbix/zabbix-server-pgsql
     # -- Tag of Docker image of Zabbix server
-    tag: ubuntu-5.0.4
+    tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
   # -- Address of database host
@@ -48,7 +48,7 @@ zabbixproxy:
     # -- Zabbix proxy Docker image name
     repository: zabbix/zabbix-proxy-mysql
     # -- Tag of Docker image of Zabbix proxy
-    tag: ubuntu-5.0.4
+    tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
   # -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
@@ -100,7 +100,7 @@ zabbixagent:
     # -- Zabbix agent Docker image name
     repository: zabbix/zabbix-agent
     # -- Tag of Docker image of Zabbix agent
-    tag: ubuntu-5.0.4
+    tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
   # -- Zabbix agent hostname
@@ -145,7 +145,7 @@ zabbixweb:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-apache-pgsql
     # -- Tag of Docker image of Zabbix web
-    tag: ubuntu-5.0.4
+    tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
   # -- Zabbix server host
