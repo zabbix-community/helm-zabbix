@@ -19,6 +19,7 @@ Clone this repository:
 ```bash
 cd ~
 git clone https://github.com/cetic/helm-zabbix
+cd helm-zabbix
 ```
 
 Edit ``helm-zabbix/docs/example/minikube/values.yaml`` file.
@@ -26,7 +27,6 @@ Edit ``helm-zabbix/docs/example/minikube/values.yaml`` file.
 Download the dependences charts.
 
 ```bash
-helm repo add stable https://kubernetes-charts-incubator.storage.googleapis.com
 helm repo add cetic https://cetic.github.io/helm-charts
 helm repo update
 ```
@@ -78,7 +78,7 @@ kubectl get pods POD_NAME -n monitoring -o jsonpath='{.spec.containers[*].name}*
 View the logs container of pods.
 
 ```bash
-kubectl logs -f pods/POD_NAME-c CONTAINER_NAME -n monitoring
+kubectl logs -f pods/POD_NAME -c CONTAINER_NAME -n monitoring
 ```
 
 Access prompt of container.
@@ -90,7 +90,7 @@ kubectl exec -it pods/POD_NAME -c CONTAINER_NAME -n monitoring -- sh
 View informations of service Zabbix.
 
 ```bash
-kubectl get svc
+kubectl get svc -n monitoring
 kubectl get pods --output=wide -n monitoring
 kubectl describe services zabbix -n monitoring
 ```

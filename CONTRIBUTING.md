@@ -45,9 +45,9 @@ git branch
 git push --set-upstream origin BRANCH_NAME
 ```
 
-* Create Pull Request (PR) to the `master` branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+* Create Pull Request (PR) to the `develop` branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
 * Update the content with the suggestions of the reviewer (if necessary).
-* After your pull request is merged, update your local clone:
+* After your pull request is merged to the `develop` and `master` branches, update your local clone:
 
 ```bash
 git checkout master

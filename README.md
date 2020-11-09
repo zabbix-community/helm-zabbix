@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -81,16 +81,30 @@ Update the list helm chart available for installation (like ``apt-get update``).
 helm repo update
 ```
 
-Install dependences of ``helm-zabbix`` chart:
+Export default values of chart ``helm-zabbix`` to file ``$HOME/zabbix_values.yaml``:
 
 ```bash
-helm dependency update
+helm show values cetic/zabbix > $HOME/zabbix_values.yaml
 ```
 
-Install the Zabbix helm chart with a release name `my-release` in the monitoring namespace:
+Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
+
+Install the Zabbix helm chart with a release name `my-release`:
 
 ```bash
-helm install --name my-release cetic/zabbix -n monitoring
+helm install zabbix cetic/zabbix --dependency-update -f $HOME/zabbix_values.yaml -n monitoring
+```
+
+View the pods.
+
+```bash
+kubectl get pods -n monitoring
+```
+
+View the logs container of pods.
+
+```bash
+kubectl logs -f pods/POD_NAME -n monitoring
 ```
 
 See the example of installation in minikube in this [tutorial](docs/example/README.md).
@@ -99,21 +113,29 @@ See section [Basic Commands of Helm 3](docs/basics-helmv3.md) for more informati
 
 # Uninstallation
 
-To uninstall/delete the `my-release` deployment:
+To uninstall/delete the ``zabbix`` deployment:
 
 ```bash
-helm delete my-release
+helm delete zabbix -n monitoring
 ```
 
 # How to access Zabbix
 
 After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service:
 
+View informations of ``zabbix`` services.
+
 ```bash
-minikube service <release-name>-zabbix-web
+kubectl describe services zabbix-web -n monitoring
 ```
 
-The default username/password are `Admin`/`zabbix`
+Listen on port 8888 locally, forwarding to 80 in the service ``zabbix-web``.
+
+```bash
+kubectl port-forward service/zabbix-web 8888:80 -n monitoring
+```
+
+Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.
 
 # License
 
