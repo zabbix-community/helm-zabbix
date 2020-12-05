@@ -70,3 +70,7 @@ spec:
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
         {{- end }}
+      imagePullSecrets:
+      {{- range .Values.zabbixweb.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}

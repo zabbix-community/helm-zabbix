@@ -114,3 +114,15 @@ spec:
               containerPort: 10051
               protocol: TCP
         {{- end }}
+      imagePullSecrets:
+      {{- range .Values.zabbixServer.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      {{- range .Values.zabbixagent.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      {{- if .Values.zabbixproxy.enabled }}
+      {{- range .Values.zabbixproxy.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      {{- end }}

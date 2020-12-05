@@ -13,6 +13,8 @@ zabbixServer:
     tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
+    # -- List of dockerconfig secrets names to use when pulling images
+    pullSecrets: []
   # -- Address of database host
   DB_SERVER_HOST: "zabbix-postgresql"
   # -- User of database
@@ -51,6 +53,8 @@ zabbixproxy:
     tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
+    #  -- List of dockerconfig secrets names to use when pulling images
+    pullSecrets: []
   # -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
   # -- Zabbix proxy hostname
@@ -103,6 +107,8 @@ zabbixagent:
     tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
+    # -- List of dockerconfig secrets names to use when pulling images
+    pullSecrets: []
   # -- Zabbix agent hostname
   # Case sensitive hostname
   ZBX_HOSTNAME: zabbix-agent
@@ -148,6 +154,8 @@ zabbixweb:
     tag: ubuntu-5.2.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
+    # zabbixweb.image.pullSecrets -- List of dockerconfig secrets names to use when pulling images
+    pullSecrets: []
   # -- Zabbix server host
   ZBX_SERVER_HOST: zabbix-server
   # -- Zabbix server port
