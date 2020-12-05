@@ -4,67 +4,67 @@
 
 # **Zabbix server** configurations
 zabbixServer:
-  # zabbixServer.replicaCount -- Number of replicas of ``zabbixServer`` module
+  # -- Number of replicas of ``zabbixServer`` module
   replicaCount: 1
   image:
-    # zabbixServer.image.repository -- Zabbix server Docker image name
+    # -- Zabbix server Docker image name
     repository: zabbix/zabbix-server-pgsql
-    # zabbixServer.image.tag -- Tag of Docker image of Zabbix server
-    tag: ubuntu-5.0.4
-    # zabbixServer.image.pullPolicy -- Pull policy of Docker image
+    # -- Tag of Docker image of Zabbix server
+    tag: ubuntu-5.2.0
+    # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
-  # zabbixServer.DB_SERVER_HOST -- Address of database host
+  # -- Address of database host
   DB_SERVER_HOST: "zabbix-postgresql"
-  # zabbixServer.POSTGRES_USER -- User of database
+  # -- User of database
   POSTGRES_USER: "zabbix"
-  # zabbixServer.POSTGRES_PASSWORD -- Password of database
+  # -- Password of database
   POSTGRES_PASSWORD: "zabbix_pwd"
-  # zabbixServer.POSTGRES_DB -- Name of database
+  # -- Name of database
   POSTGRES_DB: "zabbix"
   service:
-    # zabbixServer.service.type -- Type of service in Kubernetes cluster
+    # -- Type of service in Kubernetes cluster
     type: ClusterIP
-    # zabbixServer.service.port -- Port of service in Kubernetes cluster
+    # -- Port of service in Kubernetes cluster
     port: 10051
 
 # **PostgreSQL** configurations
 postgresql:
-  # postgresql.enabled -- Create a database using Postgresql
+  # -- Create a database using Postgresql
   enabled: true
-  # postgresql.postgresqlUsername -- User of database
+  # -- User of database
   postgresqlUsername: zabbix
-  # postgresql.postgresqlPassword -- Password of database
+  # -- Password of database
   postgresqlPassword: zabbix_pwd
-  # postgresql.postgresqlDatabase -- Name of database
+  # -- Name of database
   postgresqlDatabase: zabbix
-  # postgresql.postgresqlPostgresPassword -- Password of``postgres`` user in Postgresql
+  # -- Password of``postgres`` user in Postgresql
   postgresqlPostgresPassword: zabbix_pwd
 
 # **Zabbix proxy** not functional for the moment, work is still in progress.
 zabbixproxy:
-  # zabbixproxy.enabled -- Enables use of **Zabbix proxy**
+  # -- Enables use of **Zabbix proxy**
   enabled: false
   image:
-    # zabbixproxy.image.repository -- Zabbix proxy Docker image name
+    # -- Zabbix proxy Docker image name
     repository: zabbix/zabbix-proxy-mysql
-    # zabbixproxy.image.tag -- Tag of Docker image of Zabbix proxy
-    tag: ubuntu-5.0.4
-    # zabbixproxy.image.pullPolicy -- Pull policy of Docker image
+    # -- Tag of Docker image of Zabbix proxy
+    tag: ubuntu-5.2.0
+    # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
-  # zabbixproxy.ZBX_PROXYMODE -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
+  # -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
-  # zabbixproxy.ZBX_HOSTNAME -- Zabbix proxy hostname
+  # -- Zabbix proxy hostname
   # Case sensitive hostname
-  ZBX_HOSTNAME: zabbix-proxy #This variable is unique, case sensitive hostname.
-  # zabbixproxy.ZBX_SERVER_HOST -- Zabbix server host
+  ZBX_HOSTNAME: zabbix-proxy # This variable is unique, case sensitive hostname.
+  # -- Zabbix server host
   ZBX_SERVER_HOST: zabbix-server
-  # zabbixproxy.ZBX_SERVER_PORT -- Zabbix server port
+  # -- Zabbix server port
   ZBX_SERVER_PORT: 10051
-  # zabbixproxy.DB_SERVER_PORT -- Port of database
+  # -- Port of database
   DB_SERVER_PORT: 3306
-  # zabbixproxy.DB_SERVER_HOST -- Address of database host
+  # -- Address of database host
   DB_SERVER_HOST: maria-mariadb
-  # zabbixproxy.MYSQL_USER -- User of database
+  # -- User of database
   MYSQL_USER: admin
   # Provide the path to a file which contains the user instead of using the variable MYSQL_USER
   # MYSQL_USER_FILE: /run/secrets/MYSQL_USER
@@ -79,41 +79,42 @@ zabbixproxy:
   # ZBX_DEBUGLEVEL: 4
   # The variable is used to specify timeout for processing checks. By default, value is 4.
   #ZBX_TIMEOUT: 4
-  # zabbixproxy.ZBX_JAVAGATEWAY_ENABLE -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
+
+  # -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
   ZBX_JAVAGATEWAY_ENABLE: false
-  # zabbixproxy.ZBX_VMWARECACHESIZE -- Cache size
+  # -- Cache size
   ZBX_VMWARECACHESIZE: 128M
   service:
-    # zabbixproxy.service.type -- Type of service for Zabbix proxy
+    # -- Type of service for Zabbix proxy
     type: ClusterIP
-    # zabbixproxy.service.port -- Port to expose service
+    # -- Port to expose service
     port: 10051
-    # zabbixproxy.service.targetPort -- Port of application pod
+    # -- Port of application pod
     targetPort: 10051
 
 # **Zabbix agent** configurations
 zabbixagent:
-  # zabbixagent.enabled -- Enables use of Zabbix agent
+  # -- Enables use of Zabbix agent
   enabled: true
   image:
-    # zabbixagent.image.repository -- Zabbix agent Docker image name
+    # -- Zabbix agent Docker image name
     repository: zabbix/zabbix-agent
-    # zabbixagent.image.tag -- Tag of Docker image of Zabbix agent
-    tag: ubuntu-5.0.4
-    # zabbixagent.image.pullPolicy -- Pull policy of Docker image
+    # -- Tag of Docker image of Zabbix agent
+    tag: ubuntu-5.2.0
+    # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
-  # zabbixagent.ZBX_HOSTNAME -- Zabbix agent hostname
+  # -- Zabbix agent hostname
   # Case sensitive hostname
   ZBX_HOSTNAME: zabbix-agent
-  # zabbixagent.ZBX_SERVER_HOST -- Zabbix server host
+  # -- Zabbix server host
   ZBX_SERVER_HOST: 127.0.0.1
-  # zabbixagent.ZBX_SERVER_PORT -- Zabbix server port
+  # -- Zabbix server port
   ZBX_SERVER_PORT: 10051
-  # zabbixagent.ZBX_PASSIVE_ALLOW -- This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
+  # -- This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
   ZBX_PASSIVE_ALLOW: true
-  # zabbixagent.ZBX_PASSIVESERVERS -- The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container.
+  # -- The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container.
   ZBX_PASSIVESERVERS: 127.0.0.1
-  # zabbixagent.ZBX_ACTIVE_ALLOW -- This variable is boolean (true or false) and enables or disables feature of active checks
+  # -- This variable is boolean (true or false) and enables or disables feature of active checks
   ZBX_ACTIVE_ALLOW: true
   # The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. You may specify port.
   # ZBX_ACTIVESERVERS:
@@ -123,71 +124,73 @@ zabbixagent:
   #ZBX_DEBUGLEVEL: 3
   # The variable is used to specify timeout for processing checks. By default, value is 4.
   #ZBX_TIMEOUT: 4
-  # zabbixagent.ZBX_JAVAGATEWAY_ENABLE -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
+
+  # -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
   ZBX_JAVAGATEWAY_ENABLE: false
-  # zabbixagent.ZBX_VMWARECACHESIZE -- Cache size
+  # -- Cache size
   ZBX_VMWARECACHESIZE: 128M
   service:
-    # zabbixagent.service.type -- Type of service for Zabbix agent
+    # -- Type of service for Zabbix agent
     type: ClusterIP
-    # zabbixagent.service.port -- Port to expose service
+    # -- Port to expose service
     port: 10050
-    # zabbixagent.service.targetPort -- Port of application pod
+    # -- Port of application pod
     targetPort: 10050
 
 # **Zabbix web** configurations
 zabbixweb:
-  # zabbixweb.enabled -- Enables use of Zabbix web
+  # -- Enables use of Zabbix web
   enabled: true
   image:
-    # zabbixweb.image.repository -- Zabbix web Docker image name
+    # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-apache-pgsql
-    # zabbixweb.image.tag -- Tag of Docker image of Zabbix web
-    tag: ubuntu-5.0.4
-    # zabbixweb.image.pullPolicy -- Pull policy of Docker image
+    # -- Tag of Docker image of Zabbix web
+    tag: ubuntu-5.2.0
+    # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
-  # zabbixweb.ZBX_SERVER_HOST -- Zabbix server host
+  # -- Zabbix server host
   ZBX_SERVER_HOST: zabbix-server
-  # zabbixweb.ZBX_SERVER_PORT -- Zabbix server port
+  # -- Zabbix server port
   ZBX_SERVER_PORT: 10051
-  # zabbixweb.DB_SERVER_HOST -- Address of database host
+  # -- Address of database host
   DB_SERVER_HOST: zabbix-postgresql
-  # zabbixweb.DB_SERVER_PORT -- Port of database
+  # -- Port of database
   DB_SERVER_PORT: 5432
-  # zabbixweb.POSTGRES_USER -- User of database
+  # -- User of database
   POSTGRES_USER: zabbix
-  # zabbixweb.POSTGRES_PASSWORD -- Password of database
+  # -- Password of database
   POSTGRES_PASSWORD: zabbix_pwd
-  # zabbixweb.POSTGRES_DB -- Name of database
+  # -- Name of database
   POSTGRES_DB: zabbix
   service:
-    # zabbixweb.service.type -- Type of service for Zabbix web
+    # -- Type of service for Zabbix web
     type: NodePort
-    # zabbixweb.service.port -- Port to expose service
+    # -- Port to expose service
     port: 80
-    # zabbixweb.service.targetPort -- Port of application pod
+    # -- Port of application pod
     targetPort: 8080
 
 # Ingress configurations
 ingress:
-  # ingress.enabled -- Enables Ingress
+  # -- Enables Ingress
   enabled: false
-  # ingress.annotations -- Ingress annotations
+  # -- Ingress annotations
   annotations: {}
-  # ingress.hosts -- Ingress hosts
+  # -- Ingress hosts
   hosts:
     - host:
       paths: []
-  # ingress.tls -- Ingress TLS configuration
+  # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-# resources -- We usually recommend not to specify default resources and to leave this as a conscious
+# -- We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little
 # resources, such as Minikube. If you do want to specify resources, uncomment the following
 # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+resources: {}
 # ```limits:
 #   cpu: 100m
 #   memory: 128Mi
@@ -196,38 +199,38 @@ ingress:
 #   memory: 128Mi```
 
 livenessProbe:
-  # livenessProbe.path -- Path of health check of application
+  # -- Path of health check of application
   path: /
-  # livenessProbe.initialDelaySeconds -- Number of seconds after the container has started before liveness
+  # -- Number of seconds after the container has started before liveness
   initialDelaySeconds: 30
-  # livenessProbe.periodSeconds -- Specifies that the kubelet should perform a liveness probe every N seconds
+  # -- Specifies that the kubelet should perform a liveness probe every N seconds
   periodSeconds: 10
-  # livenessProbe.timeoutSeconds -- Number of seconds after which the probe times out
+  # -- Number of seconds after which the probe times out
   timeoutSeconds: 5
-  # livenessProbe.failureThreshold -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
+  # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
   failureThreshold: 6
-  # livenessProbe.successThreshold -- Minimum consecutive successes for the probe to be considered successful after having failed
+  # -- Minimum consecutive successes for the probe to be considered successful after having failed
   successThreshold: 1
 
 readinessProbe:
-  # readinessProbe.path -- Path of health check of application
+  # -- Path of health check of application
   path: /
-  # readinessProbe.initialDelaySeconds -- Number of seconds after the container has started before readiness
+  # -- Number of seconds after the container has started before readiness
   initialDelaySeconds: 5
-  # readinessProbe.periodSeconds -- Specifies that the kubelet should perform a readiness probe every N seconds
+  # -- Specifies that the kubelet should perform a readiness probe every N seconds
   periodSeconds: 10
-  # readinessProbe.timeoutSeconds -- Number of seconds after which the probe times out
+  # -- Number of seconds after which the probe times out
   timeoutSeconds: 5
-  # readinessProbe.failureThreshold -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
+  # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
   failureThreshold: 6
-  # readinessProbe.successThreshold-- Minimum consecutive successes for the probe to be considered successful after having failed
+  # -- Minimum consecutive successes for the probe to be considered successful after having failed
   successThreshold: 1
 
-# nodeSelector -- nodeSelector configurations
+# -- nodeSelector configurations
 nodeSelector: {}
 
-# tolerations -- Tolerations configurations
+# -- Tolerations configurations
 tolerations: []
 
-# affinity -- Affinity configurations
+# -- Affinity configurations
 affinity: {}
