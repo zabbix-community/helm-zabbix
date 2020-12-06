@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.3.1](https://img.shields.io/badge/Version-0.3.1-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -177,6 +177,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
 | zabbixServer.POSTGRES_USER | string | `"zabbix"` | User of database |
 | zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixServer.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
 | zabbixServer.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix server |
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
@@ -192,6 +193,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixagent.enabled | bool | `true` | Enables use of Zabbix agent |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name |
 | zabbixagent.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix agent |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
@@ -210,6 +212,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix proxy** |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-mysql"` | Zabbix proxy Docker image name |
 | zabbixproxy.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix proxy |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
@@ -224,6 +227,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixweb.enabled | bool | `true` | Enables use of Zabbix web |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
 | zabbixweb.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix web |
 | zabbixweb.service.port | int | `80` | Port to expose service |
