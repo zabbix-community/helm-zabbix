@@ -34,7 +34,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 **Zabbix web** interface is a part of Zabbix software. It is used to manage resources under monitoring and view monitoring statistics.
 
-## Zabbix Proxy
+## Zabbix Proxy 
 
 > **Zabbix proxy** is not functional in this helm chart, yet.
 
@@ -121,7 +121,7 @@ helm delete zabbix -n monitoring
 
 # How to access Zabbix
 
-After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service:
+After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service: 
 
 View informations of ``zabbix`` services.
 
@@ -176,6 +176,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixServer.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
 | zabbixServer.POSTGRES_USER | string | `"zabbix"` | User of database |
+| zabbixServer.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
+| zabbixServer.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
 | zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixServer.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
