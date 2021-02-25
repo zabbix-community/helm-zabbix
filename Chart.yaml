@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: zabbix
-version: 0.3.1
+version: 0.3.2
 appVersion: 5.2.0
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 keywords:
@@ -24,6 +24,6 @@ maintainers:
     url: https://github.com/aeciopires
 dependencies:
   - name: postgresql
-    version: ~8.3.0
+    version: ~10.3.6
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
