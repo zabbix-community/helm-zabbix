@@ -25,6 +25,8 @@ spec:
     spec:
       containers:
         - name: zabbix-server
+          resources:
+{{- toYaml .Values.zabbixServer.resources | nindent 12 }}
           image: {{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}
           ports:
             - containerPort: 10051
@@ -54,6 +56,8 @@ spec:
               value: {{ .Values.zabbixServer.POSTGRES_DB }}
           {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
+          resources:
+{{- toYaml .Values.zabbixagent.resources | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
@@ -86,6 +90,8 @@ spec:
           {{- end }}
         {{- if .Values.zabbixproxy.enabled }}
         - name: zabbix-proxy
+          resources:
+{{- toYaml .Values.zabbixproxy.resources | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.zabbixproxy.image.repository }}:{{ .Values.zabbixproxy.image.tag }}"

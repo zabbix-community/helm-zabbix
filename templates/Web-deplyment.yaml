@@ -24,6 +24,7 @@ spec:
     spec:
       containers:
       - name: zabbix-web
+{{- toYaml .Values.zabbixweb.resources | nindent 10 }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
         image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}"
