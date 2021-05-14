@@ -54,6 +54,10 @@ spec:
               value: {{ .Values.zabbixServer.POSTGRES_PASSWORD }}
             - name: POSTGRES_DB
               value: {{ .Values.zabbixServer.POSTGRES_DB }}
+{{- range $item := .Values.zabbixServer.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
           {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
           resources:
@@ -83,6 +87,10 @@ spec:
               value: {{ .Values.zabbixagent.ZBX_TIMEOUT }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE }}
+{{- range $item := .Values.zabbixagent.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
           ports:
             - name: zabbix-agent
               containerPort: 10050
@@ -127,6 +135,10 @@ spec:
               value: {{ .Values.zabbixproxy.ZBX_TIMEOUT }}
             - name: ZBX_JAVAGATEWAY_ENABLE
               value: {{ .Values.zabbixproxy.ZBX_VMWARECACHESIZE }}
+{{- range $item := .Values.zabbixagent.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
           ports:
             - name: http
               containerPort: 10051
