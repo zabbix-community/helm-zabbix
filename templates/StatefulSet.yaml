@@ -25,6 +25,8 @@ spec:
     spec:
       containers:
         - name: zabbix-server
+          resources:
+{{- toYaml .Values.zabbixServer.resources | nindent 12 }}
           image: {{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}
           ports:
             - containerPort: 10051
@@ -52,8 +54,14 @@ spec:
               value: {{ .Values.zabbixServer.POSTGRES_PASSWORD }}
             - name: POSTGRES_DB
               value: {{ .Values.zabbixServer.POSTGRES_DB }}
+{{- range $item := .Values.zabbixServer.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
           {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
+          resources:
+{{- toYaml .Values.zabbixagent.resources | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
@@ -79,6 +87,10 @@ spec:
               value: {{ .Values.zabbixagent.ZBX_TIMEOUT }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE }}
+{{- range $item := .Values.zabbixagent.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
           ports:
             - name: zabbix-agent
               containerPort: 10050
@@ -86,6 +98,8 @@ spec:
           {{- end }}
         {{- if .Values.zabbixproxy.enabled }}
         - name: zabbix-proxy
+          resources:
+{{- toYaml .Values.zabbixproxy.resources | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.zabbixproxy.image.repository }}:{{ .Values.zabbixproxy.image.tag }}"
@@ -121,6 +135,10 @@ spec:
               value: {{ .Values.zabbixproxy.ZBX_TIMEOUT }}
             - name: ZBX_JAVAGATEWAY_ENABLE
               value: {{ .Values.zabbixproxy.ZBX_VMWARECACHESIZE }}
+{{- range $item := .Values.zabbixagent.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
           ports:
             - name: http
               containerPort: 10051
