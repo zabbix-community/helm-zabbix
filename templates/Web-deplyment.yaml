@@ -24,6 +24,7 @@ spec:
     spec:
       containers:
       - name: zabbix-web
+        resources:
 {{- toYaml .Values.zabbixweb.resources | nindent 10 }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
@@ -48,6 +49,10 @@ spec:
           #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE }}
           #- name: POSTGRES_PASSWORD_FILE
           #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE }}
+{{- range $item := .Values.zabbixweb.extraEnv }}
+          - name: {{ $item.name }}
+            value: {{ $item.value }}
+{{- end }}
         ports:
           - name: zabbix-web
             containerPort: 8080

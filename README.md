@@ -172,6 +172,7 @@ The following tables lists the configurable parameters of the chart and their de
 | readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | tolerations | list | `[]` | Tolerations configurations |
 | zabbixServer.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
+| zabbixServer.extraEnv | object | `[]` | Add addtional extra environment variables  |
 | zabbixServer.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixServer.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixServer.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
@@ -186,6 +187,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixagent.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
+| zabbixagent.extraEnv | object | `[]` | Add addtional extra environment variables  |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_HOSTNAME | string | `"zabbix-agent"` | Zabbix agent hostname Case sensitive hostname |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
@@ -203,6 +205,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.service.targetPort | int | `10050` | Port of application pod |
 | zabbixagent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
 | zabbixproxy.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
+| zabbixproxy.extraEnv | object | `[]` | Add addtional extra environment variables  |
 | zabbixproxy.DB_SERVER_HOST | string | `"maria-mariadb"` | Address of database host |
 | zabbixproxy.DB_SERVER_PORT | int | `3306` | Port of database |
 | zabbixproxy.MYSQL_DATABASE | string | `"my_database"` | default to zabbix ( to be precised later) |
@@ -223,6 +226,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.service.targetPort | int | `10051` | Port of application pod |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
 | zabbixweb.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
+| zabbixweb.extraEnv | object | `[]` | Add addtional extra environment variables  |
 | zabbixweb.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixweb.DB_SERVER_PORT | int | `5432` | Port of database |
 | zabbixweb.POSTGRES_DB | string | `"zabbix"` | Name of database |
