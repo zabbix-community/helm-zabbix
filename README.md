@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.3.1](https://img.shields.io/badge/Version-0.3.1-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.3.3](https://img.shields.io/badge/Version-0.3.3-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -34,7 +34,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 **Zabbix web** interface is a part of Zabbix software. It is used to manage resources under monitoring and view monitoring statistics.
 
-## Zabbix Proxy 
+## Zabbix Proxy
 
 > **Zabbix proxy** is not functional in this helm chart, yet.
 
@@ -121,7 +121,7 @@ helm delete zabbix -n monitoring
 
 # How to access Zabbix
 
-After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service: 
+After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service:
 
 View informations of ``zabbix`` services.
 
@@ -171,11 +171,6 @@ The following tables lists the configurable parameters of the chart and their de
 | readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
 | readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbixServer.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
-<<<<<<< HEAD
-| zabbixServer.extraEnv | object | `[]` | Add addtional extra environment variables  |
-=======
->>>>>>> d868bf6fcd3e4d019795d410a3e46aad41f491c5
 | zabbixServer.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixServer.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixServer.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
@@ -187,13 +182,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
 | zabbixServer.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix server |
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
+| zabbixServer.resources | object | `{}` |  |
 | zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
-| zabbixagent.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
-<<<<<<< HEAD
-| zabbixagent.extraEnv | object | `[]` | Add addtional extra environment variables  |
-=======
->>>>>>> d868bf6fcd3e4d019795d410a3e46aad41f491c5
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_HOSTNAME | string | `"zabbix-agent"` | Zabbix agent hostname Case sensitive hostname |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
@@ -207,14 +198,10 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name |
 | zabbixagent.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix agent |
+| zabbixagent.resources | object | `{}` |  |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
 | zabbixagent.service.targetPort | int | `10050` | Port of application pod |
 | zabbixagent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
-| zabbixproxy.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
-<<<<<<< HEAD
-| zabbixproxy.extraEnv | object | `[]` | Add addtional extra environment variables  |
-=======
->>>>>>> d868bf6fcd3e4d019795d410a3e46aad41f491c5
 | zabbixproxy.DB_SERVER_HOST | string | `"maria-mariadb"` | Address of database host |
 | zabbixproxy.DB_SERVER_PORT | int | `3306` | Port of database |
 | zabbixproxy.MYSQL_DATABASE | string | `"my_database"` | default to zabbix ( to be precised later) |
@@ -231,14 +218,10 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-mysql"` | Zabbix proxy Docker image name |
 | zabbixproxy.image.tag | string | `"ubuntu-5.2.0"` | Tag of Docker image of Zabbix proxy |
+| zabbixproxy.resources | object | `{}` |  |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.targetPort | int | `10051` | Port of application pod |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
-| zabbixweb.resources | object | `{}` | Configure the requests/limits, highly recommended for a reliable setup  |
-<<<<<<< HEAD
-| zabbixweb.extraEnv | object | `[]` | Add addtional extra environment variables  |
-=======
->>>>>>> d868bf6fcd3e4d019795d410a3e46aad41f491c5
 | zabbixweb.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixweb.DB_SERVER_PORT | int | `5432` | Port of database |
 | zabbixweb.POSTGRES_DB | string | `"zabbix"` | Name of database |
