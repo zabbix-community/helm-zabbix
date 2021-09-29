@@ -49,11 +49,11 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: zabbix-web
+                name: {{ $fullName }}-zabbix-web
                 port:
                   number: {{ $svcPort }}
               {{- else }}
-              serviceName: zabbix-web
+              serviceName: {{ $fullName }}-zabbix-web
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}

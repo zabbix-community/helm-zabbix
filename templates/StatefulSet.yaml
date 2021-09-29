@@ -4,7 +4,7 @@ kind: StatefulSet
 metadata:
   name: {{ template "zabbix.fullname" . }}
   labels:
-    app: zabbix-server
+    app: {{ template "zabbix.fullname" . }}-zabbix-server
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
@@ -13,12 +13,12 @@ spec:
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
     matchLabels:
-      app:  zabbix-server
+      app: {{ template "zabbix.fullname" . }}-zabbix-server
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: zabbix-server
+        app: {{ template "zabbix.fullname" . }}-zabbix-server
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: {{ .Release.Name | quote }}
         heritage: {{ .Release.Service | quote }}

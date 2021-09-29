@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: zabbix-server
+  name: {{ template "zabbix.fullname" . }}-zabbix-server
   labels:
-    app: zabbix-server
+    app: {{ template "zabbix.fullname" . }}-zabbix-server
     app.kubernetes.io/name: zabbix-server
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: {{ .Release.Name | quote }}
@@ -19,15 +19,15 @@ spec:
       targetPort: 10052
       name: zabbix-jmx
   selector:
-    app: zabbix-server
+    app: {{ template "zabbix.fullname" . }}-zabbix-server
 ---
   {{- if .Values.zabbixagent.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: zabbix-agent
+  name: {{ template "zabbix.fullname" . }}-zabbix-agent
   labels:
-    app: zabbix-agent
+    app: {{ template "zabbix.fullname" . }}-zabbix-agent
     app.kubernetes.io/name: zabbix-agent
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-agent
@@ -40,16 +40,16 @@ spec:
       protocol: TCP
       name: zabbix-agent
   selector:
-    app: zabbix-agent
+    app: {{ template "zabbix.fullname" . }}-zabbix-agent
     {{- end }}
 ---
   {{- if .Values.zabbixweb.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: zabbix-web
+  name: {{ template "zabbix.fullname" . }}-zabbix-web
   labels:
-      app: zabbix-web
+      app: {{ template "zabbix.fullname" . }}-zabbix-web
       app.kubernetes.io/name: zabbix-web
       helm.sh/chart: {{ include "zabbix.chart" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}-web
@@ -62,7 +62,7 @@ spec:
       protocol: TCP
       name: zabbix-web
   selector:
-    app: zabbix-web
+    app: {{ template "zabbix.fullname" . }}-zabbix-web
   {{- end }}
 ---
   {{- if .Values.zabbixproxy.enabled }}
@@ -71,7 +71,7 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-proxy
   labels:
-    app: {{ include "zabbix.name" . | quote }}
+    app: {{ template "zabbix.fullname" . }}-zabbix-proxy
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
@@ -81,5 +81,5 @@ spec:
       targetPort: {{ .Values.zabbixproxy.service.targetPort }}
       name: http
   selector:
-    name: zabbix-proxy
+    name: {{ template "zabbix.fullname" . }}-zabbix-proxy
     {{- end }}

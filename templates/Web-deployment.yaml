@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zabbix-web
+  name: {{ template "zabbix.fullname" . }}-zabbix-web
   labels:
-    app: zabbix-web
+    app: {{ template "zabbix.fullname" . }}-zabbix-web
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
@@ -12,12 +12,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app:  zabbix-web
+      app:  {{ template "zabbix.fullname" . }}-zabbix-web
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: zabbix-web
+        app: {{ template "zabbix.fullname" . }}-zabbix-web
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: {{ .Release.Name | quote }}
         heritage: {{ .Release.Service | quote }}
