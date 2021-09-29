@@ -6,7 +6,7 @@ zabbixServer:
   replicaCount: 1
   image:
     repository: zabbix/zabbix-server-pgsql
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     pullPolicy: IfNotPresent
   DB_SERVER_HOST: "zabbix-postgresql"
   POSTGRES_USER: "zabbix"
@@ -28,7 +28,7 @@ zabbixproxy:
   enabled: false
   image:
     repository: zabbix/zabbix-proxy-mysql
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     pullPolicy: IfNotPresent
   ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
   ZBX_HOSTNAME: zabbix-proxy # " fadi-zabbix-proxy-mysql " This variable is unique, case sensitive hostname.
@@ -48,7 +48,7 @@ zabbixagent:
   enabled: true
   image:
     repository: zabbix/zabbix-agent
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     pullPolicy: IfNotPresent
   ZBX_HOSTNAME: zabbix-agent
   ZBX_SERVER_HOST: 127.0.0.1
@@ -71,7 +71,7 @@ zabbixweb:
   enabled: true
   image:
     repository: zabbix/zabbix-web-apache-pgsql
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     pullPolicy: IfNotPresent
   ZBX_SERVER_HOST: zabbix-server
   ZBX_SERVER_PORT: 10051
@@ -85,17 +85,26 @@ zabbixweb:
     port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  # -- Ingress extra labels
+  extraLabels: {}
   hosts:
-    - host: chart-example.local
-      paths: []
+    - host: zabbix.local
+      paths:
+        - path: /
+          pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+  ingressClassName: nginx
+  # -- pathType is only for k8s >= 1.1=
+  pathType: Prefix
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -6,17 +6,20 @@
 
 # Introduction
 
-This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
+This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
 ### Important note
 
->**This helm chart is still under developpement**
+> **This helm chart is still under development**
 
 # Prerequisites
 
 - Kubernetes cluster 1.10+
 - Helm 3.0+
+- Kubectl
 - PV provisioner support in the underlying infrastructure.
+
+Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 # Zabbix components
 
@@ -27,6 +30,8 @@ This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https:
 The server performs the polling and trapping of data, it calculates triggers, sends notifications to users. It is the central component to which Zabbix agents and proxies report data on availability and integrity of systems. The server can itself remotely check networked services (such as web servers and mail servers) using simple service checks.
 
 ## Zabbix Agent
+
+> **zabbix-agent2** is not supported in this helm chart, yet.
 
 **Zabbix agent** is deployed on a monitoring target to actively monitor local resources and applications (hard drives, memory, processor statistics etc).
 
@@ -58,8 +63,6 @@ The items of section [Configuration](#Configuration) can be set via ``--set`` fl
 - **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.
 
 # Installation
-
-Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 Access a Kubernetes cluster.
 
@@ -108,8 +111,6 @@ kubectl logs -f pods/POD_NAME -n monitoring
 ```
 
 See the example of installation in minikube in this [tutorial](docs/example/README.md).
-
-See section [Basic Commands of Helm 3](docs/basics-helmv3.md) for more information about commands of helm.
 
 # Uninstallation
 

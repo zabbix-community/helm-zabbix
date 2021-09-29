@@ -1,22 +1,25 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.3.3](https://img.shields.io/badge/Version-0.3.3-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
 # Introduction
 
-This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
+This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
 ### Important note
 
->**This helm chart is still under developpement**
+> **This helm chart is still under development**
 
 # Prerequisites
 
 - Kubernetes cluster 1.10+
 - Helm 3.0+
+- Kubectl
 - PV provisioner support in the underlying infrastructure.
+
+Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 # Zabbix components
 
@@ -27,6 +30,8 @@ This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https:
 The server performs the polling and trapping of data, it calculates triggers, sends notifications to users. It is the central component to which Zabbix agents and proxies report data on availability and integrity of systems. The server can itself remotely check networked services (such as web servers and mail servers) using simple service checks.
 
 ## Zabbix Agent
+
+> **zabbix-agent2** is not supported in this helm chart, yet.
 
 **Zabbix agent** is deployed on a monitoring target to actively monitor local resources and applications (hard drives, memory, processor statistics etc).
 
@@ -58,8 +63,6 @@ The items of section [Configuration](#Configuration) can be set via ``--set`` fl
 - **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.
 
 # Installation
-
-Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 Access a Kubernetes cluster.
 
@@ -109,8 +112,6 @@ kubectl logs -f pods/POD_NAME -n monitoring
 
 See the example of installation in minikube in this [tutorial](docs/example/README.md).
 
-See section [Basic Commands of Helm 3](docs/basics-helmv3.md) for more information about commands of helm.
-
 # Uninstallation
 
 To uninstall/delete the ``zabbix`` deployment:
@@ -150,7 +151,9 @@ The following tables lists the configurable parameters of the chart and their de
 | affinity | object | `{}` | Affinity configurations |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
-| ingress.hosts | list | `[{"host":null,"paths":[]}]` | Ingress hosts |
+| ingress.extraLabels | object | `{}` | Ingress extra labels |
+| ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
+| ingress.pathType | string | `"Prefix"` |  |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | livenessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
 | livenessProbe.initialDelaySeconds | int | `30` | Number of seconds after the container has started before liveness |

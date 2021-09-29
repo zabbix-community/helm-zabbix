@@ -191,15 +191,24 @@ ingress:
   enabled: false
   # -- Ingress annotations
   annotations: {}
+  # -- Ingress extra labels
+  extraLabels: {}
   # -- Ingress hosts
   hosts:
-    - host:
-      paths: []
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+  # ingressClassName: nginx
+  # -- pathType is only for k8s >= 1.1=
+  pathType: Prefix
 
 livenessProbe:
   # -- Path of health check of application
