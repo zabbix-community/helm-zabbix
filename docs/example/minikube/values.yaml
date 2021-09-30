@@ -2,13 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-zabbixServer:
+zabbixserver:
   replicaCount: 1
   image:
     repository: zabbix/zabbix-server-pgsql
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     pullPolicy: IfNotPresent
   DB_SERVER_HOST: "zabbix-postgresql"
+  DB_SERVER_PORT: "5432"
   POSTGRES_USER: "zabbix"
   POSTGRES_PASSWORD: zabbix
   POSTGRES_DB: "zabbix"
@@ -23,32 +24,32 @@ postgresql:
   postgresqlDatabase: zabbix
   postgresqlPostgresPassword: zabbix_pwd
 
-# not functional for the moment, work is still in progress.
 zabbixproxy:
-  enabled: false
+  enabled: true
+  replicaCount: 1
   image:
-    repository: zabbix/zabbix-proxy-mysql
-    tag: ubuntu-5.4.1
+    repository: zabbix/zabbix-proxy-sqlite3
+    tag: ubuntu-5.4.5
     pullPolicy: IfNotPresent
   ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
-  ZBX_HOSTNAME: zabbix-proxy # " fadi-zabbix-proxy-mysql " This variable is unique, case sensitive hostname.
-  ZBX_SERVER_HOST: zabbix-server
+  ZBX_HOSTNAME: zabbix-proxy # This variable is unique, case sensitive hostname.
+  ZBX_SERVER_HOST: zabbix-zabbix-server
   ZBX_SERVER_PORT: 10051
-  DB_SERVER_PORT: 3306
-  DB_SERVER_HOST: maria-mariadb
-  MYSQL_USER: admin
-  MYSQL_DATABASE: my_database # default to zabbix ( to be precised later )
   # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
   # ZBX_DEBUGLEVEL: 4 # The variable is used to specify debug level, from 0 to 5
   # ZBX_TIMEOUT: 4 # The variable is used to specify timeout for processing checks. By default, value is 4.
   # ZBX_JAVAGATEWAY_ENABLE: false # The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
   ZBX_VMWARECACHESIZE: 128M
+  service:
+    type: NodePort
+    port: 10051
 
 zabbixagent:
   enabled: true
   image:
-    repository: zabbix/zabbix-agent
-    tag: ubuntu-5.4.1
+    #     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
+    repository: zabbix/zabbix-agent2
+    tag: ubuntu-5.4.4
     pullPolicy: IfNotPresent
   ZBX_HOSTNAME: zabbix-agent
   ZBX_SERVER_HOST: 127.0.0.1
@@ -71,9 +72,9 @@ zabbixweb:
   enabled: true
   image:
     repository: zabbix/zabbix-web-apache-pgsql
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     pullPolicy: IfNotPresent
-  ZBX_SERVER_HOST: zabbix-server
+  ZBX_SERVER_HOST: zabbix-zabbix-server
   ZBX_SERVER_PORT: 10051
   DB_SERVER_HOST: zabbix-postgresql
   DB_SERVER_PORT: 5432
@@ -85,29 +86,26 @@ zabbixweb:
     port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  # -- Ingress extra labels
+  extraLabels: {}
   hosts:
-    - host: chart-example.local
-      paths: []
+    - host: zabbix.local
+      paths:
+        - path: /
+          pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-
-resources:
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  limits:
-    cpu: 1000m
-    memory: 1024Mi
-  requests:
-    cpu: 500m
-    memory: 512Mi
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+  ingressClassName: nginx
+  # -- pathType is only for k8s >= 1.1=
+  pathType: Prefix
 
 nodeSelector: {}
 

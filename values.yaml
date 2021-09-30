@@ -3,25 +3,27 @@
 # Declare variables to be passed into your templates.
 
 # **Zabbix server** configurations
-zabbixServer:
-  # -- Number of replicas of ``zabbixServer`` module
+zabbixserver:
+  # -- Number of replicas of ``zabbixserver`` module
   replicaCount: 1
-  # zabbixServer.hostPort -- optional set true open a port direct on node where zabbix server runs 
+  # zabbixserver.hostPort -- optional set true open a port direct on node where zabbix server runs 
   hostPort: false
-  # zabbixServer.hostIP -- optional set hostIP different from 0.0.0.0 to open port only on this IP
+  # zabbixserver.hostIP -- optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
   resources: {}
   image:
     # -- Zabbix server Docker image name
     repository: zabbix/zabbix-server-pgsql
     # -- Tag of Docker image of Zabbix server
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
   # -- Address of database host
   DB_SERVER_HOST: "zabbix-postgresql"
+  # -- Port of database host
+  DB_SERVER_PORT: "5432"
   # -- User of database
   POSTGRES_USER: "zabbix"
   # -- Password of database
@@ -33,6 +35,8 @@ zabbixServer:
     type: ClusterIP
     # -- Port of service in Kubernetes cluster
     port: 10051
+  # -- Extra environment variables
+  extraEnv: {}
 
 # **PostgreSQL** configurations
 postgresql:
@@ -47,16 +51,17 @@ postgresql:
   # -- Password of``postgres`` user in Postgresql
   postgresqlPostgresPassword: zabbix_pwd
 
-# **Zabbix proxy** not functional for the moment, work is still in progress.
 zabbixproxy:
   # -- Enables use of **Zabbix proxy**
-  enabled: false
+  enabled: true
+  # -- Number of replicas of ``zabbixproxy`` module
+  replicaCount: 1
   resources: {}
   image:
     # -- Zabbix proxy Docker image name
-    repository: zabbix/zabbix-proxy-mysql
+    repository: zabbix/zabbix-proxy-sqlite3
     # -- Tag of Docker image of Zabbix proxy
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     #  -- List of dockerconfig secrets names to use when pulling images
@@ -67,23 +72,9 @@ zabbixproxy:
   # Case sensitive hostname
   ZBX_HOSTNAME: zabbix-proxy # This variable is unique, case sensitive hostname.
   # -- Zabbix server host
-  ZBX_SERVER_HOST: zabbix-server
+  ZBX_SERVER_HOST: zabbix-zabbix-server
   # -- Zabbix server port
   ZBX_SERVER_PORT: 10051
-  # -- Port of database
-  DB_SERVER_PORT: 3306
-  # -- Address of database host
-  DB_SERVER_HOST: maria-mariadb
-  # -- User of database
-  MYSQL_USER: admin
-  # Provide the path to a file which contains the user instead of using the variable MYSQL_USER
-  # MYSQL_USER_FILE: /run/secrets/MYSQL_USER
-  # zabbixproxy.MYSQL_PASSWORD -- Password of database
-  MYSQL_PASSWORD: password1
-  # Provide the path to a file which contains the passwoord instead of using the variable MYSQL_PASSWORD
-  # MYSQL_PASSWORD_FILE: /var/run/secrets/MYSQL_PASSWORD
-  # zabbixproxy.MYSQL_DATABASE -- default to zabbix ( to be precised later)
-  MYSQL_DATABASE: my_database
   # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
   # The variable is used to specify debug level, from 0 to 5
   # ZBX_DEBUGLEVEL: 4
@@ -99,8 +90,8 @@ zabbixproxy:
     type: ClusterIP
     # -- Port to expose service
     port: 10051
-    # -- Port of application pod
-    targetPort: 10051
+  # -- Extra environment variables
+  extraEnv: {}
 
 # **Zabbix agent** configurations
 zabbixagent:
@@ -108,10 +99,10 @@ zabbixagent:
   enabled: true
   resources: {}
   image:
-    # -- Zabbix agent Docker image name
+    # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent
     # -- Tag of Docker image of Zabbix agent
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -147,24 +138,25 @@ zabbixagent:
     type: ClusterIP
     # -- Port to expose service
     port: 10050
-    # -- Port of application pod
-    targetPort: 10050
+  # -- Extra environment variables
+  extraEnv: {}
 
 # **Zabbix web** configurations
 zabbixweb:
   # -- Enables use of Zabbix web
   enabled: true
+  resources: {}
   image:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-apache-pgsql
     # -- Tag of Docker image of Zabbix web
-    tag: ubuntu-5.4.1
+    tag: ubuntu-5.4.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # zabbixweb.image.pullSecrets -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
   # -- Zabbix server host
-  ZBX_SERVER_HOST: zabbix-server
+  ZBX_SERVER_HOST: zabbix-zabbix-server
   # -- Zabbix server port
   ZBX_SERVER_PORT: 10051
   # -- Address of database host
@@ -182,8 +174,8 @@ zabbixweb:
     type: NodePort
     # -- Port to expose service
     port: 80
-    # -- Port of application pod
-    targetPort: 8080
+  # -- Extra environment variables
+  extraEnv: {}
 
 # Ingress configurations
 ingress:
@@ -191,15 +183,26 @@ ingress:
   enabled: false
   # -- Ingress annotations
   annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  # -- Ingress extra labels
+  extraLabels: {}
   # -- Ingress hosts
   hosts:
-    - host:
-      paths: []
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+  # ingressClassName: nginx
+  # -- pathType is only for k8s >= 1.1=
+  pathType: Prefix
 
 livenessProbe:
   # -- Path of health check of application

@@ -1,22 +1,25 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.3.3](https://img.shields.io/badge/Version-0.3.3-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
 # Introduction
 
-This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
+This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
 ### Important note
 
->**This helm chart is still under developpement**
+> **This helm chart is still under development**
 
 # Prerequisites
 
 - Kubernetes cluster 1.10+
 - Helm 3.0+
+- Kubectl
 - PV provisioner support in the underlying infrastructure.
+
+Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 # Zabbix components
 
@@ -28,6 +31,8 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 ## Zabbix Agent
 
+> **zabbix-agent2** is supported in this helm chart.
+
 **Zabbix agent** is deployed on a monitoring target to actively monitor local resources and applications (hard drives, memory, processor statistics etc).
 
 ## Zabbix Web (frontend)
@@ -36,7 +41,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 ## Zabbix Proxy
 
-> **Zabbix proxy** is not functional in this helm chart, yet.
+> This helm chart installs Zabbix proxy with SQLite3 support
 
 **Zabbix proxy** is a process that may collect monitoring data from one or more monitored devices and send the information to the Zabbix server, essentially working on behalf of the server. All collected data is buffered locally and then transferred to the **Zabbix server** the proxy belongs to.
 
@@ -44,7 +49,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 A database is required for zabbix to work, in this helm chart we're using Postgresql.
 
-> to use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
+> To use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
 
 ## Configure the chart
 
@@ -58,8 +63,6 @@ The items of section [Configuration](#Configuration) can be set via ``--set`` fl
 - **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.
 
 # Installation
-
-Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 Access a Kubernetes cluster.
 
@@ -109,8 +112,6 @@ kubectl logs -f pods/POD_NAME -n monitoring
 
 See the example of installation in minikube in this [tutorial](docs/example/README.md).
 
-See section [Basic Commands of Helm 3](docs/basics-helmv3.md) for more information about commands of helm.
-
 # Uninstallation
 
 To uninstall/delete the ``zabbix`` deployment:
@@ -129,10 +130,10 @@ View informations of ``zabbix`` services.
 kubectl describe services zabbix-web -n monitoring
 ```
 
-Listen on port 8888 locally, forwarding to 80 in the service ``zabbix-web``.
+Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
 
 ```bash
-kubectl port-forward service/zabbix-web 8888:80 -n monitoring
+kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
 ```
 
 Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.
@@ -150,7 +151,9 @@ The following tables lists the configurable parameters of the chart and their de
 | affinity | object | `{}` | Affinity configurations |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
-| ingress.hosts | list | `[{"host":null,"paths":[]}]` | Ingress hosts |
+| ingress.extraLabels | object | `{}` |  |
+| ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
+| ingress.pathType | string | `"Prefix"` |  |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | livenessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
 | livenessProbe.initialDelaySeconds | int | `30` | Number of seconds after the container has started before liveness |
@@ -171,20 +174,6 @@ The following tables lists the configurable parameters of the chart and their de
 | readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
 | readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbixServer.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
-| zabbixServer.POSTGRES_DB | string | `"zabbix"` | Name of database |
-| zabbixServer.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
-| zabbixServer.POSTGRES_USER | string | `"zabbix"` | User of database |
-| zabbixServer.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
-| zabbixServer.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
-| zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
-| zabbixServer.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
-| zabbixServer.image.tag | string | `"ubuntu-5.4.1"` | Tag of Docker image of Zabbix server |
-| zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
-| zabbixServer.resources | object | `{}` |  |
-| zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
-| zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_HOSTNAME | string | `"zabbix-agent"` | Zabbix agent hostname Case sensitive hostname |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
@@ -194,46 +183,59 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixagent.enabled | bool | `true` | Enables use of Zabbix agent |
+| zabbixagent.extraEnv | object | `{}` | Extra environment variables |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name |
-| zabbixagent.image.tag | string | `"ubuntu-5.4.1"` | Tag of Docker image of Zabbix agent |
+| zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
+| zabbixagent.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix agent |
 | zabbixagent.resources | object | `{}` |  |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
-| zabbixagent.service.targetPort | int | `10050` | Port of application pod |
 | zabbixagent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
-| zabbixproxy.DB_SERVER_HOST | string | `"maria-mariadb"` | Address of database host |
-| zabbixproxy.DB_SERVER_PORT | int | `3306` | Port of database |
-| zabbixproxy.MYSQL_DATABASE | string | `"my_database"` | default to zabbix ( to be precised later) |
-| zabbixproxy.MYSQL_PASSWORD | string | `"password1"` | Password of database |
-| zabbixproxy.MYSQL_USER | string | `"admin"` | User of database |
 | zabbixproxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix proxy hostname Case sensitive hostname |
 | zabbixproxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixproxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1. |
-| zabbixproxy.ZBX_SERVER_HOST | string | `"zabbix-server"` | Zabbix server host |
+| zabbixproxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
 | zabbixproxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
-| zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix proxy** |
+| zabbixproxy.enabled | bool | `true` | Enables use of **Zabbix proxy** |
+| zabbixproxy.extraEnv | object | `{}` | Extra environment variables |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-mysql"` | Zabbix proxy Docker image name |
-| zabbixproxy.image.tag | string | `"ubuntu-5.4.1"` | Tag of Docker image of Zabbix proxy |
+| zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
+| zabbixproxy.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix proxy |
+| zabbixproxy.replicaCount | int | `1` | Number of replicas of ``zabbixproxy`` module |
 | zabbixproxy.resources | object | `{}` |  |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
-| zabbixproxy.service.targetPort | int | `10051` | Port of application pod |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
+| zabbixserver.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
+| zabbixserver.DB_SERVER_PORT | string | `"5432"` | Port of database host |
+| zabbixserver.POSTGRES_DB | string | `"zabbix"` | Name of database |
+| zabbixserver.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
+| zabbixserver.POSTGRES_USER | string | `"zabbix"` | User of database |
+| zabbixserver.extraEnv | object | `{}` | Extra environment variables |
+| zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
+| zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
+| zabbixserver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixserver.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixserver.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
+| zabbixserver.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix server |
+| zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
+| zabbixserver.resources | object | `{}` |  |
+| zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
+| zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixweb.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixweb.DB_SERVER_PORT | int | `5432` | Port of database |
 | zabbixweb.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixweb.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
 | zabbixweb.POSTGRES_USER | string | `"zabbix"` | User of database |
-| zabbixweb.ZBX_SERVER_HOST | string | `"zabbix-server"` | Zabbix server host |
+| zabbixweb.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
 | zabbixweb.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixweb.enabled | bool | `true` | Enables use of Zabbix web |
+| zabbixweb.extraEnv | object | `{}` | Extra environment variables |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
-| zabbixweb.image.tag | string | `"ubuntu-5.4.1"` | Tag of Docker image of Zabbix web |
+| zabbixweb.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix web |
+| zabbixweb.resources | object | `{}` |  |
 | zabbixweb.service.port | int | `80` | Port to expose service |
-| zabbixweb.service.targetPort | int | `8080` | Port of application pod |
 | zabbixweb.service.type | string | `"NodePort"` | Type of service for Zabbix web |

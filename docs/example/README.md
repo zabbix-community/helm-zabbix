@@ -95,10 +95,10 @@ kubectl get pods --output=wide -n monitoring
 kubectl describe services zabbix -n monitoring
 ```
 
-Listen on port 8888 locally, forwarding to 80 in the service ``zabbix-web``.
+Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
 
 ```bash
-kubectl port-forward service/zabbix-web 8888:80 -n monitoring
+kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
 ```
 
 Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.

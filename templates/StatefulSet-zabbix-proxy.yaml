@@ -1,0 +1,106 @@
+{{- if .Values.zabbixproxy.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "zabbix.fullname" . }}-zabbix-proxy
+  labels:
+    app: {{ template "zabbix.fullname" . }}-zabbix-proxy
+    app.kubernetes.io/name: zabbix-proxy
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+spec:
+  replicas: {{ .Values.zabbixproxy.replicaCount }}
+  serviceName: {{ template "zabbix.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ template "zabbix.fullname" . }}-zabbix-proxy
+  template:
+    metadata:
+      labels:
+        app: {{ template "zabbix.fullname" . }}-zabbix-proxy
+        app.kubernetes.io/name: zabbix-proxy
+        helm.sh/chart: {{ include "zabbix.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
+        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+    spec:
+      containers:
+          {{- if .Values.zabbixagent.enabled }}
+        - name: zabbix-agent
+          resources:
+{{- toYaml .Values.zabbixagent.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
+          imagePullPolicy: {{ .Values.zabbixagent.image.pullPolicy }}
+          env:
+            - name: ZBX_HOSTNAME
+              value: {{ .Values.zabbixagent.ZBX_HOSTNAME | quote }}
+            - name: ZBX_SERVER_HOST
+              value: {{ .Values.zabbixagent.ZBX_SERVER_HOST | quote }}
+            - name: ZBX_SERVER_PORT
+              value: {{ .Values.zabbixagent.ZBX_SERVER_PORT | quote }}
+            - name: ZBX_PASSIVE_ALLOW
+              value: {{ .Values.zabbixagent.ZBX_PASSIVE_ALLOW | quote }}
+            - name: ZBX_PASSIVESERVERS
+              value: {{ .Values.zabbixagent.ZBX_PASSIVESERVERS | quote }}
+            - name: ZBX_ACTIVE_ALLOW
+              value: {{ .Values.zabbixagent.ZBX_ACTIVE_ALLOW | quote }}
+            - name: ZBX_ACTIVESERVERS
+              value: {{ .Values.zabbixagent.ZBX_ACTIVESERVERS | quote }}
+            - name: ZBX_DEBUGLEVEL
+              value: {{ .Values.zabbixagent.ZBX_DEBUGLEVEL | quote }}
+            - name: ZBX_TIMEOUT
+              value: {{ .Values.zabbixagent.ZBX_TIMEOUT | quote }}
+            - name: ZBX_LOADMODULE
+              value: {{ .Values.zabbixagent.ZBX_LOADMODULE | quote }}
+{{- range $item := .Values.zabbixagent.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
+          ports:
+            - name: zabbix-agent
+              containerPort: 10050
+              protocol: TCP
+          {{- end }}
+        - name: zabbix-proxy
+          resources:
+{{- toYaml .Values.zabbixproxy.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.zabbixproxy.image.repository }}:{{ .Values.zabbixproxy.image.tag }}"
+          imagePullPolicy: {{ .Values.zabbixproxy.image.pullPolicy }}
+          env:
+            - name: ZBX_PROXYMODE
+              value: {{ .Values.zabbixproxy.ZBX_PROXYMODE | quote }}
+            - name: ZBX_HOSTNAME
+              value: {{ .Values.zabbixproxy.ZBX_HOSTNAME | quote }}
+            - name: ZBX_SERVER_HOST
+              value: {{ .Values.zabbixproxy.ZBX_SERVER_HOST | quote }}
+            - name: ZBX_SERVER_PORT
+              value: {{ .Values.zabbixproxy.ZBX_SERVER_PORT | quote }}
+            - name: ZBX_LOADMODULE
+              value: {{ .Values.zabbixproxy.ZBX_LOADMODULE | quote }}
+            - name: ZBX_DEBUGLEVEL
+              value: {{ .Values.zabbixproxy.ZBX_DEBUGLEVEL | quote }}
+            - name: ZBX_TIMEOUT
+              value: {{ .Values.zabbixproxy.ZBX_TIMEOUT | quote }}
+            - name: ZBX_JAVAGATEWAY_ENABLE
+              value: {{ .Values.zabbixproxy.ZBX_VMWARECACHESIZE | quote }}
+{{- range $item := .Values.zabbixproxy.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
+          ports:
+            - name: zabbix-proxy
+              containerPort: 10051
+              protocol: TCP
+      imagePullSecrets:
+      {{- range .Values.zabbixagent.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      {{- range .Values.zabbixproxy.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+{{- end }}

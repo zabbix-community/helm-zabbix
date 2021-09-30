@@ -6,17 +6,20 @@
 
 # Introduction
 
-This [Helm](https://github.com/cetic/helm-zabbix) chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
+This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
 ### Important note
 
->**This helm chart is still under developpement**
+> **This helm chart is still under development**
 
 # Prerequisites
 
 - Kubernetes cluster 1.10+
 - Helm 3.0+
+- Kubectl
 - PV provisioner support in the underlying infrastructure.
+
+Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 # Zabbix components
 
@@ -28,15 +31,17 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 ## Zabbix Agent
 
+> **zabbix-agent2** is supported in this helm chart.
+
 **Zabbix agent** is deployed on a monitoring target to actively monitor local resources and applications (hard drives, memory, processor statistics etc).
 
 ## Zabbix Web (frontend)
 
 **Zabbix web** interface is a part of Zabbix software. It is used to manage resources under monitoring and view monitoring statistics.
 
-## Zabbix Proxy 
+## Zabbix Proxy
 
-> **Zabbix proxy** is not functional in this helm chart, yet.
+> This helm chart installs Zabbix proxy with SQLite3 support
 
 **Zabbix proxy** is a process that may collect monitoring data from one or more monitored devices and send the information to the Zabbix server, essentially working on behalf of the server. All collected data is buffered locally and then transferred to the **Zabbix server** the proxy belongs to.
 
@@ -44,7 +49,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 A database is required for zabbix to work, in this helm chart we're using Postgresql.
 
-> to use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
+> To use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
 
 ## Configure the chart
 
@@ -58,8 +63,6 @@ The items of section [Configuration](#Configuration) can be set via ``--set`` fl
 - **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.
 
 # Installation
-
-Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
 Access a Kubernetes cluster.
 
@@ -109,8 +112,6 @@ kubectl logs -f pods/POD_NAME -n monitoring
 
 See the example of installation in minikube in this [tutorial](docs/example/README.md).
 
-See section [Basic Commands of Helm 3](docs/basics-helmv3.md) for more information about commands of helm.
-
 # Uninstallation
 
 To uninstall/delete the ``zabbix`` deployment:
@@ -129,10 +130,10 @@ View informations of ``zabbix`` services.
 kubectl describe services zabbix-web -n monitoring
 ```
 
-Listen on port 8888 locally, forwarding to 80 in the service ``zabbix-web``.
+Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
 
 ```bash
-kubectl port-forward service/zabbix-web 8888:80 -n monitoring
+kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
 ```
 
 Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.
