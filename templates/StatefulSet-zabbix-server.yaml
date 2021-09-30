@@ -48,13 +48,15 @@ spec:
               {{- end}}
           env:
             - name: DB_SERVER_HOST
-              value: {{ .Values.zabbixserver.DB_SERVER_HOST }}
+              value: {{ .Values.zabbixserver.DB_SERVER_HOST | quote }}
+            - name: DB_SERVER_PORT
+              value: {{ .Values.zabbixserver.DB_SERVER_PORT | quote }}
             - name: POSTGRES_USER
-              value: {{ .Values.zabbixserver.POSTGRES_USER }}
+              value: {{ .Values.zabbixserver.POSTGRES_USER | quote }}
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.zabbixserver.POSTGRES_PASSWORD }}
+              value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
             - name: POSTGRES_DB
-              value: {{ .Values.zabbixserver.POSTGRES_DB }}
+              value: {{ .Values.zabbixserver.POSTGRES_DB | quote }}
 {{- range $item := .Values.zabbixserver.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value }}
@@ -69,7 +71,7 @@ spec:
           imagePullPolicy: {{ .Values.zabbixagent.image.pullPolicy }}
           env:
             - name: ZBX_HOSTNAME
-              value: {{ .Values.zabbixagent.ZBX_HOSTNAME }}
+              value: {{ .Values.zabbixagent.ZBX_HOSTNAME | quote }}
             - name: ZBX_SERVER_HOST
               value: {{ .Values.zabbixagent.ZBX_SERVER_HOST | quote }}
             - name: ZBX_SERVER_PORT
@@ -85,7 +87,7 @@ spec:
             - name: ZBX_DEBUGLEVEL
               value: {{ .Values.zabbixagent.ZBX_DEBUGLEVEL | quote }}
             - name: ZBX_TIMEOUT
-              value: {{ .Values.zabbixagent.ZBX_TIMEOUT }}
+              value: {{ .Values.zabbixagent.ZBX_TIMEOUT | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE }}
 {{- range $item := .Values.zabbixagent.extraEnv }}

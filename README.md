@@ -208,6 +208,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
 | zabbixserver.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
+| zabbixserver.DB_SERVER_PORT | string | `"5432"` | Port of database host |
 | zabbixserver.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixserver.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
 | zabbixserver.POSTGRES_USER | string | `"zabbix"` | User of database |

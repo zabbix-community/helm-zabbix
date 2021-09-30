@@ -45,11 +45,11 @@ spec:
           - name: POSTGRES_PASSWORD
             value: {{ .Values.zabbixweb.POSTGRES_PASSWORD | quote }}
           - name: POSTGRES_DB
-            value: {{ .Values.zabbixweb.POSTGRES_DB }}
+            value: {{ .Values.zabbixweb.POSTGRES_DB | quote }}
           # - name: POSTGRES_USER_FILE
-          #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE }}
+          #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE | quote }}
           #- name: POSTGRES_PASSWORD_FILE
-          #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE }}
+          #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE | quote }}
 {{- range $item := .Values.zabbixweb.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value }}

@@ -22,6 +22,8 @@ zabbixserver:
     pullSecrets: []
   # -- Address of database host
   DB_SERVER_HOST: "zabbix-postgresql"
+  # -- Port of database host
+  DB_SERVER_PORT: "5432"
   # -- User of database
   POSTGRES_USER: "zabbix"
   # -- Password of database
