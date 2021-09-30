@@ -33,6 +33,8 @@ zabbixserver:
     type: ClusterIP
     # -- Port of service in Kubernetes cluster
     port: 10051
+  # -- Extra environment variables
+  extraEnv: {}
 
 # **PostgreSQL** configurations
 postgresql:
@@ -86,6 +88,8 @@ zabbixproxy:
     type: ClusterIP
     # -- Port to expose service
     port: 10051
+  # -- Extra environment variables
+  extraEnv: {}
 
 # **Zabbix agent** configurations
 zabbixagent:
@@ -93,7 +97,7 @@ zabbixagent:
   enabled: true
   resources: {}
   image:
-    # -- Zabbix agent Docker image name
+    # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent
     # -- Tag of Docker image of Zabbix agent
     tag: ubuntu-5.4.5
@@ -132,6 +136,8 @@ zabbixagent:
     type: ClusterIP
     # -- Port to expose service
     port: 10050
+  # -- Extra environment variables
+  extraEnv: {}
 
 # **Zabbix web** configurations
 zabbixweb:
@@ -166,6 +172,8 @@ zabbixweb:
     type: NodePort
     # -- Port to expose service
     port: 80
+  # -- Extra environment variables
+  extraEnv: {}
 
 # Ingress configurations
 ingress:

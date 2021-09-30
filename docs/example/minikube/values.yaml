@@ -46,8 +46,9 @@ zabbixproxy:
 zabbixagent:
   enabled: true
   image:
-    repository: zabbix/zabbix-agent
-    tag: ubuntu-5.4.5
+    #     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
+    repository: zabbix/zabbix-agent2
+    tag: ubuntu-5.4.4
     pullPolicy: IfNotPresent
   ZBX_HOSTNAME: zabbix-agent
   ZBX_SERVER_HOST: 127.0.0.1

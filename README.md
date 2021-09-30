@@ -31,7 +31,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 ## Zabbix Agent
 
-> **zabbix-agent2** is not supported in this helm chart, yet.
+> **zabbix-agent2** is supported in this helm chart.
 
 **Zabbix agent** is deployed on a monitoring target to actively monitor local resources and applications (hard drives, memory, processor statistics etc).
 
@@ -195,9 +195,10 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixagent.enabled | bool | `true` | Enables use of Zabbix agent |
+| zabbixagent.extraEnv | object | `{}` | Extra environment variables |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name |
+| zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
 | zabbixagent.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix agent |
 | zabbixagent.resources | object | `{}` |  |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
@@ -209,6 +210,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixproxy.enabled | bool | `true` | Enables use of **Zabbix proxy** |
+| zabbixproxy.extraEnv | object | `{}` | Extra environment variables |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
@@ -221,6 +223,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixserver.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
 | zabbixserver.POSTGRES_USER | string | `"zabbix"` | User of database |
+| zabbixserver.extraEnv | object | `{}` | Extra environment variables |
 | zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
 | zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
 | zabbixserver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -239,6 +242,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
 | zabbixweb.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixweb.enabled | bool | `true` | Enables use of Zabbix web |
+| zabbixweb.extraEnv | object | `{}` | Extra environment variables |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
