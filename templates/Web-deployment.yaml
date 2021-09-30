@@ -5,22 +5,23 @@ metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-web
   labels:
     app: {{ template "zabbix.fullname" . }}-zabbix-web
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+    app.kubernetes.io/name: zabbix-web
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
 spec:
   replicas: 1
   selector:
     matchLabels:
       app:  {{ template "zabbix.fullname" . }}-zabbix-web
-      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
         app: {{ template "zabbix.fullname" . }}-zabbix-web
-        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-        release: {{ .Release.Name | quote }}
-        heritage: {{ .Release.Service | quote }}
+        app.kubernetes.io/name: zabbix-web
+        helm.sh/chart: {{ include "zabbix.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
+        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
     spec:
       containers:
       - name: zabbix-web

@@ -39,11 +39,23 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 **Zabbix web** interface is a part of Zabbix software. It is used to manage resources under monitoring and view monitoring statistics.
 
-## Zabbix Proxy 
+## Zabbix Proxy
 
-> **Zabbix proxy** is not functional in this helm chart, yet.
+> This helm chart installs Zabbix proxy with SQLite3 support
 
 **Zabbix proxy** is a process that may collect monitoring data from one or more monitored devices and send the information to the Zabbix server, essentially working on behalf of the server. All collected data is buffered locally and then transferred to the **Zabbix server** the proxy belongs to.
+
+## Zabbix Java Gateway
+
+> **Zabbix java gateway** is not functional in this helm chart, yet.
+
+**Zabbix java gateway** is a process that may collect monitoring data from one or more JMX applications. Zabbix java gateway accepts incoming connection from Zabbix server or Zabbix proxy and can only be used as a "passive proxy".
+
+## Zabbix SNMP Traps
+
+> **Zabbix SNMP traps** is not functional in this helm chart, yet.
+
+**Zabbix SNMP traps** is a process that used to receive SNMP traps, store them to a log file and provide access to Zabbix to collected SNMP trap messsages.
 
 ## PostgreSQL
 
@@ -130,10 +142,10 @@ View informations of ``zabbix`` services.
 kubectl describe services zabbix-web -n monitoring
 ```
 
-Listen on port 8888 locally, forwarding to 80 in the service ``zabbix-web``.
+Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
 
 ```bash
-kubectl port-forward service/zabbix-web 8888:80 -n monitoring
+kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
 ```
 
 Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.

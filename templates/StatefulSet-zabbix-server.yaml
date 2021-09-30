@@ -1,0 +1,106 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "zabbix.fullname" . }}-zabbix-server
+  labels:
+    app: {{ template "zabbix.fullname" . }}-zabbix-server
+    app.kubernetes.io/name: zabbix-server
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+spec:
+  replicas: {{ .Values.zabbixserver.replicaCount }}
+  serviceName: {{ template "zabbix.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ template "zabbix.fullname" . }}-zabbix-server
+  template:
+    metadata:
+      labels:
+        app: {{ template "zabbix.fullname" . }}-zabbix-server
+        app.kubernetes.io/name: zabbix-server
+        helm.sh/chart: {{ include "zabbix.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
+        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+    spec:
+      containers:
+        - name: zabbix-server
+          resources:
+{{- toYaml .Values.zabbixserver.resources | nindent 12 }}
+          image: {{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}
+          ports:
+            - containerPort: 10051
+              name: zabbix-server
+              {{- if (default false .Values.zabbixserver.hostPort) }}
+              hostPort: 10051
+              {{- end }}
+              {{- if ne "0.0.0.0" .Values.zabbixserver.hostIP }}
+              hostIP: {{ .Values.zabbixserver.hostIP }}
+              {{- end}}
+            - containerPort: 10052
+              name: zabbix-jmx
+              {{- if (default false .Values.zabbixserver.hostPort) }}
+              hostPort: 10052
+              {{- end }}
+              {{- if ne "0.0.0.0" .Values.zabbixserver.hostIP }}
+              hostIP: {{ .Values.zabbixserver.hostIP }}
+              {{- end}}
+          env:
+            - name: DB_SERVER_HOST
+              value: {{ .Values.zabbixserver.DB_SERVER_HOST }}
+            - name: POSTGRES_USER
+              value: {{ .Values.zabbixserver.POSTGRES_USER }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.zabbixserver.POSTGRES_PASSWORD }}
+            - name: POSTGRES_DB
+              value: {{ .Values.zabbixserver.POSTGRES_DB }}
+{{- range $item := .Values.zabbixserver.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
+          {{- if .Values.zabbixagent.enabled }}
+        - name: zabbix-agent
+          resources:
+{{- toYaml .Values.zabbixagent.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
+          imagePullPolicy: {{ .Values.zabbixagent.image.pullPolicy }}
+          env:
+            - name: ZBX_HOSTNAME
+              value: {{ .Values.zabbixagent.ZBX_HOSTNAME }}
+            - name: ZBX_SERVER_HOST
+              value: {{ .Values.zabbixagent.ZBX_SERVER_HOST | quote }}
+            - name: ZBX_SERVER_PORT
+              value: {{ .Values.zabbixagent.ZBX_SERVER_PORT | quote }}
+            - name: ZBX_PASSIVE_ALLOW
+              value: {{ .Values.zabbixagent.ZBX_PASSIVE_ALLOW | quote }}
+            - name: ZBX_PASSIVESERVERS
+              value: {{ .Values.zabbixagent.ZBX_PASSIVESERVERS | quote }}
+            - name: ZBX_ACTIVE_ALLOW
+              value: {{ .Values.zabbixagent.ZBX_ACTIVE_ALLOW | quote }}
+            - name: ZBX_ACTIVESERVERS
+              value: {{ .Values.zabbixagent.ZBX_ACTIVESERVERS | quote }}
+            - name: ZBX_DEBUGLEVEL
+              value: {{ .Values.zabbixagent.ZBX_DEBUGLEVEL | quote }}
+            - name: ZBX_TIMEOUT
+              value: {{ .Values.zabbixagent.ZBX_TIMEOUT }}
+            - name: ZBX_LOADMODULE
+              value: {{ .Values.zabbixagent.ZBX_LOADMODULE }}
+{{- range $item := .Values.zabbixagent.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value }}
+{{- end }}
+          ports:
+            - name: zabbix-agent
+              containerPort: 10050
+              protocol: TCP
+          {{- end }}
+      imagePullSecrets:
+      {{- range .Values.zabbixserver.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      {{- range .Values.zabbixagent.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
