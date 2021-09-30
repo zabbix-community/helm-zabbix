@@ -45,23 +45,11 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 **Zabbix proxy** is a process that may collect monitoring data from one or more monitored devices and send the information to the Zabbix server, essentially working on behalf of the server. All collected data is buffered locally and then transferred to the **Zabbix server** the proxy belongs to.
 
-## Zabbix Java Gateway
-
-> **Zabbix java gateway** is not functional in this helm chart, yet.
-
-**Zabbix java gateway** is a process that may collect monitoring data from one or more JMX applications. Zabbix java gateway accepts incoming connection from Zabbix server or Zabbix proxy and can only be used as a "passive proxy".
-
-## Zabbix SNMP Traps
-
-> **Zabbix SNMP traps** is not functional in this helm chart, yet.
-
-**Zabbix SNMP traps** is a process that used to receive SNMP traps, store them to a log file and provide access to Zabbix to collected SNMP trap messsages.
-
 ## PostgreSQL
 
 A database is required for zabbix to work, in this helm chart we're using Postgresql.
 
-> to use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
+> To use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
 
 ## Configure the chart
 
