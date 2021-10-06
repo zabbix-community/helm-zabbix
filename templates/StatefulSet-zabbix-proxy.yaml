@@ -57,7 +57,7 @@ spec:
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE | quote }}
 {{- range $item := .Values.zabbixagent.extraEnv }}
             - name: {{ $item.name }}
-              value: {{ $item.value }}
+              value: {{ $item.value | quote }}
 {{- end }}
           ports:
             - name: zabbix-agent
@@ -90,7 +90,7 @@ spec:
               value: {{ .Values.zabbixproxy.ZBX_VMWARECACHESIZE | quote }}
 {{- range $item := .Values.zabbixproxy.extraEnv }}
             - name: {{ $item.name }}
-              value: {{ $item.value }}
+              value: {{ $item.value | quote }}
 {{- end }}
           ports:
             - name: zabbix-proxy
