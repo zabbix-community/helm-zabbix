@@ -52,7 +52,7 @@ spec:
           #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE | quote }}
 {{- range $item := .Values.zabbixweb.extraEnv }}
           - name: {{ $item.name }}
-            value: {{ $item.value }}
+            value: {{ $item.value | quote  }}
 {{- end }}
         ports:
           - name: zabbix-web

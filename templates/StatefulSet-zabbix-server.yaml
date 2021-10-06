@@ -59,7 +59,7 @@ spec:
               value: {{ .Values.zabbixserver.POSTGRES_DB | quote }}
 {{- range $item := .Values.zabbixserver.extraEnv }}
             - name: {{ $item.name }}
-              value: {{ $item.value }}
+              value: {{ $item.value | quote }}
 {{- end }}
           {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
@@ -92,7 +92,7 @@ spec:
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE }}
 {{- range $item := .Values.zabbixagent.extraEnv }}
             - name: {{ $item.name }}
-              value: {{ $item.value }}
+              value: {{ $item.value | quote }}
 {{- end }}
           ports:
             - name: zabbix-agent

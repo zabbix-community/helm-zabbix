@@ -35,7 +35,7 @@ zabbixserver:
     type: ClusterIP
     # -- Port of service in Kubernetes cluster
     port: 10051
-  # -- Extra environment variables
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
   extraEnv: {}
 
 # **PostgreSQL** configurations
@@ -90,7 +90,7 @@ zabbixproxy:
     type: ClusterIP
     # -- Port to expose service
     port: 10051
-  # -- Extra environment variables
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
   extraEnv: {}
 
 # **Zabbix agent** configurations
@@ -138,7 +138,7 @@ zabbixagent:
     type: ClusterIP
     # -- Port to expose service
     port: 10050
-  # -- Extra environment variables
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
   extraEnv: {}
 
 # **Zabbix web** configurations
@@ -174,7 +174,7 @@ zabbixweb:
     type: NodePort
     # -- Port to expose service
     port: 80
-  # -- Extra environment variables
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
   extraEnv: {}
 
 # Ingress configurations

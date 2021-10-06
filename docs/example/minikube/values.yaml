@@ -16,6 +16,13 @@ zabbixserver:
   service:
     type: NodePort
     port: 10051
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_1"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_2"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_3"
+      value: "100"
 
 postgresql:
   enabled: true
@@ -43,6 +50,13 @@ zabbixproxy:
   service:
     type: NodePort
     port: 10051
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_4"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_5"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_6"
+      value: "100"
 
 zabbixagent:
   enabled: true
@@ -66,7 +80,13 @@ zabbixagent:
   service:
     type: ClusterIP
     port: 10050
-
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_7"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_8"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_9"
+      value: "100"
 
 zabbixweb:
   enabled: true
@@ -84,6 +104,13 @@ zabbixweb:
   service:
     type: NodePort
     port: 80
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_10"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_11"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_12"
+      value: "100"
 
 ingress:
   enabled: true
