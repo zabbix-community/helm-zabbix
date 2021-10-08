@@ -33,6 +33,8 @@ zabbixserver:
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
+    # -- Cluster IP for Zabbix server
+    clusterIP: 
     # -- Port of service in Kubernetes cluster
     port: 10051
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
@@ -88,6 +90,8 @@ zabbixproxy:
   service:
     # -- Type of service for Zabbix proxy
     type: ClusterIP
+    # -- Cluster IP for Zabbix proxy
+    clusterIP: 
     # -- Port to expose service
     port: 10051
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
@@ -136,6 +140,8 @@ zabbixagent:
   service:
     # -- Type of service for Zabbix agent
     type: ClusterIP
+    # -- Cluster IP for Zabbix agent
+    clusterIP: 
     # -- Port to expose service
     port: 10050
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
@@ -172,6 +178,8 @@ zabbixweb:
   service:
     # -- Type of service for Zabbix web
     type: NodePort
+    # -- Cluster IP for Zabbix web
+    clusterIP: 
     # -- Port to expose service
     port: 80
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml

@@ -189,6 +189,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
 | zabbixagent.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix agent |
 | zabbixagent.resources | object | `{}` |  |
+| zabbixagent.service.clusterIP | string | `nil` | Cluster IP for Zabbix agent |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
 | zabbixagent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
 | zabbixproxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix proxy hostname Case sensitive hostname |
@@ -205,6 +206,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix proxy |
 | zabbixproxy.replicaCount | int | `1` | Number of replicas of ``zabbixproxy`` module |
 | zabbixproxy.resources | object | `{}` |  |
+| zabbixproxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
 | zabbixserver.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
@@ -221,6 +223,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix server |
 | zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
 | zabbixserver.resources | object | `{}` |  |
+| zabbixserver.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixweb.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
@@ -237,5 +240,6 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
 | zabbixweb.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix web |
 | zabbixweb.resources | object | `{}` |  |
+| zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
 | zabbixweb.service.port | int | `80` | Port to expose service |
 | zabbixweb.service.type | string | `"NodePort"` | Type of service for Zabbix web |
