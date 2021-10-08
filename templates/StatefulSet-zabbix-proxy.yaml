@@ -36,7 +36,9 @@ spec:
           imagePullPolicy: {{ .Values.zabbixagent.image.pullPolicy }}
           env:
             - name: ZBX_HOSTNAME
-              value: {{ .Values.zabbixagent.ZBX_HOSTNAME | quote }}
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: ZBX_SERVER_HOST
               value: {{ .Values.zabbixagent.ZBX_SERVER_HOST | quote }}
             - name: ZBX_SERVER_PORT

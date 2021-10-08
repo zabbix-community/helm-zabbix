@@ -111,9 +111,6 @@ zabbixagent:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- Zabbix agent hostname
-  # Case sensitive hostname
-  ZBX_HOSTNAME: zabbix-agent
   # -- Zabbix server host
   ZBX_SERVER_HOST: 127.0.0.1
   # -- Zabbix server port
