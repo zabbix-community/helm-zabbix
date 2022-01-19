@@ -37,6 +37,8 @@ zabbixserver:
     clusterIP: 
     # -- Port of service in Kubernetes cluster
     port: 10051
+    # -- NodePort of service on each node
+    nodePort: 31051
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
   extraEnv: {}
 
