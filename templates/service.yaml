@@ -19,6 +19,9 @@ spec:
       targetPort: 10051
       name: zabbix-server
       protocol: TCP
+      {{- if and .Values.zabbixserver.service.nodePort (eq .Values.zabbixserver.service.type "NodePort") }}
+      nodePort: {{ .Values.zabbixserver.service.nodePort }}
+      {{- end }}
     - port: 10052
       targetPort: 10052
       protocol: TCP
