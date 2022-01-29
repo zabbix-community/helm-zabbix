@@ -23,6 +23,13 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
     spec:
+      nodeSelector:
+{{- toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations:
+{{- toYaml .Values.tolerations | nindent 8 }}
+      affinity:
+{{- toYaml .Values.affinity | nindent 8 }}
+
       containers:
       - name: zabbix-web
         resources:
