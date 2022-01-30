@@ -30,7 +30,18 @@ spec:
 {{- toYaml .Values.tolerations | nindent 8 }}
       affinity:
 {{- toYaml .Values.affinity | nindent 8 }}
-
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: zabbix-server
           resources:
