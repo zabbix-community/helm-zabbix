@@ -38,7 +38,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-          {{- if .Values.zabbixagent.enabled }}
+        {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
           resources:
 {{- toYaml .Values.zabbixagent.resources | nindent 12 }}
@@ -69,15 +69,15 @@ spec:
               value: {{ .Values.zabbixagent.ZBX_TIMEOUT | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE | quote }}
-{{- range $item := .Values.zabbixagent.extraEnv }}
+            {{- range $item := .Values.zabbixagent.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
-{{- end }}
+            {{- end }}
           ports:
             - name: zabbix-agent
               containerPort: 10050
               protocol: TCP
-          {{- end }}
+        {{- end }}
         - name: zabbix-proxy
           resources:
 {{- toYaml .Values.zabbixproxy.resources | nindent 12 }}
@@ -102,10 +102,10 @@ spec:
               value: {{ .Values.zabbixproxy.ZBX_TIMEOUT | quote }}
             - name: ZBX_JAVAGATEWAY_ENABLE
               value: {{ .Values.zabbixproxy.ZBX_VMWARECACHESIZE | quote }}
-{{- range $item := .Values.zabbixproxy.extraEnv }}
+            {{- range $item := .Values.zabbixproxy.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
-{{- end }}
+            {{- end }}
           ports:
             - name: zabbix-proxy
               containerPort: 10051
