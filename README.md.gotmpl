@@ -10,6 +10,12 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 ### Important note
 
+> **Break change**
+* The version 1.0.0 has a break change.
+* Will be used Postgresql 14.x and Zabbix 6.0.0.
+* The installation of any component of chart is optional for easy integration with the official chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
+* More info: https://github.com/cetic/helm-zabbix/issues/42
+
 > **This helm chart is still under development**
 
 # Prerequisites
@@ -47,7 +53,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 ## PostgreSQL
 
-A database is required for zabbix to work, in this helm chart we're using Postgresql.
+A database is required for zabbix to work, in this helm chart we're using Postgresql 14.x.
 
 > To use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
 
@@ -65,12 +71,6 @@ The items of section [Configuration](#Configuration) can be set via ``--set`` fl
 # Installation
 
 Access a Kubernetes cluster.
-
-Create namespace ``monitoring`` in Kubernetes cluster.
-
-```bash
-kubectl create namespace monitoring
-```
 
 Add Helm repo:
 
@@ -92,10 +92,22 @@ helm show values cetic/zabbix > $HOME/zabbix_values.yaml
 
 Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
 
-Install the Zabbix helm chart with a release name `my-release`:
+Test the installation/upgrade with command:
 
 ```bash
-helm install zabbix cetic/zabbix --dependency-update -f $HOME/zabbix_values.yaml -n monitoring
+helm upgrade --install zabbix cetic/zabbix \
+ --dependency-update \
+ --create-namespace \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
+```
+
+Install/upgrade the Zabbix with command:
+
+```bash
+helm upgrade --install zabbix cetic/zabbix \
+ --dependency-update \
+ --create-namespace \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug
 ```
 
 View the pods.
@@ -110,14 +122,14 @@ View the logs container of pods.
 kubectl logs -f pods/POD_NAME -n monitoring
 ```
 
-See the example of installation in minikube in this [tutorial](docs/example/README.md).
+See the example of installation in kind in this [tutorial](docs/example/README.md).
 
 # Uninstallation
 
 To uninstall/delete the ``zabbix`` deployment:
 
 ```bash
-helm delete zabbix -n monitoring
+helm uninstall zabbix -n monitoring
 ```
 
 # How to access Zabbix

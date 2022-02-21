@@ -1,3 +1,4 @@
+{{- if .Values.zabbixserver.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -28,8 +29,11 @@ spec:
       name: zabbix-jmx
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-server
+{{- end }}
+
+
+{{- if .Values.zabbixagent.enabled }}
 ---
-  {{- if .Values.zabbixagent.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -52,9 +56,11 @@ spec:
       name: zabbix-agent
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-server
-    {{- end }}
+{{- end }}
+
+
+{{- if .Values.zabbixweb.enabled }}
 ---
-  {{- if .Values.zabbixweb.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -78,8 +84,10 @@ spec:
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-web
   {{- end }}
+
+
+{{- if .Values.zabbixproxy.enabled }}
 ---
-  {{- if .Values.zabbixproxy.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -102,4 +110,4 @@ spec:
       name: zabbix-proxy
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-proxy
-    {{- end }}
+{{- end }}

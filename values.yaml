@@ -2,20 +2,22 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# **Zabbix server** configurations
+# **Zabbix Server** configurations
 zabbixserver:
+  # -- Enables use of **Zabbix Server**
+  enabled: true
   # -- Number of replicas of ``zabbixserver`` module
   replicaCount: 1
-  # zabbixserver.hostPort -- optional set true open a port direct on node where zabbix server runs 
+  # -- optional set true open a port direct on node where zabbix server runs 
   hostPort: false
-  # zabbixserver.hostIP -- optional set hostIP different from 0.0.0.0 to open port only on this IP
+  # -- optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
   resources: {}
   image:
     # -- Zabbix server Docker image name
     repository: zabbix/zabbix-server-pgsql
     # -- Tag of Docker image of Zabbix server
-    tag: ubuntu-5.4.5
+    tag: ubuntu-6.0.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -39,24 +41,28 @@ zabbixserver:
     port: 10051
     # -- NodePort of service on each node
     nodePort: 31051
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
 # **PostgreSQL** configurations
 postgresql:
   # -- Create a database using Postgresql
   enabled: true
-  # -- User of database
-  postgresqlUsername: zabbix
-  # -- Password of database
-  postgresqlPassword: zabbix_pwd
-  # -- Name of database
-  postgresqlDatabase: zabbix
-  # -- Password of``postgres`` user in Postgresql
-  postgresqlPostgresPassword: zabbix_pwd
+  auth:
+    # -- Enable remote access to ``postgres`` user
+    enablePostgresUser: true
+    # -- Password of``postgres`` user in Postgresql
+    postgresPassword: "zabbix_pwd"
+    # -- User of database
+    username: "zabbix"
+    # -- Password of database
+    password: "zabbix"
+    # -- Name of database
+    database: "zabbix"
 
+# **Zabbix Proxy** configurations
 zabbixproxy:
-  # -- Enables use of **Zabbix proxy**
+  # -- Enables use of **Zabbix Proxy**
   enabled: true
   # -- Number of replicas of ``zabbixproxy`` module
   replicaCount: 1
@@ -65,10 +71,10 @@ zabbixproxy:
     # -- Zabbix proxy Docker image name
     repository: zabbix/zabbix-proxy-sqlite3
     # -- Tag of Docker image of Zabbix proxy
-    tag: ubuntu-5.4.5
+    tag: ubuntu-6.0.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
-    #  -- List of dockerconfig secrets names to use when pulling images
+    # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
   # -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
@@ -96,19 +102,19 @@ zabbixproxy:
     clusterIP: 
     # -- Port to expose service
     port: 10051
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
-# **Zabbix agent** configurations
+# **Zabbix Agent** configurations
 zabbixagent:
-  # -- Enables use of Zabbix agent
+  # -- Enables use of **Zabbix Agent**
   enabled: true
   resources: {}
   image:
     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent
     # -- Tag of Docker image of Zabbix agent
-    tag: ubuntu-5.4.5
+    tag: ubuntu-6.0.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -143,22 +149,22 @@ zabbixagent:
     clusterIP: 
     # -- Port to expose service
     port: 10050
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
-# **Zabbix web** configurations
+# **Zabbix Web** configurations
 zabbixweb:
-  # -- Enables use of Zabbix web
+  # -- Enables use of **Zabbix Web**
   enabled: true
   resources: {}
   image:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-apache-pgsql
     # -- Tag of Docker image of Zabbix web
-    tag: ubuntu-5.4.5
+    tag: ubuntu-6.0.0
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
-    # zabbixweb.image.pullSecrets -- List of dockerconfig secrets names to use when pulling images
+    # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
   # -- Zabbix server host
   ZBX_SERVER_HOST: zabbix-zabbix-server
@@ -181,7 +187,7 @@ zabbixweb:
     clusterIP: 
     # -- Port to expose service
     port: 80
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
 # Ingress configurations

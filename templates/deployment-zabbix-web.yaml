@@ -1,4 +1,4 @@
-  {{- if .Values.zabbixweb.enabled }}
+{{- if .Values.zabbixweb.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -62,10 +62,10 @@ spec:
           #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE | quote }}
           #- name: POSTGRES_PASSWORD_FILE
           #  value: value: {{ .Values.zabbixweb.POSTGRES_PASSWORD_FILE | quote }}
-{{- range $item := .Values.zabbixweb.extraEnv }}
+          {{- range $item := .Values.zabbixweb.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value | quote  }}
-{{- end }}
+          {{- end }}
         ports:
           - name: zabbix-web
             containerPort: 8080
@@ -88,8 +88,8 @@ spec:
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
-        {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixweb.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
+{{- end }}

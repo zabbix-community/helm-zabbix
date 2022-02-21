@@ -21,10 +21,10 @@ Or use Kubernetes cluster in [EKS](https://aws.amazon.com/eks), [GKE](https://cl
 
 Follow instructions of page for install Docker-CE.
 
-* Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
-* Debian: https://docs.docker.com/install/linux/docker-ce/debian/
-* CentOS: https://docs.docker.com/install/linux/docker-ce/centos/
-* MacOS: https://docs.docker.com/docker-for-mac/install/
+* Ubuntu: https://docs.docker.com/engine/install/ubuntu/
+* Debian: https://docs.docker.com/engine/install/debian/
+* CentOS: https://docs.docker.com/engine/install/centos/
+* MacOS: https://docs.docker.com/desktop/mac/install/
 
 Start the Docker service, configure Docker to boot up with the OS and add your user to the Docker group.
 
@@ -112,7 +112,7 @@ Execute these commands to install helm 3.
 ```bash
 sudo su
 
-HELM_TAR_FILE=helm-v3.7.0-linux-amd64.tar.gz
+HELM_TAR_FILE=helm-v3.7.1-linux-amd64.tar.gz
 HELM_URL=https://get.helm.sh
 HELM_BIN=helm3
 

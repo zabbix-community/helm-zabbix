@@ -1,3 +1,4 @@
+{{- if .Values.zabbixserver.enabled }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -69,11 +70,11 @@ spec:
               value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
             - name: POSTGRES_DB
               value: {{ .Values.zabbixserver.POSTGRES_DB | quote }}
-{{- range $item := .Values.zabbixserver.extraEnv }}
+            {{- range $item := .Values.zabbixserver.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
-{{- end }}
-          {{- if .Values.zabbixagent.enabled }}
+            {{- end }}
+        {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
           resources:
 {{- toYaml .Values.zabbixagent.resources | nindent 12 }}
@@ -102,15 +103,15 @@ spec:
               value: {{ .Values.zabbixagent.ZBX_TIMEOUT | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixagent.ZBX_LOADMODULE }}
-{{- range $item := .Values.zabbixagent.extraEnv }}
+            {{- range $item := .Values.zabbixagent.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
-{{- end }}
+            {{- end }}
           ports:
             - name: zabbix-agent
               containerPort: 10050
               protocol: TCP
-          {{- end }}
+        {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixserver.image.pullSecrets }}
         - name: {{ . | quote }}
@@ -118,3 +119,4 @@ spec:
       {{- range .Values.zabbixagent.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
+{{- end }}

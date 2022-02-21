@@ -17,12 +17,13 @@ Install Helm 3 (Visit the [requirements.md](../requirements.md) file.).
 Clone this repository:
 
 ```bash
-cd ~
+mkdir ~/mygit
+cd ~/mygit
 git clone https://github.com/cetic/helm-zabbix
-cd helm-zabbix
+cd ~/mygit/helm-zabbix
 ```
 
-Edit ``helm-zabbix/docs/example/minikube/values.yaml`` file.
+Edit ``~/mygit/helm-zabbix/docs/example/kind/values.yaml`` file.
 
 Download the dependences charts.
 
@@ -31,30 +32,24 @@ helm repo add cetic https://cetic.github.io/helm-charts
 helm repo update
 ```
 
-Install dependences of ``helm-zabbix`` chart:
+Test the installation/upgrade with command (update the YAML files paths if necessary):
 
 ```bash
-helm dependency update
+helm upgrade --install zabbix \
+ --dependency-update \
+ --create-namespace \
+ -f ~/mygit/helm-zabbix/docs/example/kind/values.yaml \
+ cetic/zabbix -n monitoring --debug --dry-run
 ```
 
-List the namespaces of cluster.
+Install/upgrade Zabbix in the Kubernetes cluster (update the YAML files paths if necessary).
 
 ```bash
-kubectl get namespaces
-```
-
-Create the namespaces ``monitoring`` if it not exists in cluster.
-
-```bash
-kubectl create namespace monitoring
-```
-
-Deploy Zabbix in the Kubernetes cluster. (Update the YAML files paths if necessary).
-
-```bash
-helm install zabbix \
- -f ~/helm-zabbix/docs/example/minikube/values.yaml \
- cetic/zabbix -n monitoring
+helm upgrade --install zabbix \
+ --dependency-update \
+ --create-namespace \
+ -f ~/mygit/helm-zabbix/docs/example/kind/values.yaml \
+ cetic/zabbix -n monitoring --debug
 ```
 
 View the pods.
@@ -106,7 +101,7 @@ Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.
 To uninstall the zabbix.
 
 ```bash
-helm delete zabbix -n monitoring
+helm uninstall zabbix -n monitoring
 ```
 
 # Install nginx-ingress for services internal Kubernetes cluster

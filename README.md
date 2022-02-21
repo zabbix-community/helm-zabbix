@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 0.4.4](https://img.shields.io/badge/Version-0.4.4-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -9,6 +9,12 @@ Zabbix is a mature and effortless enterprise-class open source monitoring soluti
 This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
 ### Important note
+
+> **Break change**
+* The version 1.0.0 has a break change.
+* Will be used Postgresql 14.x and Zabbix 6.0.0.
+* The installation of any component of chart is optional for easy integration with the official chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
+* More info: https://github.com/cetic/helm-zabbix/issues/42
 
 > **This helm chart is still under development**
 
@@ -47,7 +53,7 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 ## PostgreSQL
 
-A database is required for zabbix to work, in this helm chart we're using Postgresql.
+A database is required for zabbix to work, in this helm chart we're using Postgresql 14.x.
 
 > To use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
 
@@ -65,12 +71,6 @@ The items of section [Configuration](#Configuration) can be set via ``--set`` fl
 # Installation
 
 Access a Kubernetes cluster.
-
-Create namespace ``monitoring`` in Kubernetes cluster.
-
-```bash
-kubectl create namespace monitoring
-```
 
 Add Helm repo:
 
@@ -92,10 +92,22 @@ helm show values cetic/zabbix > $HOME/zabbix_values.yaml
 
 Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
 
-Install the Zabbix helm chart with a release name `my-release`:
+Test the installation/upgrade with command:
 
 ```bash
-helm install zabbix cetic/zabbix --dependency-update -f $HOME/zabbix_values.yaml -n monitoring
+helm upgrade --install zabbix cetic/zabbix \
+ --dependency-update \
+ --create-namespace \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
+```
+
+Install/upgrade the Zabbix with command:
+
+```bash
+helm upgrade --install zabbix cetic/zabbix \
+ --dependency-update \
+ --create-namespace \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug
 ```
 
 View the pods.
@@ -110,14 +122,14 @@ View the logs container of pods.
 kubectl logs -f pods/POD_NAME -n monitoring
 ```
 
-See the example of installation in minikube in this [tutorial](docs/example/README.md).
+See the example of installation in kind in this [tutorial](docs/example/README.md).
 
 # Uninstallation
 
 To uninstall/delete the ``zabbix`` deployment:
 
 ```bash
-helm delete zabbix -n monitoring
+helm uninstall zabbix -n monitoring
 ```
 
 # How to access Zabbix
@@ -162,11 +174,12 @@ The following tables lists the configurable parameters of the chart and their de
 | livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
 | livenessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | nodeSelector | object | `{}` | nodeSelector configurations |
+| postgresql.auth.database | string | `"zabbix"` | Name of database |
+| postgresql.auth.enablePostgresUser | bool | `true` | Enable remote access to ``postgres`` user |
+| postgresql.auth.password | string | `"zabbix"` | Password of database |
+| postgresql.auth.postgresPassword | string | `"zabbix_pwd"` | Password of``postgres`` user in Postgresql |
+| postgresql.auth.username | string | `"zabbix"` | User of database |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
-| postgresql.postgresqlDatabase | string | `"zabbix"` | Name of database |
-| postgresql.postgresqlPassword | string | `"zabbix_pwd"` | Password of database |
-| postgresql.postgresqlPostgresPassword | string | `"zabbix_pwd"` | Password of``postgres`` user in Postgresql |
-| postgresql.postgresqlUsername | string | `"zabbix"` | User of database |
 | readinessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
 | readinessProbe.initialDelaySeconds | int | `5` | Number of seconds after the container has started before readiness |
 | readinessProbe.path | string | `"/"` | Path of health check of application |
@@ -181,12 +194,12 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.ZBX_SERVER_HOST | string | `"127.0.0.1"` | Zabbix server host |
 | zabbixagent.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
-| zabbixagent.enabled | bool | `true` | Enables use of Zabbix agent |
-| zabbixagent.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml |
+| zabbixagent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
+| zabbixagent.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
-| zabbixagent.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix agent |
+| zabbixagent.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix agent |
 | zabbixagent.resources | object | `{}` |  |
 | zabbixagent.service.clusterIP | string | `nil` | Cluster IP for Zabbix agent |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
@@ -197,12 +210,12 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
 | zabbixproxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
-| zabbixproxy.enabled | bool | `true` | Enables use of **Zabbix proxy** |
-| zabbixproxy.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml |
+| zabbixproxy.enabled | bool | `true` | Enables use of **Zabbix Proxy** |
+| zabbixproxy.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
-| zabbixproxy.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix proxy |
+| zabbixproxy.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix proxy |
 | zabbixproxy.replicaCount | int | `1` | Number of replicas of ``zabbixproxy`` module |
 | zabbixproxy.resources | object | `{}` |  |
 | zabbixproxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
@@ -213,13 +226,14 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixserver.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
 | zabbixserver.POSTGRES_USER | string | `"zabbix"` | User of database |
-| zabbixserver.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml |
+| zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
+| zabbixserver.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
 | zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
 | zabbixserver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixserver.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixserver.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
-| zabbixserver.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix server |
+| zabbixserver.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix server |
 | zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
 | zabbixserver.resources | object | `{}` |  |
 | zabbixserver.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
@@ -233,12 +247,12 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.POSTGRES_USER | string | `"zabbix"` | User of database |
 | zabbixweb.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
 | zabbixweb.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
-| zabbixweb.enabled | bool | `true` | Enables use of Zabbix web |
-| zabbixweb.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/minikube/values.yaml |
+| zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
+| zabbixweb.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
-| zabbixweb.image.tag | string | `"ubuntu-5.4.5"` | Tag of Docker image of Zabbix web |
+| zabbixweb.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix web |
 | zabbixweb.resources | object | `{}` |  |
 | zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
 | zabbixweb.service.port | int | `80` | Port to expose service |
