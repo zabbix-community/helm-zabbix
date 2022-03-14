@@ -29,7 +29,7 @@ zabbixserver:
   # -- User of database
   POSTGRES_USER: "zabbix"
   # -- Password of database
-  POSTGRES_PASSWORD: "zabbix_pwd"
+  POSTGRES_PASSWORD: "zabbix"
   # -- Name of database
   POSTGRES_DB: "zabbix"
   service:
@@ -177,7 +177,7 @@ zabbixweb:
   # -- User of database
   POSTGRES_USER: zabbix
   # -- Password of database
-  POSTGRES_PASSWORD: zabbix_pwd
+  POSTGRES_PASSWORD: zabbix
   # -- Name of database
   POSTGRES_DB: zabbix
   service:
