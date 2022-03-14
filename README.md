@@ -224,7 +224,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixserver.DB_SERVER_PORT | string | `"5432"` | Port of database host |
 | zabbixserver.POSTGRES_DB | string | `"zabbix"` | Name of database |
-| zabbixserver.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
+| zabbixserver.POSTGRES_PASSWORD | string | `"zabbix"` | Password of database |
 | zabbixserver.POSTGRES_USER | string | `"zabbix"` | User of database |
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixserver.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
@@ -243,7 +243,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
 | zabbixweb.DB_SERVER_PORT | int | `5432` | Port of database |
 | zabbixweb.POSTGRES_DB | string | `"zabbix"` | Name of database |
-| zabbixweb.POSTGRES_PASSWORD | string | `"zabbix_pwd"` | Password of database |
+| zabbixweb.POSTGRES_PASSWORD | string | `"zabbix"` | Password of database |
 | zabbixweb.POSTGRES_USER | string | `"zabbix"` | User of database |
 | zabbixweb.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
 | zabbixweb.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
