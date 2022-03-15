@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: zabbix
-version: 1.1.1
+version: 1.1.0
 appVersion: 6.0.0
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 keywords:
