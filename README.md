@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 1.1.1](https://img.shields.io/badge/Version-1.1.1-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -201,6 +201,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
 | zabbixagent.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix agent |
 | zabbixagent.resources | object | `{}` |  |
+| zabbixagent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
 | zabbixagent.service.clusterIP | string | `nil` | Cluster IP for Zabbix agent |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
 | zabbixagent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
@@ -218,6 +219,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix proxy |
 | zabbixproxy.replicaCount | int | `1` | Number of replicas of ``zabbixproxy`` module |
 | zabbixproxy.resources | object | `{}` |  |
+| zabbixproxy.service.annotations | object | `{}` | Annotations for the zabbix-proxy service |
 | zabbixproxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
@@ -236,6 +238,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix server |
 | zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
 | zabbixserver.resources | object | `{}` |  |
+| zabbixserver.service.annotations | object | `{}` | Annotations for the zabbix-server service |
 | zabbixserver.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | zabbixserver.service.nodePort | int | `31051` | NodePort of service on each node |
 | zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
@@ -254,6 +257,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
 | zabbixweb.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix web |
 | zabbixweb.resources | object | `{}` |  |
+| zabbixweb.service.annotations | object | `{}` | Annotations for the zabbix-web service |
 | zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
 | zabbixweb.service.port | int | `80` | Port to expose service |
 | zabbixweb.service.type | string | `"NodePort"` | Type of service for Zabbix web |
