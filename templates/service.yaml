@@ -10,6 +10,12 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+  {{- if .Values.zabbixserver.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixserver.service.annotations }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+  {{- end }}
 spec:
   type: {{ .Values.zabbixserver.service.type }}
   {{- if .Values.zabbixserver.service.clusterIP }}
