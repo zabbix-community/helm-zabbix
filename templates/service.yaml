@@ -50,6 +50,12 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-agent
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
+  {{- if .Values.zabbixagent.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixagent.service.annotations }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+  {{- end }}
 spec:
   type: {{ .Values.zabbixagent.service.type }}
   {{- if .Values.zabbixagent.service.clusterIP }}
@@ -77,6 +83,12 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
+  {{- if .Values.zabbixweb.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixweb.service.annotations }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+  {{- end }}
 spec:
   type: {{ .Values.zabbixweb.service.type }}
   {{- if .Values.zabbixweb.service.clusterIP }}
@@ -104,6 +116,12 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+  {{- if .Values.zabbixproxy.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixproxy.service.annotations }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+  {{- end }}
 spec:
   type: {{ .Values.zabbixproxy.service.type }}
   {{- if .Values.zabbixproxy.service.clusterIP }}
