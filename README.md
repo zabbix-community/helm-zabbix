@@ -236,6 +236,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix server |
 | zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
 | zabbixserver.resources | object | `{}` |  |
+| zabbixserver.service.annotations | object | `{}` | Annotations for the zabbix-server service |
 | zabbixserver.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | zabbixserver.service.nodePort | int | `31051` | NodePort of service on each node |
 | zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
