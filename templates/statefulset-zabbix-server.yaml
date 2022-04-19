@@ -67,7 +67,14 @@ spec:
             - name: POSTGRES_USER
               value: {{ .Values.zabbixserver.POSTGRES_USER | quote }}
             - name: POSTGRES_PASSWORD
+              {{- if .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
+                  key: {{ default "password" .Values.zabbixserver.POSTGRES_PASSWORD_SECRET_KEY }}
+              {{- else }}
               value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
+              {{- end }}
             - name: POSTGRES_DB
               value: {{ .Values.zabbixserver.POSTGRES_DB | quote }}
             {{- range $item := .Values.zabbixserver.extraEnv }}

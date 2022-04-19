@@ -55,7 +55,14 @@ spec:
           - name: POSTGRES_USER
             value: {{ .Values.zabbixweb.POSTGRES_USER | quote }}
           - name: POSTGRES_PASSWORD
-            value: {{ .Values.zabbixweb.POSTGRES_PASSWORD | quote }}
+            {{- if .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
+                key: {{ default "password" .Values.zabbixserver.POSTGRES_PASSWORD_SECRET_KEY }}
+            {{- else }}
+            value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
+            {{- end }}
           - name: POSTGRES_DB
             value: {{ .Values.zabbixweb.POSTGRES_DB | quote }}
           # - name: POSTGRES_USER_FILE
