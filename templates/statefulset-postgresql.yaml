@@ -102,6 +102,8 @@ spec:
               value: {{ .Values.postgresql.POSTGRES_DB | quote }}
               {{- end }}
             {{- end }}
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
             {{- range $item := .Values.zabbixproxy.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
@@ -109,7 +111,7 @@ spec:
           {{- if .Values.postgresql.persistence.enabled }}
           volumeMounts:
             - name: postgresql-data
-              mountPath: /var/lib/postgresql
+              mountPath: /var/lib/postgresql/data
           {{- end }}
           ports:
             - name: db
