@@ -45,6 +45,9 @@ zabbixserver:
     port: 10051
     # -- NodePort of service on each node
     nodePort: 31051
+    # -- Annotations for the zabbix-server service
+    annotations: {}
+    # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
@@ -106,6 +109,9 @@ zabbixproxy:
     clusterIP:
     # -- Port to expose service
     port: 10051
+    # -- Annotations for the zabbix-proxy service
+    annotations: {}
+    # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
@@ -153,6 +159,9 @@ zabbixagent:
     clusterIP:
     # -- Port to expose service
     port: 10050
+    # -- Annotations for the zabbix-agent service
+    annotations: {}
+    # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
@@ -191,6 +200,9 @@ zabbixweb:
     clusterIP:
     # -- Port to expose service
     port: 80
+    # -- Annotations for the zabbix-web service
+    annotations: {}
+    # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: {}
 
