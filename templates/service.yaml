@@ -104,6 +104,39 @@ spec:
   {{- end }}
 
 
+{{- if .Values.zabbixwebservice.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-zabbix-webservice
+  labels:
+    app: {{ template "zabbix.fullname" . }}-zabbix-webservice
+    app.kubernetes.io/name: zabbix-webservice
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
+  {{- if .Values.zabbixwebservice.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixwebservice.service.annotations }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.zabbixwebservice.service.type }}
+  {{- if .Values.zabbixwebservice.service.clusterIP }}
+  clusterIP: {{ .Values.zabbixwebservice.service.clusterIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.zabbixwebservice.service.port }}
+      targetPort: 10053
+      protocol: TCP
+      name: webservice
+  selector:
+    app: {{ template "zabbix.fullname" . }}-zabbix-webservice
+  {{- end }}
+
+
 {{- if .Values.zabbixproxy.enabled }}
 ---
 apiVersion: v1

@@ -276,6 +276,38 @@ zabbixweb:
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: []
 
+# **Zabbix Web** configurations
+zabbixwebservice:
+  # -- Enables use of **Zabbix Web Service**
+  enabled: true
+  replicaCount: 1
+  # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
+  pod_anti_affinity: true
+  resources: {}
+  image:
+    # -- Zabbix web Docker image name
+    repository: zabbix/zabbix-web-service
+    # -- Tag of Docker image of Zabbix web
+    tag: alpine-6.0-latest
+    # -- Pull policy of Docker image
+    pullPolicy: IfNotPresent
+    # -- List of dockerconfig secrets names to use when pulling images
+    pullSecrets: []
+  # -- set the IgnoreURLCertErrors configuration setting of Zabbix web service
+  #ignore_url_cert_errors=1
+  service:
+    # -- Type of service for Zabbix web
+    type: ClusterIP
+    # -- Cluster IP for Zabbix web
+    clusterIP: 
+    # -- Port to expose service
+    port: 10053
+    # -- Annotations for the zabbix-web service
+    annotations: {}
+    # metallb.universe.tf/address-pool: production-public-ips
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
+  extraEnv: []
+
 # Ingress configurations
 ingress:
   # -- Enables Ingress
