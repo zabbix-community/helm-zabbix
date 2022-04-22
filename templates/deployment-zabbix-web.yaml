@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
 spec:
-  replicas: 1
+  replicas: {{ .Values.zabbixweb.replicaCount }}
   selector:
     matchLabels:
       app:  {{ template "zabbix.fullname" . }}-zabbix-web
@@ -27,9 +27,19 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- if gt (len .Values.affinity) 0 }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.affinity | nindent 8 }}
+      {{- else if .Values.zabbixweb.pod_anti_affinity }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
@@ -44,10 +54,12 @@ spec:
         image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}"
         imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
         env:
-          - name: ZBX_SERVER_HOST
-            value: {{ .Values.zabbixweb.ZBX_SERVER_HOST | quote }}
-          - name: ZBX_SERVER_PORT
-            value: {{ .Values.zabbixweb.ZBX_SERVER_PORT | quote }}
+          - name: ZBX_SERVER_NAME
+          {{- if .Values.zabbixweb.zbx_server_name }}
+            value: {{ .Values.zabbixweb.zbx_server_name }}
+          {{- else }}
+            value: Zabbix in K8S
+          {{- end }}
           {{- if .Values.postgresql.enabled }}
           - name: DB_SERVER_HOST
             value: {{ template "zabbix.fullname" . }}-postgresql

@@ -1,7 +1,7 @@
 {{- if .Values.zabbixserver.enabled }}
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-server
   labels:
@@ -12,7 +12,6 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
 spec:
   replicas: {{ .Values.zabbixserver.replicaCount }}
-  serviceName: {{ template "zabbix.fullname" . }}
   selector:
     matchLabels:
       app: {{ template "zabbix.fullname" . }}-zabbix-server
@@ -29,9 +28,19 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- if gt (len .Values.affinity) 0 }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.affinity | nindent 8 }}
+      {{- else if .Values.zabbixserver.pod_anti_affinity }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
@@ -82,13 +91,13 @@ spec:
               {{- if .Values.db_access.DB_SERVER_HOST }}
               value: {{ .Values.db_access.DB_SERVER_HOST | quote }}
               {{- else }}
-              value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
+              value: {{ .Values.zabbixserver.DB_SERVER_HOST | quote }}
               {{- end }}
             - name: DB_SERVER_PORT
               {{- if .Values.db_access.DB_SERVER_PORT }}
               value: {{ .Values.db_access.DB_SERVER_PORT | quote }}
               {{- else }}
-              value: {{ .Values.zabbixweb.DB_SERVER_PORT | quote }}
+              value: {{ .Values.zabbixserver.DB_SERVER_PORT | quote }}
               {{- end }}
             {{- end }}
             {{- if .Values.db_access.secret_name }}
@@ -137,6 +146,18 @@ spec:
             {{- range $item := .Values.zabbixserver.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
+            {{- end }}
+            - name: ZBX_AUTOHANODENAME
+              value: "hostname"
+            - name: ZBX_NODEADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            {{- if .Values.zabbixwebservice.enabled }}
+            - name: ZBX_WEBSERVICEURL
+              value: "http://{{ template "zabbix.fullname" . }}-zabbix-webservice:{{ .Values.zabbixwebservice.service.port }}/report"
+            - name: ZBX_STARTREPORTWRITERS
+              value: {{ .Values.zabbixwebservice.replicaCount|quote }}
             {{- end }}
         {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent

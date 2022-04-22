@@ -1,0 +1,97 @@
+{{- if .Values.zabbixserver.ha_nodes_autoclean.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "zabbix.fullname" . }}-nodesclean
+  labels:
+    app: {{ template "zabbix.fullname" . }}-nodesclean
+    app.kubernetes.io/name: nodesclean
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-nodesclean
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-nodesclean
+spec:
+  schedule: {{ .Values.zabbixserver.ha_nodes_autoclean.schedule|quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hanodes-autoclean
+            image: postgres:14
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/bash
+            - -c
+            - echo "deleting all stopped and unavailable HANodes older than {{ .Values.zabbixserver.ha_nodes_autoclean.delete_older_than_seconds }} seconds..." && psql -c "delete from ha_node where status in (1,2) and extract(epoch from now())-lastaccess>{{ .Values.zabbixserver.ha_nodes_autoclean.delete_older_than_seconds }}"
+            env:
+            {{- if .Values.postgresql.enabled }}
+            - name: PGHOST
+              value: {{ template "zabbix.fullname" . }}-postgresql
+            - name: PGPORT
+              value: {{ .Values.postgresql.service.port | quote }}
+            {{- else if .Values.db_access.secret_name }}
+            - name: PGHOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: host
+            - name: PGPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: port
+                  optional: true
+            {{- else }}
+            - name: PGHOST
+              {{- if .Values.db_access.DB_SERVER_HOST }}
+              value: {{ .Values.db_access.DB_SERVER_HOST | quote }}
+              {{- else }}
+              value: {{ .Values.zabbixserver.DB_SERVER_HOST | quote }}
+              {{- end }}
+            - name: PGPORT
+              {{- if .Values.db_access.DB_SERVER_PORT }}
+              value: {{ .Values.db_access.DB_SERVER_PORT | quote }}
+              {{- else }}
+              value: {{ .Values.zabbixserver.DB_SERVER_PORT | quote }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.db_access.secret_name }}
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: user
+                  optional: true
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: password
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: dbname
+                  optional: true
+            {{- else }}
+            - name: PGUSER
+              {{- if .Values.db_access.POSTGRES_USER }}
+              value: {{ .Values.db_access.POSTGRES_USER | quote }}
+              {{- else }}
+              value: {{ .Values.zabbixserver.POSTGRES_USER | quote }}
+              {{ end }}
+            - name: PGPASSWORD
+              {{- if .Values.db_access.POSTGRES_PASSWORD }}
+              value: {{ .Values.db_access.POSTGRES_PASSWORD | quote }}
+              {{- else }}
+              value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
+              {{- end }}
+            - name: PGDATABASE
+              {{- if .Values.db_access.POSTGRES_DB }}
+              value: {{ .Values.db_access.POSTGRES_DB | quote }}
+              {{- else }}
+              value: {{ .Values.zabbixserver.POSTGRES_DB | quote }}
+              {{- end }}
+            {{- end }}
+          restartPolicy: OnFailure
+{{- end }}

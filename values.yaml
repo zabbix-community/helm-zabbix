@@ -41,7 +41,9 @@ zabbixserver:
   enabled: true
   # -- Number of replicas of ``zabbixserver`` module
   replicaCount: 1
-  # -- optional set true open a port direct on node where zabbix server runs
+  # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
+  pod_anti_affinity: true
+  # -- optional set true open a port direct on node where zabbix server runs 
   hostPort: false
   # -- optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
@@ -55,6 +57,11 @@ zabbixserver:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
+  # -- automatically clean orphaned ha nodes from ha_nodes db table
+  ha_nodes_autoclean:
+    enabled: true
+    schedule: "0 1 * * *"
+    delete_older_than_seconds: 3600
   # -- Address of database host
   #DB_SERVER_HOST: "zabbix-postgresql"
   # -- Port of database host
@@ -184,7 +191,7 @@ zabbixagent:
   resources: {}
   image:
     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
-    repository: zabbix/zabbix-agent
+    repository: zabbix/zabbix-agent2
     # -- Tag of Docker image of Zabbix agent
     tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
@@ -231,10 +238,13 @@ zabbixagent:
 zabbixweb:
   # -- Enables use of **Zabbix Web**
   enabled: true
+  replicaCount: 1
+  # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
+  pod_anti_affinity: true
   resources: {}
   image:
     # -- Zabbix web Docker image name
-    repository: zabbix/zabbix-web-apache-pgsql
+    repository: zabbix/zabbix-web-nginx-pgsql
     # -- Tag of Docker image of Zabbix web
     tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
@@ -251,6 +261,8 @@ zabbixweb:
   #POSTGRES_PASSWORD: zabbix
   # -- Name of database
   #POSTGRES_DB: zabbix
+  # -- Name of the Zabbix server in GUI
+  #zbx_server_name: something
   service:
     # -- Type of service for Zabbix web
     type: NodePort
