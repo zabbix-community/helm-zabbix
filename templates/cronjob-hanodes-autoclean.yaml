@@ -17,8 +17,8 @@ spec:
         spec:
           containers:
           - name: hanodes-autoclean
-            image: postgres:14
-            imagePullPolicy: IfNotPresent
+            image: {{ .Values.zabbixserver.ha_nodes_autoclean.image.repository }}:{{ .Values.zabbixserver.ha_nodes_autoclean.image.tag }}
+            imagePullPolicy: {{ .Values.zabbixserver.ha_nodes_autoclean.image.pullPolicy }}
             command:
             - /bin/bash
             - -c
@@ -93,5 +93,9 @@ spec:
               value: {{ .Values.zabbixserver.POSTGRES_DB | quote }}
               {{- end }}
             {{- end }}
+          imagePullSecrets:
+          {{- range .Values.zabbixserver.image.pullSecrets }}
+            - name: {{ . | quote }}
+          {{- end }}
           restartPolicy: OnFailure
 {{- end }}

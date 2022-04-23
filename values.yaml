@@ -60,6 +60,11 @@ zabbixserver:
   # -- automatically clean orphaned ha nodes from ha_nodes db table
   ha_nodes_autoclean:
     enabled: true
+    image:
+      repository: postgres
+      tag: "14"
+      pullPolicy: IfNotPresent
+      pullSecrets: []
     schedule: "0 1 * * *"
     delete_older_than_seconds: 3600
   # -- Address of database host
