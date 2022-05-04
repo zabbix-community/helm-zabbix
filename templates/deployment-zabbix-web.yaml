@@ -148,22 +148,22 @@ spec:
             protocol: TCP
         livenessProbe:
           httpGet:
-            path: {{ .Values.livenessProbe.path }}
+            path: {{ .Values.zabbixweb.livenessProbe.path }}
             port: zabbix-web
-          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.zabbixweb.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.zabbixweb.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.zabbixweb.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.zabbixweb.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.zabbixweb.livenessProbe.failureThreshold }}
         readinessProbe:
           httpGet:
-            path: {{ .Values.readinessProbe.path }}
+            path: {{ .Values.zabbixweb.readinessProbe.path }}
             port: zabbix-web
-          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.zabbixweb.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.zabbixweb.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.zabbixweb.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.zabbixweb.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.zabbixweb.readinessProbe.failureThreshold }}
       imagePullSecrets:
       {{- range .Values.zabbixweb.image.pullSecrets }}
         - name: {{ . | quote }}

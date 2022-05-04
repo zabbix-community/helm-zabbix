@@ -280,6 +280,32 @@ zabbixweb:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: []
+  livenessProbe:
+    # -- Path of health check of application
+    path: /
+    # -- Number of seconds after the container has started before liveness
+    initialDelaySeconds: 30
+    # -- Specifies that the kubelet should perform a liveness probe every N seconds
+    periodSeconds: 10
+    # -- Number of seconds after which the probe times out
+    timeoutSeconds: 5
+    # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
+    failureThreshold: 6
+    # -- Minimum consecutive successes for the probe to be considered successful after having failed
+    successThreshold: 1
+  readinessProbe:
+    # -- Path of health check of application
+    path: /
+    # -- Number of seconds after the container has started before readiness
+    initialDelaySeconds: 5
+    # -- Specifies that the kubelet should perform a readiness probe every N seconds
+    periodSeconds: 10
+    # -- Number of seconds after which the probe times out
+    timeoutSeconds: 5
+    # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
+    failureThreshold: 6
+    # -- Minimum consecutive successes for the probe to be considered successful after having failed
+    successThreshold: 1
 
 # **Zabbix Web** configurations
 zabbixwebservice:
@@ -340,33 +366,6 @@ ingress:
   # -- pathType is only for k8s >= 1.1=
   pathType: Prefix
 
-livenessProbe:
-  # -- Path of health check of application
-  path: /
-  # -- Number of seconds after the container has started before liveness
-  initialDelaySeconds: 30
-  # -- Specifies that the kubelet should perform a liveness probe every N seconds
-  periodSeconds: 10
-  # -- Number of seconds after which the probe times out
-  timeoutSeconds: 5
-  # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
-  failureThreshold: 6
-  # -- Minimum consecutive successes for the probe to be considered successful after having failed
-  successThreshold: 1
-
-readinessProbe:
-  # -- Path of health check of application
-  path: /
-  # -- Number of seconds after the container has started before readiness
-  initialDelaySeconds: 5
-  # -- Specifies that the kubelet should perform a readiness probe every N seconds
-  periodSeconds: 10
-  # -- Number of seconds after which the probe times out
-  timeoutSeconds: 5
-  # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
-  failureThreshold: 6
-  # -- Minimum consecutive successes for the probe to be considered successful after having failed
-  successThreshold: 1
 
 # -- nodeSelector configurations
 nodeSelector: {}
