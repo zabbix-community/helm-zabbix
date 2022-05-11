@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -163,9 +163,9 @@ The following tables lists the configurable parameters of the chart and their de
 | affinity | object | `{}` | Affinity configurations |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
-| ingress.extraLabels | object | `{}` |  |
+| ingress.extraLabels | object | `{}` | Ingress extra labels |
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
-| ingress.pathType | string | `"Prefix"` |  |
+| ingress.pathType | string | `"Prefix"` | pathType is only for k8s >= 1.1= |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | livenessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
 | livenessProbe.initialDelaySeconds | int | `30` | Number of seconds after the container has started before liveness |
@@ -227,11 +227,13 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.DB_SERVER_PORT | string | `"5432"` | Port of database host |
 | zabbixserver.POSTGRES_DB | string | `"zabbix"` | Name of database |
 | zabbixserver.POSTGRES_PASSWORD | string | `"zabbix"` | Password of database |
+| zabbixserver.POSTGRES_PASSWORD_SECRET | string | `""` | Name of the secret used for Postgres Password, if set, it overrules the POSTGRES_PASSWORD value |
+| zabbixserver.POSTGRES_PASSWORD_SECRET_KEY | string | `"password"` | Key of the secret used for Postgres Password, requires POSTGRES_PASSWORD_SECRET, defaults to password |
 | zabbixserver.POSTGRES_USER | string | `"zabbix"` | User of database |
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixserver.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
-| zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
+| zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs |
 | zabbixserver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixserver.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixserver.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |

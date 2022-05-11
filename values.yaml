@@ -8,7 +8,7 @@ zabbixserver:
   enabled: true
   # -- Number of replicas of ``zabbixserver`` module
   replicaCount: 1
-  # -- optional set true open a port direct on node where zabbix server runs 
+  # -- optional set true open a port direct on node where zabbix server runs
   hostPort: false
   # -- optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
@@ -30,13 +30,17 @@ zabbixserver:
   POSTGRES_USER: "zabbix"
   # -- Password of database
   POSTGRES_PASSWORD: "zabbix"
+  # -- Name of the secret used for Postgres Password, if set, it overrules the POSTGRES_PASSWORD value
+  POSTGRES_PASSWORD_SECRET: ""
+  # -- Key of the secret used for Postgres Password, requires POSTGRES_PASSWORD_SECRET, defaults to password
+  POSTGRES_PASSWORD_SECRET_KEY: "password"
   # -- Name of database
   POSTGRES_DB: "zabbix"
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
     # -- Cluster IP for Zabbix server
-    clusterIP: 
+    clusterIP:
     # -- Port of service in Kubernetes cluster
     port: 10051
     # -- NodePort of service on each node
@@ -102,7 +106,7 @@ zabbixproxy:
     # -- Type of service for Zabbix proxy
     type: ClusterIP
     # -- Cluster IP for Zabbix proxy
-    clusterIP: 
+    clusterIP:
     # -- Port to expose service
     port: 10051
     # -- Annotations for the zabbix-proxy service
@@ -152,7 +156,7 @@ zabbixagent:
     # -- Type of service for Zabbix agent
     type: ClusterIP
     # -- Cluster IP for Zabbix agent
-    clusterIP: 
+    clusterIP:
     # -- Port to expose service
     port: 10050
     # -- Annotations for the zabbix-agent service
@@ -193,7 +197,7 @@ zabbixweb:
     # -- Type of service for Zabbix web
     type: NodePort
     # -- Cluster IP for Zabbix web
-    clusterIP: 
+    clusterIP:
     # -- Port to expose service
     port: 80
     # -- Annotations for the zabbix-web service
