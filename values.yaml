@@ -101,6 +101,8 @@ postgresql:
   #POSTGRES_PASSWORD: "zabbix"
   # -- Name of database
   #POSTGRES_DB: "zabbix"
+  #- max simultaneous connections to accept for the Postgres server
+  max_connections: 50
   persistence:
     # -- whether to enable persistent storage for the postgres container or not
     enabled: false

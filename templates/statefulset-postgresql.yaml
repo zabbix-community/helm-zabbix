@@ -64,7 +64,8 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
-          imagePullPolicy: {{ .Values.zabbixproxy.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          args: ["-c", "max_connections={{ .Values.postgresql.max_connections }}"]
           env:
             {{- if .Values.db_access.secret_name }}
             - name: POSTGRES_USER
