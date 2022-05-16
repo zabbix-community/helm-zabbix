@@ -119,6 +119,11 @@ spec:
             - name: POSTGRES_PASSWORD
               {{- if .Values.db_access.POSTGRES_PASSWORD }}
               value: {{ .Values.db_access.POSTGRES_PASSWORD | quote }}
+              {{- else if .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
+                  key: {{ default "password" .Values.zabbixserver.POSTGRES_PASSWORD_SECRET_KEY }}
               {{- else }}
               value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
               {{- end }}
