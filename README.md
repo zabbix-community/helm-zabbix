@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -161,11 +161,13 @@ The following tables lists the configurable parameters of the chart and their de
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity configurations |
+| db_access.secret_autocreate | bool | `true` | automatically create secret if not already present (works only in combination with postgresql.enabled=true) |
+| db_access.secret_name | string | `"zabbixdb-pguser-zabbix"` | * password |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
-| ingress.extraLabels | object | `{}` |  |
+| ingress.extraLabels | object | `{}` | Ingress extra labels |
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
-| ingress.pathType | string | `"Prefix"` |  |
+| ingress.pathType | string | `"Prefix"` | pathType is only for k8s >= 1.1= |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | livenessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
 | livenessProbe.initialDelaySeconds | int | `30` | Number of seconds after the container has started before liveness |
@@ -174,12 +176,20 @@ The following tables lists the configurable parameters of the chart and their de
 | livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
 | livenessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | nodeSelector | object | `{}` | nodeSelector configurations |
-| postgresql.auth.database | string | `"zabbix"` | Name of database |
-| postgresql.auth.enablePostgresUser | bool | `true` | Enable remote access to ``postgres`` user |
-| postgresql.auth.password | string | `"zabbix"` | Password of database |
-| postgresql.auth.postgresPassword | string | `"zabbix_pwd"` | Password of``postgres`` user in Postgresql |
-| postgresql.auth.username | string | `"zabbix"` | User of database |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
+| postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
+| postgresql.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| postgresql.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
+| postgresql.image.tag | int | `14` | Tag of Docker image of Postgresql server, chose "14" for postgres or "latest-pg14" for timescaledb |
+| postgresql.max_connections | int | `50` | Name of database POSTGRES_DB: "zabbix" - max simultaneous connections to accept for the Postgres server |
+| postgresql.persistence.enabled | bool | `false` | whether to enable persistent storage for the postgres container or not |
+| postgresql.persistence.existing_claim_name | bool | `false` | existing persistent volume claim name to be used to store posgres data |
+| postgresql.persistence.storage_size | string | `"5Gi"` | size of the PVC to be automatically generated |
+| postgresql.service.annotations | object | `{}` | Annotations for the zabbix-server service |
+| postgresql.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
+| postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
+| postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | readinessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
 | readinessProbe.initialDelaySeconds | int | `5` | Number of seconds after the container has started before readiness |
 | readinessProbe.path | string | `"/"` | Path of health check of application |
@@ -195,7 +205,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixagent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
-| zabbixagent.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixagent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
@@ -212,7 +222,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixproxy.enabled | bool | `true` | Enables use of **Zabbix Proxy** |
-| zabbixproxy.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
@@ -223,13 +233,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
-| zabbixserver.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
-| zabbixserver.DB_SERVER_PORT | string | `"5432"` | Port of database host |
-| zabbixserver.POSTGRES_DB | string | `"zabbix"` | Name of database |
-| zabbixserver.POSTGRES_PASSWORD | string | `"zabbix"` | Password of database |
-| zabbixserver.POSTGRES_USER | string | `"zabbix"` | User of database |
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
-| zabbixserver.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
 | zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
 | zabbixserver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -238,25 +243,20 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix server |
 | zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
 | zabbixserver.resources | object | `{}` |  |
+| zabbixserver.service | object | `{"annotations":{},"clusterIP":null,"nodePort":31051,"port":10051,"type":"ClusterIP"}` | Name of database POSTGRES_DB: "zabbix" |
 | zabbixserver.service.annotations | object | `{}` | Annotations for the zabbix-server service |
 | zabbixserver.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | zabbixserver.service.nodePort | int | `31051` | NodePort of service on each node |
 | zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
-| zabbixweb.DB_SERVER_HOST | string | `"zabbix-postgresql"` | Address of database host |
-| zabbixweb.DB_SERVER_PORT | int | `5432` | Port of database |
-| zabbixweb.POSTGRES_DB | string | `"zabbix"` | Name of database |
-| zabbixweb.POSTGRES_PASSWORD | string | `"zabbix"` | Password of database |
-| zabbixweb.POSTGRES_USER | string | `"zabbix"` | User of database |
-| zabbixweb.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
-| zabbixweb.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
-| zabbixweb.extraEnv | object | `{}` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-apache-pgsql"` | Zabbix web Docker image name |
 | zabbixweb.image.tag | string | `"ubuntu-6.0.0"` | Tag of Docker image of Zabbix web |
 | zabbixweb.resources | object | `{}` |  |
+| zabbixweb.service | object | `{"annotations":{},"clusterIP":null,"port":80,"type":"NodePort"}` | Name of database POSTGRES_DB: zabbix |
 | zabbixweb.service.annotations | object | `{}` | Annotations for the zabbix-web service |
 | zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
 | zabbixweb.service.port | int | `80` | Port to expose service |
