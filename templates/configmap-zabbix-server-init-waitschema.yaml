@@ -147,16 +147,32 @@ data:
                 c.relnamespace WHERE  n.nspname = '$DB_SERVER_SCHEMA' AND c.relname = 'dbversion'" "${DB_SERVER_DBNAME}")
 
             if [ -n "${DBVERSION_TABLE_EXISTS}" ]; then
-                echo "** Table '${DB_SERVER_DBNAME}.dbversion' already exists."
+                echo "** Table '${DB_SERVER_DBNAME}.dbversion' exists."
                 ZBX_DB_VERSION=$(psql_query "SELECT mandatory FROM ${DB_SERVER_SCHEMA}.dbversion" "${DB_SERVER_DBNAME}")
             fi
 
             if [ -n "${ZBX_DB_VERSION}" ]; then
-                echo "** dbversion is ${ZBX_DB_VERSION}, letting the Zabbix Server container start"
+                echo "** dbversion is ${ZBX_DB_VERSION}, continuing with next step of checks..."
                 break
             fi
 
             echo "**** DB Version not found yet, assuming DB schema is not yet created. Waiting $WAIT_TIMEOUT seconds..."
+            sleep $WAIT_TIMEOUT
+        done
+    }
+
+    check_db_users() {
+        WAIT_TIMEOUT=5
+        while true :
+        do
+            DB_AMOUNT_USERS=$(psql_query "SELECT count(*) FROM users" "${DB_SERVER_DBNAME}")
+            
+            if [ ${DB_AMOUNT_USERS} -gt 0 ]; then
+                echo "** amount of users in users table is ${DB_AMOUNT_USERS}, letting the Zabbix Server container start"
+                break
+            fi
+
+            echo "**** DB amount of entries in user table is ${DB_AMOUNT_USERS}. Waiting $WAIT_TIMEOUT seconds..."
             sleep $WAIT_TIMEOUT
         done
     }
@@ -166,6 +182,7 @@ data:
         check_variables_postgresql
         check_db_connect_postgresql
         check_db_schema_present
+        check_db_users
     }
 
     wait_for_db_and_schema
