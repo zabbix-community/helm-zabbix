@@ -275,6 +275,8 @@ zabbixweb:
     clusterIP:
     # -- Port to expose service
     port: 80
+    # -- NodePort port to allocate (only if service.type = NodePort)
+    #nodePort: 31080
     # -- Annotations for the zabbix-web service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips

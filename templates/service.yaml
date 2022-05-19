@@ -99,6 +99,9 @@ spec:
       targetPort: 8080
       protocol: TCP
       name: zabbix-web
+      {{- if .Values.zabbixweb.service.nodePort }}
+      nodePort: {{ .Values.zabbixweb.service.nodePort }}
+      {{- end }}
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-web
   {{- end }}
