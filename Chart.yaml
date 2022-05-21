@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: zabbix
-version: 1.2.0
+version: 2.0.0
 appVersion: 6.0.0
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 keywords:
@@ -25,8 +25,3 @@ maintainers:
   - name: Sebastien Dupont
     email: sebastien.dupont@cetic.be
     url: https://github.com/banzo
-dependencies:
-  - name: postgresql
-    version: ~11.0.6
-    repository: https://charts.bitnami.com/bitnami
-    condition: postgresql.enabled

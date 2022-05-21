@@ -48,23 +48,80 @@ spec:
             value: {{ .Values.zabbixweb.ZBX_SERVER_HOST | quote }}
           - name: ZBX_SERVER_PORT
             value: {{ .Values.zabbixweb.ZBX_SERVER_PORT | quote }}
+          {{- if .Values.postgresql.enabled }}
           - name: DB_SERVER_HOST
-            value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
+            value: {{ template "zabbix.fullname" . }}-postgresql
           - name: DB_SERVER_PORT
+            value: {{ .Values.postgresql.service.port | quote }}
+          {{- else if .Values.db_access.secret_name }}
+          - name: DB_SERVER_HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.db_access.secret_name }}
+                key: host
+          - name: DB_SERVER_PORT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.db_access.secret_name }}
+                key: port
+                optional: true
+          {{- else }}
+          - name: DB_SERVER_HOST
+            {{- if .Values.db_access.DB_SERVER_HOST }}
+            value: {{ .Values.db_access.DB_SERVER_HOST | quote }}
+            {{- else }}
+            value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
+            {{- end -}}
+          - name: DB_SERVER_PORT
+            {{- if .Values.db_access.DB_SERVER_PORT }}
+            value: {{ .Values.db_access.DB_SERVER_PORT | quote }}
+            {{- else }}
             value: {{ .Values.zabbixweb.DB_SERVER_PORT | quote }}
+            {{- end -}}
+          {{- end }}
+          {{- if .Values.db_access.secret_name }}
           - name: POSTGRES_USER
-            value: {{ .Values.zabbixweb.POSTGRES_USER | quote }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.db_access.secret_name }}
+                key: user
+                optional: true
           - name: POSTGRES_PASSWORD
-            {{- if .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.db_access.secret_name }}
+                key: password
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.db_access.secret_name }}
+                key: dbname
+                optional: true
+          {{- else }}
+          - name: POSTGRES_USER
+            {{- if .Values.db_access.POSTGRES_USER }}
+            value: {{ .Values.db_access.POSTGRES_USER | quote }}
+            {{- else }}
+            value: {{ .Values.zabbixweb.POSTGRES_USER | quote }}
+            {{- end }}
+          - name: POSTGRES_PASSWORD
+            {{- if .Values.db_access.POSTGRES_PASSWORD }}
+            value: {{ .Values.db_access.POSTGRES_PASSWORD | quote }}
+            {{- else if .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.zabbixserver.POSTGRES_PASSWORD_SECRET }}
                 key: {{ default "password" .Values.zabbixserver.POSTGRES_PASSWORD_SECRET_KEY }}
             {{- else }}
-            value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
+            value: {{ .Values.zabbixweb.POSTGRES_PASSWORD | quote }}
             {{- end }}
           - name: POSTGRES_DB
+            {{- if .Values.db_access.POSTGRES_DB }}
+            value: {{ .Values.db_access.POSTGRES_DB | quote }}
+            {{- else }}
             value: {{ .Values.zabbixweb.POSTGRES_DB | quote }}
+            {{- end }}
+          {{- end }}
           # - name: POSTGRES_USER_FILE
           #  value: value: {{ .Values.zabbixweb.POSTGRES_USER_FILE | quote }}
           #- name: POSTGRES_PASSWORD_FILE

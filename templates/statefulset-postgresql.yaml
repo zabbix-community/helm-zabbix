@@ -1,0 +1,136 @@
+{{- if .Values.postgresql.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "zabbix.fullname" . }}-postgresql
+  labels:
+    app: {{ template "zabbix.fullname" . }}-postgresql
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+spec:
+  {{- if .Values.postgresql.persistence.enabled }}
+  {{- if not .Values.postgresql.persistence.existing_claim_name }}
+  volumeClaimTemplates:
+    - metadata:
+        name: postgresql-data
+      spec:
+        accessModes:
+          {{- if .Values.postgresql.persistence.claim_access_mode }}
+          - {{ .Values.postgresql.persistence.claim_access_mode }}
+          {{- else }}
+          - ReadWriteOnce
+          {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.postgresql.persistence.storage_size }}
+        {{- if .Values.postgresql.persistence.storage_class }}
+        storageClassName: {{ .Values.postgresql.persistence.storage_class }}
+        {{- end }}
+  {{- end }}
+  {{- end }}
+  replicas: 1
+  serviceName: {{ template "zabbix.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ template "zabbix.fullname" . }}-postgresql
+  template:
+    metadata:
+      labels:
+        app: {{ template "zabbix.fullname" . }}-postgresql
+        app.kubernetes.io/name: postgresql
+        helm.sh/chart: {{ include "zabbix.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
+        app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: postgresql
+          resources:
+{{- toYaml .Values.postgresql.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          args: ["-c", "max_connections={{ .Values.postgresql.max_connections }}"]
+          env:
+            {{- if .Values.db_access.secret_name }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.secret_name }}
+                  key: dbname
+            {{- else }}
+            - name: POSTGRES_USER
+              {{- if .Values.db_access.POSTGRES_USER }}
+              value: {{ .Values.db_access.POSTGRES_USER | quote }}
+              {{- else }}
+              value: {{ .Values.postgresql.POSTGRES_USER | quote }}
+              {{- end }}
+            - name: POSTGRES_PASSWORD
+              {{- if .Values.db_access.POSTGRES_PASSWORD }}
+              value: {{ .Values.db_access.POSTGRES_PASSWORD | quote }}
+              {{- else }}
+              value: {{ .Values.postgresql.POSTGRES_PASSWORD | quote }}
+              {{- end }}
+            - name: POSTGRES_DB
+              {{- if .Values.db_access.POSTGRES_DB }}
+              value: {{ .Values.db_access.POSTGRES_DB | quote }}
+              {{- else }}
+              value: {{ .Values.postgresql.POSTGRES_DB | quote }}
+              {{- end }}
+            {{- end }}
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+            {{- range $item := .Values.zabbixproxy.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value | quote }}
+            {{- end }}
+          {{- if .Values.postgresql.persistence.enabled }}
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/postgresql/data
+          {{- end }}
+          ports:
+            - name: db
+              containerPort: 5432
+              protocol: TCP
+      {{- if .Values.postgresql.persistence.enabled }}
+      {{- if .Values.postgresql.persistence.existing_claim_name }}
+      volumes:
+        - name: postgresql-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgresql.persistence.existing_claim_name }}
+      {{- end }}
+      {{- end }}
+      imagePullSecrets:
+      {{- range .Values.postgresql.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      {{- range .Values.postgresql.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+{{- end }}

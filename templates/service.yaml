@@ -135,3 +135,35 @@ spec:
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-proxy
 {{- end }}
+
+{{- if .Values.postgresql.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-postgresql
+  labels:
+    app: {{ template "zabbix.fullname" . }}-postgresql
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+  {{- if .Values.postgresql.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.postgresql.service.annotations }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.postgresql.service.type }}
+  {{- if .Values.postgresql.service.clusterIP }}
+  clusterIP: {{ .Values.postgresql.service.clusterIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.postgresql.service.port }}
+      targetPort: 5432
+      protocol: TCP
+      name: db
+  selector:
+    app: {{ template "zabbix.fullname" . }}-postgresql
+{{- end }}
