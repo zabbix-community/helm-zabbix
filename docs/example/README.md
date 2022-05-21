@@ -1,6 +1,9 @@
 <!-- TOC -->
 - [About](#about)
-- [How to Deploy Zabbix in Kubernetes](#how-to-deploy-zabbix-in-kubernetes)
+- [Installation](#installation)
+- [How to access Zabbix](#how-to-access-zabbix)
+- [Troubleshooting](#troubleshooting)
+- [Uninstallation](#uninstallation)
 - [Install nginx-ingress for services internal Kubernetes cluster](#install-nginx-ingress-for-services-internal-kubernetes-cluster)
 <!-- TOC -->
 
@@ -8,7 +11,7 @@
 
 This page presents an example to use the [Zabbix Helm Chart](https://github.com/cetic/helm-zabbix). For more informations, see the [README.md](/README.md) file.
 
-# How to Deploy Zabbix in Kubernetes
+# Installation
 
 Create or access your Kubernetes cluster and configure the ``kubectl``.
 
@@ -58,6 +61,36 @@ View the pods.
 kubectl get pods -n monitoring
 ```
 
+# How to access Zabbix
+
+After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service:
+
+View informations of ``zabbix`` services.
+
+```bash
+kubectl describe services zabbix-web -n monitoring
+```
+
+Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
+
+```bash
+kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
+```
+
+Access Zabbix:
+
+* URL: http://localhost:8888
+* Login: **Admin**
+* Password: **zabbix**
+
+# Troubleshooting
+
+View the pods.
+
+```bash
+kubectl get pods -n monitoring
+```
+
 View informations of pods.
 
 ```bash
@@ -90,13 +123,7 @@ kubectl get pods --output=wide -n monitoring
 kubectl describe services zabbix -n monitoring
 ```
 
-Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
-
-```bash
-kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
-```
-
-Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.
+# Uninstallation
 
 To uninstall the zabbix.
 

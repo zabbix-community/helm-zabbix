@@ -15,7 +15,7 @@ zabbixserver:
   replicaCount: 1
   image:
     repository: zabbix/zabbix-server-pgsql
-    tag: ubuntu-6.0.0
+    tag: ubuntu-6.0.4
     pullPolicy: IfNotPresent
   service:
     type: NodePort
@@ -41,7 +41,7 @@ zabbixproxy:
   replicaCount: 1
   image:
     repository: zabbix/zabbix-proxy-sqlite3
-    tag: ubuntu-6.0.0
+    tag: ubuntu-6.0.4
     pullPolicy: IfNotPresent
   ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
   ZBX_HOSTNAME: zabbix-proxy # This variable is unique, case sensitive hostname.
@@ -68,7 +68,7 @@ zabbixagent:
   image:
     # Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent2
-    tag: ubuntu-6.0.0
+    tag: ubuntu-6.0.4
     pullPolicy: IfNotPresent
   ZBX_HOSTNAME: zabbix-agent
   ZBX_SERVER_HOST: 127.0.0.1
@@ -97,7 +97,7 @@ zabbixweb:
   enabled: true
   image:
     repository: zabbix/zabbix-web-apache-pgsql
-    tag: ubuntu-6.0.0
+    tag: ubuntu-6.0.4
     pullPolicy: IfNotPresent
   ZBX_SERVER_HOST: zabbix-zabbix-server
   ZBX_SERVER_PORT: 10051

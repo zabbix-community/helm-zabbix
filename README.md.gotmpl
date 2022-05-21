@@ -8,15 +8,33 @@
 
 This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
-### Important note
+### Important notes
 
-> **Break change**
+> **This helm chart is still under development**
+
+> **Break change 2.0.0**
+* The version 2.0.0 has a break change.
+* Will be used Postgresql 14.x and Zabbix 6.0.4.
+* This version implements a central way of managing database access credentials 
+using a secret, which then will be respected by all the components
+installed by this chart: zabbixserver, zabbixweb and postgresql.
+* The secret must contain a number of keys indicating DB host, DB name,
+user and password and can direct towards a database installed within
+this chart, or an external database.
+* The benefit of this is that now the database can respect the values 
+in the central DB access secret and initialize accordingly.
+* Last but not least, the credential secret can be chosen to be
+auto-generated (password will be set to a random string) at chart
+installation, if postgresql.enabled is set to true. With this, an easy
+to use "out-of-the-box" installation with as little customizations as
+possible is possible, while still obtaining a good level of security.
+* More info: https://github.com/cetic/helm-zabbix/pull/53
+
+> **Break change 1.0.0**
 * The version 1.0.0 has a break change.
 * Will be used Postgresql 14.x and Zabbix 6.0.0.
 * The installation of any component of chart is optional for easy integration with the official chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
 * More info: https://github.com/cetic/helm-zabbix/issues/42
-
-> **This helm chart is still under development**
 
 # Prerequisites
 
@@ -92,6 +110,8 @@ helm show values cetic/zabbix > $HOME/zabbix_values.yaml
 
 Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
 
+See the example of installation in kind in this [tutorial](docs/example/README.md).
+
 Test the installation/upgrade with command:
 
 ```bash
@@ -116,22 +136,6 @@ View the pods.
 kubectl get pods -n monitoring
 ```
 
-View the logs container of pods.
-
-```bash
-kubectl logs -f pods/POD_NAME -n monitoring
-```
-
-See the example of installation in kind in this [tutorial](docs/example/README.md).
-
-# Uninstallation
-
-To uninstall/delete the ``zabbix`` deployment:
-
-```bash
-helm uninstall zabbix -n monitoring
-```
-
 # How to access Zabbix
 
 After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service: 
@@ -148,7 +152,59 @@ Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-
 kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
 ```
 
-Access Zabbix in http://localhost:8888. Login ``Admin`` and password ``zabbix``.
+Access Zabbix:
+
+* URL: http://localhost:8888
+* Login: **Admin**
+* Password: **zabbix**
+
+# Troubleshooting
+
+View the pods.
+
+```bash
+kubectl get pods -n monitoring
+```
+
+View informations of pods.
+
+```bash
+kubectl describe pods/POD_NAME -n monitoring
+```
+
+View all containers of pod.
+
+```bash
+kubectl get pods POD_NAME -n monitoring -o jsonpath='{.spec.containers[*].name}*'
+```
+
+View the logs container of pods.
+
+```bash
+kubectl logs -f pods/POD_NAME -c CONTAINER_NAME -n monitoring
+```
+
+Access prompt of container.
+
+```bash
+kubectl exec -it pods/POD_NAME -c CONTAINER_NAME -n monitoring -- sh
+```
+
+View informations of service Zabbix.
+
+```bash
+kubectl get svc -n monitoring
+kubectl get pods --output=wide -n monitoring
+kubectl describe services zabbix -n monitoring
+```
+
+# Uninstallation
+
+To uninstall/delete the ``zabbix`` deployment:
+
+```bash
+helm uninstall zabbix -n monitoring
+```
 
 # License
 
