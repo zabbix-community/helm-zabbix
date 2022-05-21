@@ -1,0 +1,32 @@
+{{- if .Values.ingressroute.enabled -}}
+{{- $fullName := include "zabbix.fullname" . -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "zabbix.labels" . | nindent 4 }}
+  {{- with .Values.ingressroute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingressroute.entryPoints }}
+  entryPoints:
+  {{- with .Values.ingressroute.entryPoints }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  routes:
+  - match: Host(`{{ .Values.ingressroute.hostName }}`)
+    kind: Rule
+    services:
+    - name: {{ template "zabbix.fullname" . }}-zabbix-web
+      port: {{ .Values.zabbixweb.service.port }}
+  {{- if .Values.ingressroute.tls }}
+  tls:
+  {{- with .Values.ingressroute.tls }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+{{- end }}
