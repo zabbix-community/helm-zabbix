@@ -146,6 +146,11 @@ spec:
           - name: zabbix-web
             containerPort: 8080
             protocol: TCP
+        {{- if .Values.zabbixweb.saml_certs_secret_name }}
+        volumeMounts:
+          - name: zabbix-web-samlcerts
+            mountPath: /etc/zabbix/web/certs
+        {{- end }}
         livenessProbe:
           httpGet:
             path: {{ .Values.zabbixweb.livenessProbe.path }}
@@ -167,5 +172,11 @@ spec:
       imagePullSecrets:
       {{- range .Values.zabbixweb.image.pullSecrets }}
         - name: {{ . | quote }}
+      {{- end }}
+      {{- if .Values.zabbixweb.saml_certs_secret_name }}
+      volumes:
+        - name: zabbix-web-samlcerts
+          secret:
+            secretName: {{ .Values.zabbixweb.saml_certs_secret_name }}
       {{- end }}
 {{- end }}
