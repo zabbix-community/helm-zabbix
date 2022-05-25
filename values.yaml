@@ -288,7 +288,7 @@ zabbixwebservice:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-service
     # -- Tag of Docker image of Zabbix web
-    tag: alpine-6.0-latest
+    tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
