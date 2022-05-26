@@ -2,6 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# -- zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc.
+zabbix_image_tag: ubuntu-6.0.4
+
 # with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend
 # you can either chose from having all this in one named (preexisting) secret or setting the values one by one with vars
 # whatever set here overrides the credential settings within the "zabbixserver" and "zabbixweb" sections.
@@ -52,7 +55,7 @@ zabbixserver:
     # -- Zabbix server Docker image name
     repository: zabbix/zabbix-server-pgsql
     # -- Tag of Docker image of Zabbix server
-    tag: ubuntu-6.0.4
+    #tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -152,7 +155,7 @@ zabbixproxy:
     # -- Zabbix proxy Docker image name
     repository: zabbix/zabbix-proxy-sqlite3
     # -- Tag of Docker image of Zabbix proxy
-    tag: ubuntu-6.0.4
+    #tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -198,7 +201,7 @@ zabbixagent:
     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent2
     # -- Tag of Docker image of Zabbix agent
-    tag: ubuntu-6.0.4
+    #tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -251,7 +254,7 @@ zabbixweb:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-nginx-pgsql
     # -- Tag of Docker image of Zabbix web
-    tag: ubuntu-6.0.4
+    #tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -325,7 +328,7 @@ zabbixwebservice:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-service
     # -- Tag of Docker image of Zabbix web
-    tag: ubuntu-6.0.4
+    #tag: ubuntu-6.0.4
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
