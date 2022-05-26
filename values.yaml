@@ -275,7 +275,7 @@ zabbixweb:
   #saml_certs_secret_name: zabbix-web-samlcerts
   service:
     # -- Type of service for Zabbix web
-    type: NodePort
+    type: ClusterIP
     # -- Cluster IP for Zabbix web
     clusterIP:
     # -- Port to expose service
