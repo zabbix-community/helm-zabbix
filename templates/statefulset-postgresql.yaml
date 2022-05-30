@@ -67,41 +67,36 @@ spec:
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
           args: ["-c", "max_connections={{ .Values.postgresql.max_connections }}"]
           env:
-            {{- if .Values.db_access.secret_name }}
+            {{- if .Values.db_access.use_unified_secret }}
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: password
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: dbname
             {{- else }}
             - name: POSTGRES_USER
-              {{- if .Values.db_access.POSTGRES_USER }}
-              value: {{ .Values.db_access.POSTGRES_USER | quote }}
-              {{- else }}
-              value: {{ .Values.postgresql.POSTGRES_USER | quote }}
-              {{- end }}
+              value: {{ .Values.db_access.postgres_user | quote }}
             - name: POSTGRES_PASSWORD
-              {{- if .Values.db_access.POSTGRES_PASSWORD }}
-              value: {{ .Values.db_access.POSTGRES_PASSWORD | quote }}
+              {{- if .Values.db_access.postgres_password_secret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.postgres_password_secret }}
+                  key: {{ default "password" .Values.db_access.postgres_password_secret_key }}
               {{- else }}
-              value: {{ .Values.postgresql.POSTGRES_PASSWORD | quote }}
+              value: {{ .Values.db_access.postgres_password | quote }}
               {{- end }}
             - name: POSTGRES_DB
-              {{- if .Values.db_access.POSTGRES_DB }}
-              value: {{ .Values.db_access.POSTGRES_DB | quote }}
-              {{- else }}
-              value: {{ .Values.postgresql.POSTGRES_DB | quote }}
-              {{- end }}
+              value: {{ .Values.db_access.postgres_db | quote }}
             {{- end }}
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata

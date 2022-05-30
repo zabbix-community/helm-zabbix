@@ -29,69 +29,56 @@ spec:
               value: {{ template "zabbix.fullname" . }}-postgresql
             - name: PGPORT
               value: {{ .Values.postgresql.service.port | quote }}
-            {{- else if .Values.db_access.secret_name }}
+            {{- else if .Values.db_access.use_unified_secret }}
             - name: PGHOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: host
             - name: PGPORT
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: port
                   optional: true
             {{- else }}
             - name: PGHOST
-              {{- if .Values.db_access.DB_SERVER_HOST }}
-              value: {{ .Values.db_access.DB_SERVER_HOST | quote }}
-              {{- else }}
-              value: {{ .Values.zabbixserver.DB_SERVER_HOST | quote }}
-              {{- end }}
+              value: {{ .Values.db_access.db_server_host | quote }}
             - name: PGPORT
-              {{- if .Values.db_access.DB_SERVER_PORT }}
-              value: {{ .Values.db_access.DB_SERVER_PORT | quote }}
-              {{- else }}
-              value: {{ .Values.zabbixserver.DB_SERVER_PORT | quote }}
-              {{- end }}
+              value: {{ .Values.db_access.db_server_port | quote }}
             {{- end }}
-            {{- if .Values.db_access.secret_name }}
+            {{- if .Values.db_access.use_unified_secret }}
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: user
                   optional: true
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: password
             - name: PGDATABASE
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
+                  name: {{ .Values.db_access.unified_secret_name }}
                   key: dbname
                   optional: true
             {{- else }}
             - name: PGUSER
-              {{- if .Values.db_access.POSTGRES_USER }}
-              value: {{ .Values.db_access.POSTGRES_USER | quote }}
-              {{- else }}
-              value: {{ .Values.zabbixserver.POSTGRES_USER | quote }}
-              {{ end }}
+              value: {{ .Values.db_access.postgres_user | quote }}
             - name: PGPASSWORD
-              {{- if .Values.db_access.POSTGRES_PASSWORD }}
-              value: {{ .Values.db_access.POSTGRES_PASSWORD | quote }}
-              {{- else }}
-              value: {{ .Values.zabbixserver.POSTGRES_PASSWORD | quote }}
+              {{- if .Values.db_access.postgres_password_secret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db_access.postgres_password_secret }}
+                  key: {{ default "password" .Values.db_access.postgres_password_secret_key }}
+              {{- else  }}
+              value: {{ .Values.db_access.postgres_password | quote }}
               {{- end }}
             - name: PGDATABASE
-              {{- if .Values.db_access.POSTGRES_DB }}
-              value: {{ .Values.db_access.POSTGRES_DB | quote }}
-              {{- else }}
-              value: {{ .Values.zabbixserver.POSTGRES_DB | quote }}
-              {{- end }}
+              value: {{ .Values.db_access.postgres_db | quote }}
             {{- end }}
           imagePullSecrets:
           {{- range .Values.zabbixserver.image.pullSecrets }}

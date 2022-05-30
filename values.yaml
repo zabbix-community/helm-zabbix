@@ -5,38 +5,47 @@
 # -- zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc.
 zabbix_image_tag: ubuntu-6.0.4
 
+# **Zabbix DB access / credentials** configurations
 # with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend
 # you can either chose from having all this in one named (preexisting) secret or setting the values one by one with vars
 # whatever set here overrides the credential settings within the "zabbixserver" and "zabbixweb" sections.
 db_access:
-  # -- under this section you can configure DB access and credentials centrally for the entire helm chart.
-  # -- All relevant components installed by this chart will respect it: zabbixserver, zabbixweb and postgresql (if enabled)
+  # under this section you can configure DB access and credentials centrally for the entire helm chart.
+  # All relevant components installed by this chart will respect it: zabbixserver, zabbixweb and postgresql (if enabled)
   # 
-  # -- USING A SECRET
-  # -- DB access details all in one existing secret (matches the structure of secrets the CrunchyData pgo operator generates)
-  # -- if this option is chosen the below listed "DB_SERVER_*" and "POSTGRES_*" settings are being ignored
-  # -- the secret must contain the following keys:
-  # -- * host
-  # -- * port
-  # -- * dbname
-  # -- * user
-  # -- * password
-  secret_name: zabbixdb-pguser-zabbix
+  # USING ONE SECRET CONTAINING ALL DB RELEVANT SETTINGS
+  # DB access details all in one existing secret (matches the structure of secrets the CrunchyData pgo operator generates)
+  # if this option is chosen the below listed "db_server_*" and "postgres_*" settings are being ignored
+  # the secret must contain the following keys:
+  #   * host
+  #   * port
+  #   * dbname
+  #   * user
+  #   * password
+  # -- Whether to use the unified db access secret
+  use_unified_secret: true
+  # -- Name of one secret for unified configuration of DB access
+  unified_secret_name: zabbixdb-pguser-zabbix
   # -- automatically create secret if not already present (works only in combination with postgresql.enabled=true)
-  secret_autocreate: true
+  unified_secret_autocreate: true
   #
-  # -- If you do NOT want to use a secret for all settings, you can still either set the credentials manually here for all
-  # -- components at once, or if left uncommented, set the credentials for each of the components manually
+  # If you do NOT want to use one unified secret for all settings, you can still set the credentials manually here.
+  # These settings will be used for all components of this chart where it makes sense (zabbix server, postgresql,
+  # web frontend, ...)
   # -- Address of database host - ignored if postgresql.enabled=true
-  #DB_SERVER_HOST: "zabbix-postgresql"
+  db_server_host: "zabbix-postgresql"
   # -- Port of database host - ignored if postgresql.enabled=true
-  #DB_SERVER_PORT: "5432"
+  db_server_port: "5432"
   # -- User of database
-  #POSTGRES_USER: "zabbix"
-  # -- Password of database
-  #POSTGRES_PASSWORD: "zabbix"
+  postgres_user: "zabbix"
+  # -- Name of a secret used for Postgres Password, if set, it overrules the POSTGRES_PASSWORD value
+  #postgres_password_secret: mysecret
+  # -- Key of the secret used for Postgres Password, requires POSTGRES_PASSWORD_SECRET, defaults to password
+  #postgres_password_secret_key: "password"
+  # -- Password of database - ignored if postgres_password_secret is set
+  postgres_password: "zabbix"
   # -- Name of database
-  #POSTGRES_DB: "zabbix"
+  postgres_db: "zabbix"
 
 # **Zabbix Server** configurations
 zabbixserver:
@@ -70,20 +79,6 @@ zabbixserver:
       pullSecrets: []
     schedule: "0 1 * * *"
     delete_older_than_seconds: 3600
-  # -- Address of database host
-  #DB_SERVER_HOST: "zabbix-postgresql"
-  # -- Port of database host
-  #DB_SERVER_PORT: "5432"
-  # -- User of database
-  #POSTGRES_USER: "zabbix"
-  # -- Password of database
-  #POSTGRES_PASSWORD: "zabbix"
-  # -- Name of a secret used for Postgres Password, if set, it overrules the POSTGRES_PASSWORD value
-  #POSTGRES_PASSWORD_SECRET: ""
-  # -- Key of the secret used for Postgres Password, requires POSTGRES_PASSWORD_SECRET, defaults to password
-  #POSTGRES_PASSWORD_SECRET_KEY: "password"
-  # -- Name of database
-  #POSTGRES_DB: "zabbix"
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
@@ -114,13 +109,6 @@ postgresql:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- User of database
-  #POSTGRES_USER: "zabbix"
-  # -- Password of database
-  #POSTGRES_PASSWORD: "zabbix"
-  # -- Name of database
-  #POSTGRES_DB: "zabbix"
-  #- max simultaneous connections to accept for the Postgres server
   max_connections: 50
   persistence:
     # -- whether to enable persistent storage for the postgres container or not
@@ -259,16 +247,6 @@ zabbixweb:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- Zabbix server host
-  #DB_SERVER_HOST: zabbix-postgresql
-  # -- Port of database
-  #DB_SERVER_PORT: 5432
-  # -- User of database
-  #POSTGRES_USER: zabbix
-  # -- Password of database
-  #POSTGRES_PASSWORD: zabbix
-  # -- Name of database
-  #POSTGRES_DB: zabbix
   # -- Name of the Zabbix server in GUI
   #zbx_server_name: something
   # -- Certificate containing certificates for SAML configuration
@@ -316,7 +294,7 @@ zabbixweb:
     # -- Minimum consecutive successes for the probe to be considered successful after having failed
     successThreshold: 1
 
-# **Zabbix Web** configurations
+# **Zabbix Web Service** configurations
 zabbixwebservice:
   # -- Enables use of **Zabbix Web Service**
   enabled: true
