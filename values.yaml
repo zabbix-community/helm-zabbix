@@ -135,7 +135,7 @@ postgresql:
 # **Zabbix Proxy** configurations
 zabbixproxy:
   # -- Enables use of **Zabbix Proxy**
-  enabled: true
+  enabled: false
   # -- Number of replicas of ``zabbixproxy`` module
   replicaCount: 1
   resources: {}
