@@ -247,8 +247,6 @@ zabbixweb:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- Name of the Zabbix server in GUI
-  #zbx_server_name: something
   # -- Certificate containing certificates for SAML configuration
   #saml_certs_secret_name: zabbix-web-samlcerts
   service:
@@ -267,6 +265,8 @@ zabbixweb:
   extraEnv: []
     #- name: ZBX_SSO_SETTINGS
     #  value: '{"baseurl": "https://zabbix.example.com"}'
+    #- name: ZBX_SERVER_NAME
+    #  value: Demo Zabbix
   livenessProbe:
     # -- Path of health check of application
     path: /

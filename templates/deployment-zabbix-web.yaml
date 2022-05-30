@@ -58,12 +58,6 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
         env:
-          - name: ZBX_SERVER_NAME
-          {{- if .Values.zabbixweb.zbx_server_name }}
-            value: {{ .Values.zabbixweb.zbx_server_name }}
-          {{- else }}
-            value: Zabbix in K8S
-          {{- end }}
           {{- if .Values.postgresql.enabled }}
           - name: DB_SERVER_HOST
             value: {{ template "zabbix.fullname" . }}-postgresql
