@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -11,6 +11,11 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 ### Important notes
 
 > **This helm chart is still under development**
+
+> **Break change 3.0.0**
+* This version removes the possibility to specify database username/password per
+  subsection in favor of specifying all of them centrally at one place.
+* Also, the names of the values have changed from upper to lowercase.
 
 > **Break change 2.0.0**
 * The version 2.0.0 has a break change.
@@ -251,9 +256,8 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
 | postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
-| route.enabled | bool | `false` |  |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbix_image_tag | string | `"ubuntu-6.0.4"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
+| zabbix_image_tag | string | `"ubuntu-6.0.5"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixagent.ZBX_PASSIVESERVERS | string | `"127.0.0.1"` | The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. |
