@@ -1,8 +1,11 @@
 *.tgz
+packages/
 
 # Helm Charts dependencies
 /charts
 *.lock
+
+.DS_Store
 
 .idea
 
