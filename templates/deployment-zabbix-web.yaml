@@ -71,7 +71,7 @@ spec:
             value: {{ .Values.db_access.DB_SERVER_HOST | quote }}
             {{- else }}
             value: {{ .Values.zabbixweb.DB_SERVER_HOST | quote }}
-            {{- end -}}
+            {{- end }}
           - name: DB_SERVER_PORT
             {{- if .Values.db_access.DB_SERVER_PORT }}
             value: {{ .Values.db_access.DB_SERVER_PORT | quote }}
