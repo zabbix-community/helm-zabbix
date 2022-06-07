@@ -13,8 +13,9 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 > **This helm chart is still under development**
 
 > **Break change 3.0.0**
-* This version removes the possibility to specify database username/password per
-  subsection in favor of specifying all of them centrally at one place.
+* This version removes the possibility to specify database username/password
+  per subsection in favor of specifying all of them centrally at one place
+  (see 2.0.0 changes).
 * Also, the names of the values have changed from upper to lowercase.
 
 > **Break change 2.0.0**

@@ -334,8 +334,6 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  # -- Ingress extra labels
-  extraLabels: {}
   # -- Ingress hosts
   hosts:
     - host: chart-example.local
@@ -359,8 +357,6 @@ ingressroute:
   enabled: false
   # -- IngressRoute annotations
   annotations: {}
-  # -- Ingressroute extra labels
-  extraLabels: {}
   # -- Ingressroute entrypoints
   entryPoints:
     - websecure
