@@ -13,9 +13,8 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 > **This helm chart is still under development**
 
 > **Break change 3.0.0**
-* This version removes the possibility to specify database username/password
-  per subsection in favor of specifying all of them centrally at one place
-  (see 2.0.0 changes).
+* This version removes the possibility to specify database username/password per
+  subsection in favor of specifying all of them centrally at one place.
 * Also, the names of the values have changed from upper to lowercase.
 
 > **Break change 2.0.0**
@@ -233,14 +232,12 @@ The following tables lists the configurable parameters of the chart and their de
 | db_access.use_unified_secret | bool | `true` | Whether to use the unified db access secret |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
-| ingress.extraLabels | object | `{}` | Ingress extra labels |
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
 | ingress.pathType | string | `"Prefix"` | pathType is only for k8s >= 1.1= |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | ingressroute.annotations | object | `{}` | IngressRoute annotations |
 | ingressroute.enabled | bool | `false` | Enables Traefik IngressRoute |
 | ingressroute.entryPoints | list | `["websecure"]` | Ingressroute entrypoints |
-| ingressroute.extraLabels | object | `{}` | Ingressroute extra labels |
 | ingressroute.hostName | string | `"chart-example.local"` | Ingressroute host name |
 | nodeSelector | object | `{}` | nodeSelector configurations |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
@@ -257,6 +254,10 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
 | postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
+| route.annotations | object | `{}` | Openshift Route extra annotations |
+| route.enabled | bool | `false` | Enables Route object for Openshift |
+| route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
+| route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | tolerations | list | `[]` | Tolerations configurations |
 | zabbix_image_tag | string | `"ubuntu-6.0.5"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
