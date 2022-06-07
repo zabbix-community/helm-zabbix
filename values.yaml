@@ -370,6 +370,20 @@ ingressroute:
   #tls:
   #  certResolver: myresolver
 
+route:
+  # -- Enables Route object for Openshift
+  enabled: false
+  # -- Host Name for the route. Can be left empty
+  hostName: chart-example.local
+  # -- Openshift Route wildcardPolicy
+  #wildcardPolicy:
+  # -- Openshift Route TLS settings
+  tls:
+    termination: edge
+    #insecureEdgeTerminationPolicy: Redirect
+  # -- Openshift Route extra annotations
+  annotations: {}
+
 # -- nodeSelector configurations
 nodeSelector: {}
 
