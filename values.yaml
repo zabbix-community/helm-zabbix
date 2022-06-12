@@ -63,8 +63,6 @@ zabbixserver:
   image:
     # -- Zabbix server Docker image name
     repository: zabbix/zabbix-server-pgsql
-    # -- Tag of Docker image of Zabbix server
-    #tag: ubuntu-6.0.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -142,8 +140,6 @@ zabbixproxy:
   image:
     # -- Zabbix proxy Docker image name
     repository: zabbix/zabbix-proxy-sqlite3
-    # -- Tag of Docker image of Zabbix proxy
-    #tag: ubuntu-6.0.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -188,8 +184,6 @@ zabbixagent:
   image:
     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent2
-    # -- Tag of Docker image of Zabbix agent
-    #tag: ubuntu-6.0.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -241,8 +235,6 @@ zabbixweb:
   image:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-nginx-pgsql
-    # -- Tag of Docker image of Zabbix web
-    #tag: ubuntu-6.0.5
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -306,8 +298,6 @@ zabbixwebservice:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-service
     # -- Tag of Docker image of Zabbix web
-    #tag: ubuntu-6.0.5
-    # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []

@@ -14,11 +14,7 @@ spec:
     spec:
       containers:
       - name: init-db-schema
-        {{- if .Values.zabbix_image_tag }}
         image: {{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}
-        {{- else }}
-        image: {{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}
-        {{- end }}
         env:
           {{- if .Values.postgresql.enabled }}
           - name: DB_SERVER_HOST

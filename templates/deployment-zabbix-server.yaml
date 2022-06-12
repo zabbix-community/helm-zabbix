@@ -49,11 +49,7 @@ spec:
       {{- if gt (.Values.zabbixserver.replicaCount | int) 1 }}
       initContainers:
         - name: init-wait-for-database-schema
-          {{- if .Values.zabbix_image_tag }}
           image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
-          {{- else }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
-          {{- end }}
           env:
             {{- if .Values.postgresql.enabled }}
             - name: DB_SERVER_HOST
@@ -122,11 +118,7 @@ spec:
         - name: zabbix-server
           resources:
 {{- toYaml .Values.zabbixserver.resources | nindent 12 }}
-          {{- if .Values.zabbix_image_tag }}
           image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
-          {{- else }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
-          {{- end }}
           ports:
             - containerPort: 10051
               name: zabbix-server
@@ -223,11 +215,7 @@ spec:
 {{- toYaml .Values.zabbixagent.resources | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.zabbix_image_tag }}
           image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbix_image_tag }}"
-          {{- else }}
-          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
-          {{- end }}
           imagePullPolicy: {{ .Values.zabbixagent.image.pullPolicy }}
           env:
             - name: ZBX_HOSTNAME
