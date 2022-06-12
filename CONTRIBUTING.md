@@ -7,7 +7,8 @@
 
 # Contributing
 
-* Install the follow packages: ``git``, ``kubectl``, ``helm``, ``helm-docs``. See this [tutorial](docs/requirements.md).
+* Have the ``make`` command and *docker* installed on your system. With this, you don't need the below mentioned ``helm`` and ``helm-docs`` and use containers for the needed steps instead.
+* [OPTIONAL] Install the follow packages: ``git``, ``kubectl``, ``helm``, ``helm-docs``. See this [tutorial](docs/requirements.md).
 * [OPTIONAL] Configure authentication on your Github account to use the SSH protocol instead of HTTP. Watch this tutorial to learn how to set up: https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account
 * Create a fork this repository.
 * Clone the forked repository to your local system:
@@ -37,7 +38,30 @@ git branch
 ```
 
 * Make your changes and tests to the new branch.
+* Verify your changed do not introduce syntactical/semantic errors:
+
+Method using make and docker:
+```bash
+make lint
+````
+
+Method using locally installed ``helm`` command:
+```bash
+helm lint .
+```
+
 * Run command ``helm-docs`` to update content of ``README.md`` file using the ``README.md.gotmpl`` template. More info about [helm-docs](https://github.com/norwoodj/helm-docs).
+
+Method using make and docker:
+```bash
+make gen-docs
+```
+
+Method using locally installed ``helm-docs`` command:
+```bash
+helm-docs
+```
+
 * Commit the changes to the branch.
 * Push files to repository remote with command:
 
