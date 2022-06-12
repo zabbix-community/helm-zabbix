@@ -1,6 +1,6 @@
 URL=https://github.com/cetic/helm-zabbix/
-HELM_IMAGE = alpine/helm:3.9.0
-HELM_DOCS_IMAGE = jnorwood/helm-docs:v1.10.0
+HELM_IMAGE=alpine/helm:3.9.0
+HELM_DOCS_IMAGE=jnorwood/helm-docs:v1.10.0
 KNOWN_TARGETS=helm
 
 
