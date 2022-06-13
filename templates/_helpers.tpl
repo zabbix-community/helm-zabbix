@@ -106,7 +106,8 @@ Return the entire logic of setting DB access related env vars for the containers
 {{- $uservar := "POSTGRES_USER" }}
 {{- $passwordvar := "POSTGRES_PASSWORD" }}
 {{- $dbvar := "POSTGRES_DB" }}
-{{- if eq $cntxt "database" }}
+{{/* special settings for the DB client (autoclean cron job) container, needs different env variable names */}}
+{{- if eq $cntxt "db_client" }}
 {{- $hostvar = "PGHOST" }}
 {{- $portvar = "PGPORT" }}
 {{- $uservar = "PGUSER" }}
