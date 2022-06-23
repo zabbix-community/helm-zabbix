@@ -93,6 +93,12 @@ zabbixserver:
   extraEnv: []
     #- name: ENABLE_TIMESCALED
     #  value: "true"
+  # -- additional volumeMounts to the zabbix server container
+  extraVolumeMounts: []
+  # -- additional containers to start within the zabbix server pod
+  extraContainers: []
+  # -- additional volumes to make available to the zabbix server pod
+  extraVolumes: []
 
 # **PostgreSQL** configurations
 postgresql:
@@ -129,6 +135,12 @@ postgresql:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables.
   extraEnv: []
+  # -- additional volumeMounts to the postgresql container
+  extraVolumeMounts: []
+  # -- additional containers to start within the postgresql pod
+  extraContainers: []
+  # -- additional volumes to make available to the postgresql pod
+  extraVolumes: []
 
 # **Zabbix Proxy** configurations
 zabbixproxy:
@@ -175,6 +187,12 @@ zabbixproxy:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: []
+  # -- additional volumeMounts to the zabbix proxy container
+  extraVolumeMounts: []
+  # -- additional containers to start within the zabbix proxy pod
+  extraContainers: []
+  # -- additional volumes to make available to the zabbix proxy pod
+  extraVolumes: []
 
 # **Zabbix Agent** configurations
 zabbixagent:
@@ -223,6 +241,8 @@ zabbixagent:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: []
+  # -- additional volumeMounts to the zabbix agent container
+  extraVolumeMounts: []
 
 # **Zabbix Web** configurations
 zabbixweb:
@@ -259,6 +279,12 @@ zabbixweb:
     #  value: '{"baseurl": "https://zabbix.example.com"}'
     #- name: ZBX_SERVER_NAME
     #  value: Demo Zabbix
+  # -- additional volumeMounts to the zabbix web container
+  extraVolumeMounts: []
+  # -- additional containers to start within the zabbix web pod
+  extraContainers: []
+  # -- additional volumes to make available to the zabbix web pod
+  extraVolumes: []
   livenessProbe:
     # -- Path of health check of application
     path: /
@@ -315,6 +341,12 @@ zabbixwebservice:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml
   extraEnv: []
+  # -- additional volumeMounts to the zabbix webservice container
+  extraVolumeMounts: []
+  # -- additional containers to start within the zabbix webservice pod
+  extraContainers: []
+  # -- additional volumes to make available to the zabbix webservice pod
+  extraVolumes: []
 
 # Ingress configurations
 ingress:

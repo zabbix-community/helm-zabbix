@@ -99,6 +99,10 @@ spec:
             - name: ZBX_STARTREPORTWRITERS
               value: {{ .Values.zabbixwebservice.replicaCount|quote }}
             {{- end }}
+          {{- with .Values.zabbixserver.extraVolumeMounts }}
+          volumeMounts:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
         {{- if .Values.zabbixagent.enabled }}
         - name: zabbix-agent
           resources:
@@ -136,6 +140,13 @@ spec:
             - name: zabbix-agent
               containerPort: 10050
               protocol: TCP
+          {{- with .Values.zabbixagent.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
+        {{- with .Values.zabbixserver.extraContainers }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixserver.image.pullSecrets }}
@@ -144,10 +155,13 @@ spec:
       {{- range .Values.zabbixagent.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
-      {{- if gt (.Values.zabbixserver.replicaCount | int) 1 }}
       volumes:
+      {{- if gt (.Values.zabbixserver.replicaCount | int) 1 }}
         - name: init-waitschema-script
           configMap:
             name: {{ template "zabbix.fullname" . }}-waitdbschema-script
+      {{- end }}
+      {{- with .Values.zabbixserver.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}

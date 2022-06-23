@@ -259,7 +259,9 @@ The following tables lists the configurable parameters of the chart and their de
 | ingressroute.hostName | string | `"chart-example.local"` | Ingressroute host name |
 | nodeSelector | object | `{}` | nodeSelector configurations |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
+| postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
+| postgresql.extraVolumes | list | `[]` | additional volumes to make available to the postgresql pod |
 | postgresql.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | postgresql.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
@@ -302,7 +304,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
+| zabbixproxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
 | zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixproxy.extraVolumes | list | `[]` | additional volumes to make available to the zabbix proxy pod |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
@@ -313,7 +317,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
+| zabbixserver.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
 | zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixserver.extraVolumes | list | `[]` | additional volumes to make available to the zabbix server pod |
 | zabbixserver.ha_nodes_autoclean | object | `{"delete_older_than_seconds":3600,"enabled":true,"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
 | zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
 | zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
@@ -329,7 +335,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
+| zabbixweb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
 | zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixweb.extraVolumes | list | `[]` | additional volumes to make available to the zabbix web pod |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixweb.image.repository | string | `"zabbix/zabbix-web-nginx-pgsql"` | Zabbix web Docker image name |
@@ -354,7 +362,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.service.port | int | `80` | Port to expose service |
 | zabbixweb.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
 | zabbixwebservice.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
+| zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
 | zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixwebservice.extraVolumes | list | `[]` | additional volumes to make available to the zabbix webservice pod |
 | zabbixwebservice.image.pullPolicy | string | `"IfNotPresent"` | Tag of Docker image of Zabbix web |
 | zabbixwebservice.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixwebservice.image.repository | string | `"zabbix/zabbix-web-service"` | Zabbix web Docker image name |

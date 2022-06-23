@@ -74,22 +74,31 @@ spec:
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
             {{- end }}
-          {{- if .Values.postgresql.persistence.enabled }}
           volumeMounts:
+          {{- if .Values.postgresql.persistence.enabled }}
             - name: postgresql-data
               mountPath: /var/lib/postgresql/data
+          {{- end }}
+          {{- with .Values.postgresql.extraVolumeMounts }}
+          {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
             - name: db
               containerPort: 5432
               protocol: TCP
+      {{- with .Values.postgresql.extraContainers }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
       {{- if .Values.postgresql.persistence.enabled }}
       {{- if .Values.postgresql.persistence.existing_claim_name }}
-      volumes:
         - name: postgresql-data
           persistentVolumeClaim:
             claimName: {{ .Values.postgresql.persistence.existing_claim_name }}
       {{- end }}
+      {{- end }}
+      {{- with .Values.postgresql.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
       imagePullSecrets:
       {{- range .Values.postgresql.image.pullSecrets }}

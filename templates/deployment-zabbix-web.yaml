@@ -63,10 +63,13 @@ spec:
           - name: zabbix-web
             containerPort: 8080
             protocol: TCP
-        {{- if .Values.zabbixweb.saml_certs_secret_name }}
         volumeMounts:
+        {{- if .Values.zabbixweb.saml_certs_secret_name }}
           - name: zabbix-web-samlcerts
             mountPath: /etc/zabbix/web/certs
+        {{- end }}
+        {{- with .Values.zabbixweb.extraVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         livenessProbe:
           httpGet:
@@ -86,14 +89,20 @@ spec:
           timeoutSeconds: {{ .Values.zabbixweb.readinessProbe.timeoutSeconds }}
           successThreshold: {{ .Values.zabbixweb.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.zabbixweb.readinessProbe.failureThreshold }}
+      {{- with .Values.zabbixweb.extraContainers }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixweb.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
-      {{- if .Values.zabbixweb.saml_certs_secret_name }}
       volumes:
+      {{- if .Values.zabbixweb.saml_certs_secret_name }}
         - name: zabbix-web-samlcerts
           secret:
             secretName: {{ .Values.zabbixweb.saml_certs_secret_name }}
+      {{- end }}
+      {{- with .Values.zabbixweb.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
