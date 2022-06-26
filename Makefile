@@ -23,14 +23,6 @@ lint:
 package:
 	CMD="package . -d packages" $(MAKE) helm
 
-# Create index file (use only for initial setup)
-index:
-	CMD="repo index --url ${URL} ." $(MAKE) helm
-
-# Update index file add new version of package into it
-merge:
-	CMD="repo index --url ${URL} --merge index.yaml ." $(MAKE) helm
-
 gen-docs:
 	docker run --rm --name helm-docs  \
 		--user $(shell id -u):$(shell id -g) \
