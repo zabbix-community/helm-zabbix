@@ -12,6 +12,15 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 > **This helm chart is still under development**
 
+> **Break change 3.0.0**
+* This version removes the possibility to specify database username/password per
+  subsection in favor of specifying all of them centrally at one place.
+* Also, the names of the values have changed from upper to lowercase.
+* It is now possible to start the Zabbix Server pods with replicas of more than 1.
+  HA functionality of Zabbix will automatically be enabled and it is made sure that 
+  the database schema publication will only happen once, and not by all of the Zabbix
+  server pods at the same time.
+
 > **Break change 2.0.0**
 * The version 2.0.0 has a break change.
 * Will be used Postgresql 14.x and Zabbix 6.0.4.
@@ -41,7 +50,7 @@ possible is possible, while still obtaining a good level of security.
 - Kubernetes cluster 1.10+
 - Helm 3.0+
 - Kubectl
-- PV provisioner support in the underlying infrastructure.
+- PV provisioner support in the underlying infrastructure (optional).
 
 Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
 
@@ -51,7 +60,8 @@ Install requirement ``kubectl`` and ``helm`` following the instructions this [tu
 
 **Zabbix server** is the central process of Zabbix software.
 
-The server performs the polling and trapping of data, it calculates triggers, sends notifications to users. It is the central component to which Zabbix agents and proxies report data on availability and integrity of systems. The server can itself remotely check networked services (such as web servers and mail servers) using simple service checks.
+The server performs the polling and trapping of data, it calculates triggers, sends notifications to users. It is the central component to which Zabbix agents and proxies report data on availability and integrity of systems. The server can itself remotely check networked services (such as web servers and mail servers) using simple service checks. Zabbix Server can be operated in a High Availability mode since version 6.0 which is automatically enabled by this Helm chart when setting the Zabbix server component to run more than 1 replica. In this HA mode, all Zabbix server instances periodically send a heartbeat to the Database server (just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case the active node does not send a heartbeat within a certain time, any of the remaining ones automatically take over. It is everytime possible to join new nodes to the HA cluster by just raising the amount of replicas of the Zabbix server.
+
 
 ## Zabbix Agent
 
@@ -73,15 +83,59 @@ The server performs the polling and trapping of data, it calculates triggers, se
 
 A database is required for zabbix to work, in this helm chart we're using Postgresql 14.x.
 
-> To use a different database make sure you use the right docker image, the docker image we're using here is for postgresql only.
+> We use plain postgresql database by default WITHOUT persistence. If you want persistence or would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
+
 
 ## Configure the chart
 
 The items of section [Configuration](#Configuration) can be set via ``--set`` flag during installation or change the values according to the need of the environment in ``helm-zabbix/values.yaml`` file.
 
+### Configure central database access related settings
+
+All settings referring to how the different components that this Chart installs access the Zabbix Database (either an external, already existing database or one deployed within this Helm chart) are being configured centrally under the ``db_access`` section of the ``values.yaml`` file.
+
+By default, this Chart will deploy it's own very simple PostgreSQL database. All settings relevant to how to access this database will be held in one central unified secret with the name configured with the ``db_access.unified_secret_name`` setting.
+
+Instead of letting the Chart automatically generate such a secret with a random password (which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself. Use ``db_access.unified_secret_autocreate=false`` in such a case and read the comments in ``values.yaml`` for how the values inside the secret should be set.
+
+If you want to connect your Zabbix installation to a Postgres database deployed using the [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/), you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it, by just referring to its name with the ``db_access.unified_secret_name`` setting to it.
+
+There is also the possibility to set all DB relevant settings directly inside the ``db_access`` section of the ``values.yaml`` file by using the settings noted there (``db_server_host``, ``postgres_user``, etc). If doing so, you still can use one single secret to told just and only the database password. If you want to do so, supply the ``db_access.postgres_password_secret`` and ``db_access.postgres_password_secret_key`` settings, accordingly.
+
+## Configure Postgresql database to match with your performance expectations
+
+While the default database configuration shipped with this Chart is fine for most (very small, for testing only) Zabbix installations, you will want to set some specific settings to better match your setup. First of all, you should consider enabling Postgresql database persistence (``postgresql.persistence.enabled``), as otherwise all your changes and historical data will be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune Postgresql by supplying extra postgresql runtime parameters using the ``postgresql.extraRuntimeParameters`` dictionary:
+
+```yaml
+postgresql:
+  enabled: true
+  persistence:
+    enabled: true
+    storage_size: 50Gi
+  extraRuntimeParameters:
+    max_connections: 250
+    dynamic_shared_memory_type: posix
+    shared_buffers: 4GB
+    temp_buffers: 16MB
+    work_mem: 128MB
+    maintenance_work_mem: 256MB
+    effective_cache_size: 6GB
+    min_wal_size: 80MB
+```
+
+Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring to this config file with the ``postgresql.extraRuntimeParameters`` set to:
+
+```yaml
+postgresql:
+  extraRuntimeParameters:
+    config.file: /path/to/your/config.file
+```
+
 ### Configure the way how to expose Zabbix service:
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
+- **IngressRoute**: The custom resource definition if you use the [Traefik](https://traefik.io/traefik/) ingress controller.
+- **Route**: The ingress controller used by Red Hat Openshift, based on HAProxy
 - **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
 - **NodePort**: Exposes the service on each Node’s IP at a static port (the NodePort). You’ll be able to contact the NodePort service, from outside the cluster, by requesting ``NodeIP:NodePort``.
 - **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.

@@ -25,3 +25,9 @@
 
 .circleci/
 docs/
+
+# Makefile and other stuff
+Makefile
+CONTRIBUTING.md
+README.md.gotmpl
+packages/

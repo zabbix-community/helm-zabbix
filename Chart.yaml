@@ -1,8 +1,8 @@
 ---
 apiVersion: v2
 name: zabbix
-version: 2.0.1
-appVersion: 6.0.4
+version: 3.0.0
+appVersion: 6.0.5
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 keywords:
   - zabbix
@@ -10,7 +10,7 @@ keywords:
   - metrics
 home: https://www.zabbix.com/
 icon: https://assets.zabbix.com/img/logo/zabbix_logo_500x131.png
-source:
+sources:
   - https://github.com/cetic/helm-zabbix
 maintainers:
   - name: Aecio Pires
@@ -22,6 +22,9 @@ maintainers:
   - name: Amen Ayadi
     email: amen.ayadi@cetic.be
     url: https://github.com/AyadiAmen
+  - name: Christian Anton
+    email: christian.anton@secadm.de
+    url: https://secadm.de
   - name: Sebastien Dupont
     email: sebastien.dupont@cetic.be
     url: https://github.com/banzo

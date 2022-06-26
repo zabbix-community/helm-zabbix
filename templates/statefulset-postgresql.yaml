@@ -65,66 +65,46 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
-          args: ["-c", "max_connections={{ .Values.postgresql.max_connections }}"]
-          env:
-            {{- if .Values.db_access.secret_name }}
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
-                  key: user
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
-                  key: password
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.db_access.secret_name }}
-                  key: dbname
-            {{- else }}
-            - name: POSTGRES_USER
-              {{- if .Values.db_access.POSTGRES_USER }}
-              value: {{ .Values.db_access.POSTGRES_USER | quote }}
-              {{- else }}
-              value: {{ .Values.postgresql.POSTGRES_USER | quote }}
-              {{- end }}
-            - name: POSTGRES_PASSWORD
-              {{- if .Values.db_access.POSTGRES_PASSWORD }}
-              value: {{ .Values.db_access.POSTGRES_PASSWORD | quote }}
-              {{- else }}
-              value: {{ .Values.postgresql.POSTGRES_PASSWORD | quote }}
-              {{- end }}
-            - name: POSTGRES_DB
-              {{- if .Values.db_access.POSTGRES_DB }}
-              value: {{ .Values.db_access.POSTGRES_DB | quote }}
-              {{- else }}
-              value: {{ .Values.postgresql.POSTGRES_DB | quote }}
-              {{- end }}
+          {{- with .Values.postgresql.extraRuntimeParameters }}
+          args:
+            {{- range $key, $value := . }}
+            - "-c"
+            - "{{ $key }}={{ $value }}"
             {{- end }}
+          {{- end }}
+          env:
+            {{- include "zabbix.db_access.env_vars" (list $ . "database") | nindent 12 }}
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
             {{- range $item := .Values.zabbixproxy.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
             {{- end }}
-          {{- if .Values.postgresql.persistence.enabled }}
           volumeMounts:
+          {{- if .Values.postgresql.persistence.enabled }}
             - name: postgresql-data
               mountPath: /var/lib/postgresql/data
+          {{- end }}
+          {{- with .Values.postgresql.extraVolumeMounts }}
+          {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
             - name: db
               containerPort: 5432
               protocol: TCP
+      {{- with .Values.postgresql.extraContainers }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
       {{- if .Values.postgresql.persistence.enabled }}
       {{- if .Values.postgresql.persistence.existing_claim_name }}
-      volumes:
         - name: postgresql-data
           persistentVolumeClaim:
             claimName: {{ .Values.postgresql.persistence.existing_claim_name }}
       {{- end }}
+      {{- end }}
+      {{- with .Values.postgresql.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
       imagePullSecrets:
       {{- range .Values.postgresql.image.pullSecrets }}

@@ -1,0 +1,32 @@
+{{- if .Values.route.enabled }}
+{{- $fullName := include "zabbix.fullname" . -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "zabbix.labels" . | nindent 4 }}
+  {{- with .Values.route.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.route.hostName }}
+  host: {{ .Values.route.hostName }}
+  {{- end }}
+  port:
+    targetPort: zabbix-web
+  {{- with .Values.route.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  to:
+    kind: Service
+    name: {{ template "zabbix.fullname" . }}-zabbix-web
+    weight: 100
+  {{- if .Values.route.wildcardPolicy }}
+  wildcardPolicy: {{ .Values.route.wildcardPolicy }}
+  {{- else }}
+  wildcardPolicy: None
+  {{- end }}
+{{- end }}

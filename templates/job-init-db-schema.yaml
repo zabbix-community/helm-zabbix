@@ -1,0 +1,25 @@
+{{- if gt (.Values.zabbixserver.replicaCount | int) 1 }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "zabbix.fullname" . }}-init-db-schema
+  labels:
+    app: {{ template "zabbix.fullname" . }}-init-db-schema
+    app.kubernetes.io/name: init-db-schema
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-init-db-schema
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-init-db-schema
+spec:
+  template:
+    spec:
+      containers:
+      - name: init-db-schema
+        image: {{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}
+        env:
+          {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 10 }}
+        command:
+          - "/bin/sh"
+          - "-c"
+          - 'sed -e "s/^exec \"\$@\"$/prepare_server/" -e "/^ *update_zbx_config$/d" /usr/bin/docker-entrypoint.sh >~/docker-entrypoint.sh && bash ~/docker-entrypoint.sh'
+      restartPolicy: Never
+{{- end}}

@@ -28,13 +28,6 @@ cd ~/mygit/helm-zabbix
 
 Edit ``~/mygit/helm-zabbix/docs/example/kind/values.yaml`` file.
 
-Download the dependences charts.
-
-```bash
-helm repo add cetic https://cetic.github.io/helm-charts
-helm repo update
-```
-
 Test the installation/upgrade with command (update the YAML files paths if necessary):
 
 ```bash
