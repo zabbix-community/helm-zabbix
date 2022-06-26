@@ -325,7 +325,7 @@ zabbixwebservice:
   image:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-service
-    # -- Tag of Docker image of Zabbix web
+    # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []

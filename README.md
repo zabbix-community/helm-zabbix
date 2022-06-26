@@ -400,7 +400,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixwebservice.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix webservice container |
 | zabbixwebservice.extraVolumes | list | `[]` | additional volumes to make available to the zabbix webservice pod |
-| zabbixwebservice.image.pullPolicy | string | `"IfNotPresent"` | Tag of Docker image of Zabbix web |
+| zabbixwebservice.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixwebservice.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixwebservice.image.repository | string | `"zabbix/zabbix-web-service"` | Zabbix web Docker image name |
 | zabbixwebservice.pod_anti_affinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
