@@ -65,7 +65,13 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
-          args: ["-c", "max_connections={{ .Values.postgresql.max_connections }}"]
+          {{- with .Values.postgresql.extraRuntimeParameters }}
+          args:
+            {{- range $key, $value := . }}
+            - "-c"
+            - "{{ $key }}={{ $value }}"
+            {{- end }}
+          {{- end }}
           env:
             {{- include "zabbix.db_access.env_vars" (list $ . "database") | nindent 12 }}
             - name: PGDATA

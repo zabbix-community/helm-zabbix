@@ -102,6 +102,35 @@ If you want to connect your Zabbix installation to a Postgres database deployed 
 
 There is also the possibility to set all DB relevant settings directly inside the ``db_access`` section of the ``values.yaml`` file by using the settings noted there (``db_server_host``, ``postgres_user``, etc). If doing so, you still can use one single secret to told just and only the database password. If you want to do so, supply the ``db_access.postgres_password_secret`` and ``db_access.postgres_password_secret_key`` settings, accordingly.
 
+## Configure Postgresql database to match with your performance expectations
+
+While the default database configuration shipped with this Chart is fine for most (very small, for testing only) Zabbix installations, you will want to set some specific settings to better match your setup. First of all, you should consider enabling Postgresql database persistence (``postgresql.persistence.enabled``), as otherwise all your changes and historical data will be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune Postgresql by supplying extra postgresql runtime parameters using the ``postgresql.extraRuntimeParameters`` dictionary:
+
+```yaml
+postgresql:
+  enabled: true
+  persistence:
+    enabled: true
+    storage_size: 50Gi
+  extraRuntimeParameters:
+    max_connections: 250
+    dynamic_shared_memory_type: posix
+    shared_buffers: 4GB
+    temp_buffers: 16MB
+    work_mem: 128MB
+    maintenance_work_mem: 256MB
+    effective_cache_size: 6GB
+    min_wal_size: 80MB
+```
+
+Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring to this config file with the ``postgresql.extraRuntimeParameters`` set to:
+
+```yaml
+postgresql:
+  extraRuntimeParameters:
+    config.file: /path/to/your/config.file
+```
+
 ### Configure the way how to expose Zabbix service:
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.

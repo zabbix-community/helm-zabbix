@@ -113,7 +113,6 @@ postgresql:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  max_connections: 50
   persistence:
     # -- whether to enable persistent storage for the postgres container or not
     enabled: false
@@ -133,6 +132,9 @@ postgresql:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
+  # -- Extra Postgresql runtime parameters ("-c" options)
+  extraRuntimeParameters:
+    max_connections: 50
   # -- Extra environment variables. A list of additional environment variables.
   extraEnv: []
   # -- additional volumeMounts to the postgresql container

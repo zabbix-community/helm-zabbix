@@ -100,6 +100,35 @@ If you want to connect your Zabbix installation to a Postgres database deployed 
 
 There is also the possibility to set all DB relevant settings directly inside the ``db_access`` section of the ``values.yaml`` file by using the settings noted there (``db_server_host``, ``postgres_user``, etc). If doing so, you still can use one single secret to told just and only the database password. If you want to do so, supply the ``db_access.postgres_password_secret`` and ``db_access.postgres_password_secret_key`` settings, accordingly.
 
+## Configure Postgresql database to match with your performance expectations
+
+While the default database configuration shipped with this Chart is fine for most (very small, for testing only) Zabbix installations, you will want to set some specific settings to better match your setup. First of all, you should consider enabling Postgresql database persistence (``postgresql.persistence.enabled``), as otherwise all your changes and historical data will be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune Postgresql by supplying extra postgresql runtime parameters using the ``postgresql.extraRuntimeParameters`` dictionary:
+
+```yaml
+postgresql:
+  enabled: true
+  persistence:
+    enabled: true
+    storage_size: 50Gi
+  extraRuntimeParameters:
+    max_connections: 250
+    dynamic_shared_memory_type: posix
+    shared_buffers: 4GB
+    temp_buffers: 16MB
+    work_mem: 128MB
+    maintenance_work_mem: 256MB
+    effective_cache_size: 6GB
+    min_wal_size: 80MB
+```
+
+Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring to this config file with the ``postgresql.extraRuntimeParameters`` set to:
+
+```yaml
+postgresql:
+  extraRuntimeParameters:
+    config.file: /path/to/your/config.file
+```
+
 ### Configure the way how to expose Zabbix service:
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
@@ -261,12 +290,13 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
+| postgresql.extraRuntimeParameters | object | `{"max_connections":50}` | Extra Postgresql runtime parameters ("-c" options) |
+| postgresql.extraVolumeMounts | list | `[]` | additional volumeMounts to the postgresql container |
 | postgresql.extraVolumes | list | `[]` | additional volumes to make available to the postgresql pod |
 | postgresql.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | postgresql.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
 | postgresql.image.tag | int | `14` | Tag of Docker image of Postgresql server, chose "14" for postgres or "latest-pg14" for timescaledb |
-| postgresql.max_connections | int | `50` |  |
 | postgresql.persistence.enabled | bool | `false` | whether to enable persistent storage for the postgres container or not |
 | postgresql.persistence.existing_claim_name | bool | `false` | existing persistent volume claim name to be used to store posgres data |
 | postgresql.persistence.storage_size | string | `"5Gi"` | size of the PVC to be automatically generated |
@@ -289,6 +319,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixagent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
 | zabbixagent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixagent.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix agent container |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent2"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
@@ -306,6 +337,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixproxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
 | zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixproxy.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix proxy container |
 | zabbixproxy.extraVolumes | list | `[]` | additional volumes to make available to the zabbix proxy pod |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
@@ -319,6 +351,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixserver.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
 | zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixserver.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix server container |
 | zabbixserver.extraVolumes | list | `[]` | additional volumes to make available to the zabbix server pod |
 | zabbixserver.ha_nodes_autoclean | object | `{"delete_older_than_seconds":3600,"enabled":true,"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
 | zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
@@ -337,6 +370,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
 | zabbixweb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
 | zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixweb.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix web container |
 | zabbixweb.extraVolumes | list | `[]` | additional volumes to make available to the zabbix web pod |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
@@ -364,6 +398,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixwebservice.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
 | zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixwebservice.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix webservice container |
 | zabbixwebservice.extraVolumes | list | `[]` | additional volumes to make available to the zabbix webservice pod |
 | zabbixwebservice.image.pullPolicy | string | `"IfNotPresent"` | Tag of Docker image of Zabbix web |
 | zabbixwebservice.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
