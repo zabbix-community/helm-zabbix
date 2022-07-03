@@ -1,6 +1,6 @@
 # Custom values for zabbix.
 
-zabbix_image_tag: alpine-6.0.5
+zabbix_image_tag: alpine-6.0.6
 
 db_access:
   # central place for all database related parameters (db name, host, user, password) in one secret
