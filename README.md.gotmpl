@@ -10,9 +10,8 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 ### Important notes
 
-> **This helm chart is still under development**
-
 > **Break change 3.0.0**
+* Will be used Postgresql 14.x and Zabbix 6.x.
 * This version removes the possibility to specify database username/password per
   subsection in favor of specifying all of them centrally at one place.
 * Also, the names of the values have changed from upper to lowercase.
@@ -20,10 +19,10 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
   HA functionality of Zabbix will automatically be enabled and it is made sure that 
   the database schema publication will only happen once, and not by all of the Zabbix
   server pods at the same time.
+* More info: https://github.com/cetic/helm-zabbix/pull/54
 
 > **Break change 2.0.0**
-* The version 2.0.0 has a break change.
-* Will be used Postgresql 14.x and Zabbix 6.0.4.
+* Will be used Postgresql 14.x and Zabbix 6.x.
 * This version implements a central way of managing database access credentials 
 using a secret, which then will be respected by all the components
 installed by this chart: zabbixserver, zabbixweb and postgresql.
@@ -40,8 +39,7 @@ possible is possible, while still obtaining a good level of security.
 * More info: https://github.com/cetic/helm-zabbix/pull/53
 
 > **Break change 1.0.0**
-* The version 1.0.0 has a break change.
-* Will be used Postgresql 14.x and Zabbix 6.0.0.
+* Will be used Postgresql 14.x and Zabbix 6.x.
 * The installation of any component of chart is optional for easy integration with the official chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
 * More info: https://github.com/cetic/helm-zabbix/issues/42
 

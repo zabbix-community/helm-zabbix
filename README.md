@@ -10,9 +10,8 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 ### Important notes
 
-> **This helm chart is still under development**
-
 > **Break change 3.0.0**
+* Will be used Postgresql 14.x and Zabbix 6.x.
 * This version removes the possibility to specify database username/password per
   subsection in favor of specifying all of them centrally at one place.
 * Also, the names of the values have changed from upper to lowercase.
@@ -20,10 +19,10 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
   HA functionality of Zabbix will automatically be enabled and it is made sure that
   the database schema publication will only happen once, and not by all of the Zabbix
   server pods at the same time.
+* More info: https://github.com/cetic/helm-zabbix/pull/54
 
 > **Break change 2.0.0**
-* The version 2.0.0 has a break change.
-* Will be used Postgresql 14.x and Zabbix 6.0.4.
+* Will be used Postgresql 14.x and Zabbix 6.x.
 * This version implements a central way of managing database access credentials
 using a secret, which then will be respected by all the components
 installed by this chart: zabbixserver, zabbixweb and postgresql.
@@ -40,8 +39,7 @@ possible is possible, while still obtaining a good level of security.
 * More info: https://github.com/cetic/helm-zabbix/pull/53
 
 > **Break change 1.0.0**
-* The version 1.0.0 has a break change.
-* Will be used Postgresql 14.x and Zabbix 6.0.0.
+* Will be used Postgresql 14.x and Zabbix 6.x.
 * The installation of any component of chart is optional for easy integration with the official chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
 * More info: https://github.com/cetic/helm-zabbix/issues/42
 
@@ -309,7 +307,7 @@ The following tables lists the configurable parameters of the chart and their de
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
 | route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbix_image_tag | string | `"ubuntu-6.0.5"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
+| zabbix_image_tag | string | `"ubuntu-6.0.6"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixagent.ZBX_PASSIVESERVERS | string | `"127.0.0.1"` | The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. |
@@ -324,7 +322,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixagent.image.repository | string | `"zabbix/zabbix-agent2"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
 | zabbixagent.image.tag | string | `nil` | Zabbix agent Docker image tag, if you want to override zabbix_image_tag |
-| zabbixagent.resources | object | `{}` |  |
+| zabbixagent.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixagent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
 | zabbixagent.service.clusterIP | string | `nil` | Cluster IP for Zabbix agent |
 | zabbixagent.service.port | int | `10050` | Port to expose service |
@@ -345,7 +343,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
 | zabbixproxy.image.tag | string | `nil` | Zabbix proxy Docker image tag, if you want to override zabbix_image_tag |
 | zabbixproxy.replicaCount | int | `1` | Number of replicas of ``zabbixproxy`` module |
-| zabbixproxy.resources | object | `{}` |  |
+| zabbixproxy.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixproxy.service.annotations | object | `{}` | Annotations for the zabbix-proxy service |
 | zabbixproxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
@@ -364,7 +362,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.image.tag | string | `nil` | Zabbix server Docker image tag, if you want to override zabbix_image_tag |
 | zabbixserver.pod_anti_affinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
-| zabbixserver.resources | object | `{}` |  |
+| zabbixserver.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixserver.service.annotations | object | `{}` | Annotations for the zabbix-server service |
 | zabbixserver.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | zabbixserver.service.nodePort | int | `31051` | NodePort of service on each node |
@@ -392,8 +390,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.readinessProbe.periodSeconds | int | `10` | Specifies that the kubelet should perform a readiness probe every N seconds |
 | zabbixweb.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
 | zabbixweb.readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
-| zabbixweb.replicaCount | int | `1` |  |
-| zabbixweb.resources | object | `{}` |  |
+| zabbixweb.replicaCount | int | `1` | Number of replicas of ``zabbixweb`` module |
+| zabbixweb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixweb.service | object | `{"annotations":{},"clusterIP":null,"port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration saml_certs_secret_name: zabbix-web-samlcerts |
 | zabbixweb.service.annotations | object | `{}` | Annotations for the zabbix-web service |
 | zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
@@ -409,8 +407,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixwebservice.image.repository | string | `"zabbix/zabbix-web-service"` | Zabbix webservice Docker image name |
 | zabbixwebservice.image.tag | string | `nil` | Zabbix webservice Docker image tag, if you want to override zabbix_image_tag |
 | zabbixwebservice.pod_anti_affinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
-| zabbixwebservice.replicaCount | int | `1` |  |
-| zabbixwebservice.resources | object | `{}` |  |
+| zabbixwebservice.replicaCount | int | `1` | Number of replicas of ``zabbixwebservice`` module |
+| zabbixwebservice.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixwebservice.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | set the IgnoreURLCertErrors configuration setting of Zabbix web service ignore_url_cert_errors=1 |
 | zabbixwebservice.service.annotations | object | `{}` | Annotations for the zabbix-web service |
 | zabbixwebservice.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |

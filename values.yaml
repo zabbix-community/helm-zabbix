@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # -- zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc.
-zabbix_image_tag: ubuntu-6.0.5
+zabbix_image_tag: ubuntu-6.0.6
 
 # **Zabbix DB access / credentials** configurations
 # with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend
@@ -59,6 +59,7 @@ zabbixserver:
   hostPort: false
   # -- optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
+  # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
     # -- Zabbix server Docker image name
@@ -152,6 +153,7 @@ zabbixproxy:
   enabled: false
   # -- Number of replicas of ``zabbixproxy`` module
   replicaCount: 1
+  # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
     # -- Zabbix proxy Docker image name
@@ -204,6 +206,7 @@ zabbixproxy:
 zabbixagent:
   # -- Enables use of **Zabbix Agent**
   enabled: true
+  # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
@@ -256,9 +259,11 @@ zabbixagent:
 zabbixweb:
   # -- Enables use of **Zabbix Web**
   enabled: true
+  # -- Number of replicas of ``zabbixweb`` module
   replicaCount: 1
   # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
   pod_anti_affinity: true
+  # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
     # -- Zabbix web Docker image name
@@ -326,9 +331,11 @@ zabbixweb:
 zabbixwebservice:
   # -- Enables use of **Zabbix Web Service**
   enabled: true
+  # -- Number of replicas of ``zabbixwebservice`` module
   replicaCount: 1
   # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
   pod_anti_affinity: true
+  # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
     # -- Zabbix webservice Docker image name
