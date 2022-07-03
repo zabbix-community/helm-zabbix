@@ -51,7 +51,11 @@ spec:
           {{- toYaml .Values.zabbixwebservice.resources | nindent 10 }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
+        {{- if .Values.zabbixwebservice.image.tag }}
+        image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbixwebservice.image.tag }}"
+        {{- else }}
         image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbix_image_tag }}"
+        {{- end }}
         imagePullPolicy: {{ .Values.zabbixwebservice.image.pullPolicy }}
         env:
           {{- if .Values.zabbixwebservice.ignore_url_cert_errors }}

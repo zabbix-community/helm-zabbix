@@ -63,6 +63,8 @@ zabbixserver:
   image:
     # -- Zabbix server Docker image name
     repository: zabbix/zabbix-server-pgsql
+    # -- Zabbix server Docker image tag, if you want to override zabbix_image_tag
+    tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -154,6 +156,8 @@ zabbixproxy:
   image:
     # -- Zabbix proxy Docker image name
     repository: zabbix/zabbix-proxy-sqlite3
+    # -- Zabbix proxy Docker image tag, if you want to override zabbix_image_tag
+    tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -204,6 +208,8 @@ zabbixagent:
   image:
     # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent2
+    # -- Zabbix agent Docker image tag, if you want to override zabbix_image_tag
+    tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -257,6 +263,8 @@ zabbixweb:
   image:
     # -- Zabbix web Docker image name
     repository: zabbix/zabbix-web-nginx-pgsql
+    # -- Zabbix web Docker image tag, if you want to override zabbix_image_tag
+    tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -323,8 +331,10 @@ zabbixwebservice:
   pod_anti_affinity: true
   resources: {}
   image:
-    # -- Zabbix web Docker image name
+    # -- Zabbix webservice Docker image name
     repository: zabbix/zabbix-web-service
+    # -- Zabbix webservice Docker image tag, if you want to override zabbix_image_tag
+    tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
