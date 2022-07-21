@@ -45,6 +45,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
         app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
     spec:
+      {{- with .Values.postgresql.extraPodSpecs }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

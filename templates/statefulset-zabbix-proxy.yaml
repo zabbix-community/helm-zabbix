@@ -25,6 +25,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
     spec:
+      {{- with .Values.zabbixproxy.extraPodSpecs }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

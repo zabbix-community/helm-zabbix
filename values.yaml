@@ -104,6 +104,8 @@ zabbixserver:
   extraInitContainers: []
   # -- additional volumes to make available to the zabbix server pod
   extraVolumes: []
+  # -- additional specifications to the zabbix server pod
+  extraPodSpecs: {}
 
 # **PostgreSQL** configurations
 postgresql:
@@ -150,6 +152,8 @@ postgresql:
   extraInitContainers: []
   # -- additional volumes to make available to the postgresql pod
   extraVolumes: []
+  # -- additional specifications to the postgresql pod
+  extraPodSpecs: {}
 
 # **Zabbix Proxy** configurations
 zabbixproxy:
@@ -207,6 +211,8 @@ zabbixproxy:
   extraInitContainers: []
   # -- additional volumes to make available to the zabbix proxy pod
   extraVolumes: []
+  # -- additional specifications to the zabbix proxy pod
+  extraPodSpecs: {}
 
 # **Zabbix Agent** configurations
 zabbixagent:
@@ -308,6 +314,8 @@ zabbixweb:
   extraInitContainers: []
   # -- additional volumes to make available to the zabbix web pod
   extraVolumes: []
+  # -- additional specifications to the zabbix web pod
+  extraPodSpecs: {}
   livenessProbe:
     # -- Path of health check of application
     path: /
@@ -376,6 +384,8 @@ zabbixwebservice:
   extraInitContainers: []
   # -- additional volumes to make available to the zabbix webservice pod
   extraVolumes: []
+  # -- additional specifications to the zabbix webservice pod
+  extraPodSpecs: {}
 
 # Ingress configurations
 ingress:

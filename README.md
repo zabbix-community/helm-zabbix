@@ -349,6 +349,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | postgresql.extraInitContainers | list | `[]` | additional init containers to start within the postgresql pod |
+| postgresql.extraPodSpecs | object | `{}` | additional specifications to the postgresql pod |
 | postgresql.extraRuntimeParameters | object | `{"max_connections":50}` | Extra Postgresql runtime parameters ("-c" options) |
 | postgresql.extraVolumeMounts | list | `[]` | additional volumeMounts to the postgresql container |
 | postgresql.extraVolumes | list | `[]` | additional volumes to make available to the postgresql pod |
@@ -398,6 +399,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
 | zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixproxy.extraInitContainers | list | `[]` | additional init containers to start within the zabbix proxy pod |
+| zabbixproxy.extraPodSpecs | object | `{}` | additional specifications to the zabbix proxy pod |
 | zabbixproxy.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix proxy container |
 | zabbixproxy.extraVolumes | list | `[]` | additional volumes to make available to the zabbix proxy pod |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -414,6 +416,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
 | zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixserver.extraInitContainers | list | `[]` | additional init containers to start within the zabbix server pod |
+| zabbixserver.extraPodSpecs | object | `{}` | additional specifications to the zabbix server pod |
 | zabbixserver.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix server container |
 | zabbixserver.extraVolumes | list | `[]` | additional volumes to make available to the zabbix server pod |
 | zabbixserver.ha_nodes_autoclean | object | `{"delete_older_than_seconds":3600,"enabled":true,"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
@@ -435,6 +438,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
 | zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixweb.extraInitContainers | list | `[]` | additional init containers to start within the zabbix web pod |
+| zabbixweb.extraPodSpecs | object | `{}` | additional specifications to the zabbix web pod |
 | zabbixweb.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix web container |
 | zabbixweb.extraVolumes | list | `[]` | additional volumes to make available to the zabbix web pod |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -465,6 +469,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
 | zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
 | zabbixwebservice.extraInitContainers | list | `[]` | additional init containers to start within the zabbix webservice pod |
+| zabbixwebservice.extraPodSpecs | object | `{}` | additional specifications to the zabbix webservice pod |
 | zabbixwebservice.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix webservice container |
 | zabbixwebservice.extraVolumes | list | `[]` | additional volumes to make available to the zabbix webservice pod |
 | zabbixwebservice.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |

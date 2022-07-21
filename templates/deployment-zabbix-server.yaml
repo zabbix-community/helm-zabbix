@@ -24,6 +24,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
     spec:
+      {{- with .Values.zabbixserver.extraPodSpecs }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
