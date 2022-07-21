@@ -79,6 +79,9 @@ spec:
       {{- with .Values.zabbixwebservice.extraContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
+      {{- with .Values.zabbixwebservice.extraInitContainers }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixweb.image.pullSecrets }}
         - name: {{ . | quote }}

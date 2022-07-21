@@ -129,6 +129,9 @@ spec:
         {{- with .Values.zabbixproxy.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- with .Values.zabbixproxy.extraInitContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixagent.image.pullSecrets }}
         - name: {{ . | quote }}

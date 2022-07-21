@@ -95,6 +95,9 @@ spec:
       {{- with .Values.postgresql.extraContainers }}
       {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.postgresql.extraInitContainers }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
       {{- if .Values.postgresql.persistence.enabled }}
       {{- if .Values.postgresql.persistence.existing_claim_name }}
