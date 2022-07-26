@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # -- zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc.
-zabbix_image_tag: ubuntu-6.2.0
+zabbix_image_tag: ubuntu-6.0.7
 
 # **Zabbix DB access / credentials** configurations
 # with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend
