@@ -2,8 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# -- zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc.
-zabbix_image_tag: ubuntu-6.2.0
+# -- Zabbix components (server, agent, web frontend, ...) image tag to use.
+#This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
+#But by default this helm chart will install the latest LTS version (example: 6.0.x).
+#See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
+#When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version
+#here or overwrite in each component (example: zabbixserver.image.tag, etc).
+zabbix_image_tag: ubuntu-6.0.7
 
 # **Zabbix DB access / credentials** configurations
 # with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend

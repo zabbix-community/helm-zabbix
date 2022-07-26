@@ -10,6 +10,12 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 ### Important notes
 
+> **About the Zabbix version supported**
+* This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. 
+* But by default this helm chart will install the latest LTS version (example: 6.0.x). 
+See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
+* When you want use a non-LTS version (example: 6.2.x), you have to set this in values.yaml yourself.
+
 > **Break change 3.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version removes the possibility to specify database username/password per

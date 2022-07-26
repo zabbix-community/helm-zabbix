@@ -26,6 +26,10 @@ spec:
       {{- with .Values.zabbixweb.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
+      {{- with .Values.zabbixweb.extraInitContainers }}
+      initContainers:
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -97,9 +101,6 @@ spec:
           successThreshold: {{ .Values.zabbixweb.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.zabbixweb.readinessProbe.failureThreshold }}
       {{- with .Values.zabbixweb.extraContainers }}
-      {{- toYaml . | nindent 6 }}
-      {{- end }}
-      {{- with .Values.zabbixweb.extraInitContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
       imagePullSecrets:
