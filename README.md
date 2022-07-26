@@ -12,9 +12,9 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 > **About the Zabbix version supported**
 * This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
-> But by default this helm chart will install the latest LTS version (example: 6.0.x).
+* But by default this helm chart will install the latest LTS version (example: 6.0.x).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-> When you want use a non-LTS version (example: 6.2.x), you have to set this in values.yaml yourself.
+* When you want use a non-LTS version (example: 6.2.x), you have to set this in values.yaml yourself.
 
 > **Break change 3.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
@@ -375,7 +375,7 @@ The following tables lists the configurable parameters of the chart and their de
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
 | route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbix_image_tag | string | `"ubuntu-6.0.7"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
+| zabbix_image_tag | string | `"ubuntu-6.0.7"` | zabbix components (server, agent, web frontend, ...) image tag to use.  This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.  But by default this helm chart will install the latest LTS version (example: 6.0.x).  See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixagent.ZBX_PASSIVESERVERS | string | `"127.0.0.1"` | The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. |
