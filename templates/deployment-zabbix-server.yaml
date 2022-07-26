@@ -53,9 +53,9 @@ spec:
       initContainers:
         - name: init-wait-for-database-schema
           {{- if .Values.zabbixserver.image.tag }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag | default .Chart.AppVersion}}"
           {{- else }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
           {{- end }}
           env:
             {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 12 }}
@@ -65,15 +65,23 @@ spec:
           volumeMounts:
             - name: init-waitschema-script
               mountPath: /script
+        {{- with .Values.zabbixserver.extraInitContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- else if eq (.Values.zabbixserver.replicaCount | int) 1 }}
+      initContainers:
+        {{- with .Values.zabbixserver.extraInitContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- end }}
       containers:
         - name: zabbix-server
           resources:
 {{- toYaml .Values.zabbixserver.resources | nindent 12 }}
           {{- if .Values.zabbixserver.image.tag }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag | default .Chart.AppVersion }}"
           {{- else }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
           {{- end }}
           ports:
             - containerPort: 10051
@@ -121,9 +129,9 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           {{- if .Values.zabbixagent.image.tag }}
-          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
+          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag | default .Chart.AppVersion }}"
           {{- else }}
-          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbix_image_tag }}"
+          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
           {{- end }}
           imagePullPolicy: {{ .Values.zabbixagent.image.pullPolicy }}
           env:
@@ -161,9 +169,6 @@ spec:
           {{- end }}
         {{- end }}
         {{- with .Values.zabbixserver.extraContainers }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- with .Values.zabbixserver.extraInitContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       imagePullSecrets:

@@ -15,9 +15,9 @@ spec:
       containers:
       - name: init-db-schema
         {{- if .Values.zabbixserver.image.tag }}
-        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
+        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag | default .Chart.AppVersion }}"
         {{- else }}
-        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
+        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
         {{- end }}
         env:
           {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 10 }}

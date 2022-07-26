@@ -26,6 +26,10 @@ spec:
       {{- with .Values.zabbixwebservice.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
+      {{- with .Values.zabbixwebservice.extraInitContainers }}
+      initContainers:
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -55,9 +59,9 @@ spec:
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
         {{- if .Values.zabbixwebservice.image.tag }}
-        image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbixwebservice.image.tag }}"
+        image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbixwebservice.image.tag | default .Chart.AppVersion }}"
         {{- else }}
-        image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbix_image_tag }}"
+        image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
         {{- end }}
         imagePullPolicy: {{ .Values.zabbixwebservice.image.pullPolicy }}
         env:
@@ -80,9 +84,6 @@ spec:
           {{ toYaml . | nindent 10 }}
         {{- end }}
       {{- with .Values.zabbixwebservice.extraContainers }}
-      {{- toYaml . | nindent 6 }}
-      {{- end }}
-      {{- with .Values.zabbixwebservice.extraInitContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
       imagePullSecrets:
