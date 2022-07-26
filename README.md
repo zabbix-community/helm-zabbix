@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 3.0.1](https://img.shields.io/badge/Version-3.0.1-informational?style=flat-square)
+[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) ![Version: 3.1.0](https://img.shields.io/badge/Version-3.1.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -40,7 +40,8 @@ possible is possible, while still obtaining a good level of security.
 
 > **Break change 1.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
-* The installation of any component of chart is optional for easy integration with the official chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
+* The installation of any component of chart is optional for easy integration with the official
+ chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
 * More info: https://github.com/cetic/helm-zabbix/issues/42
 
 # Prerequisites
@@ -50,7 +51,8 @@ possible is possible, while still obtaining a good level of security.
 - Kubectl
 - PV provisioner support in the underlying infrastructure (optional).
 
-Install requirement ``kubectl`` and ``helm`` following the instructions this [tutorial](docs/requirements.md).
+Install requirement ``kubectl`` and ``helm`` following the instructions this
+[tutorial](docs/requirements.md).
 
 # Zabbix components
 
@@ -58,49 +60,99 @@ Install requirement ``kubectl`` and ``helm`` following the instructions this [tu
 
 **Zabbix server** is the central process of Zabbix software.
 
-The server performs the polling and trapping of data, it calculates triggers, sends notifications to users. It is the central component to which Zabbix agents and proxies report data on availability and integrity of systems. The server can itself remotely check networked services (such as web servers and mail servers) using simple service checks. Zabbix Server can be operated in a High Availability mode since version 6.0 which is automatically enabled by this Helm chart when setting the Zabbix server component to run more than 1 replica. In this HA mode, all Zabbix server instances periodically send a heartbeat to the Database server (just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case the active node does not send a heartbeat within a certain time, any of the remaining ones automatically take over. It is everytime possible to join new nodes to the HA cluster by just raising the amount of replicas of the Zabbix server.
+The server performs the polling and trapping of data, it calculates triggers, sends notifications
+to users. It is the central component to which Zabbix agents and proxies report data on availability
+and integrity of systems. The server can itself remotely check networked services (such as web servers
+and mail servers) using simple service checks
+[Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/server).
+
+Zabbix Server can be operated in a High Availability mode since version 6.0 which is automatically
+enabled by this Helm chart when setting the Zabbix server component to run more than 1 replica.
+In this HA mode, all Zabbix server instances periodically send a heartbeat to the Database server
+(just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case
+the active node does not send a heartbeat within a certain time, any of the remaining ones
+automatically take over. It is everytime possible to join new nodes to the HA cluster by just
+raising the amount of replicas of the Zabbix server.
 
 ## Zabbix Agent
 
 > **zabbix-agent2** is supported in this helm chart.
 
-**Zabbix agent** is deployed on a monitoring target to actively monitor local resources and applications (hard drives, memory, processor statistics etc).
+**Zabbix agent** is deployed on a monitoring target to actively monitor local resources and
+applications (hard drives, memory, processor statistics etc)
+[Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/agent).
 
 ## Zabbix Web (frontend)
 
-**Zabbix web** interface is a part of Zabbix software. It is used to manage resources under monitoring and view monitoring statistics.
+**Zabbix web** interface is a part of Zabbix software. It is used to manage resources under
+monitoring and view monitoring statistics
+[Official documentation](https://www.zabbix.com/documentation/current/en/manual/web_interface).
+
+## Zabbix Web Service
+
+**Zabbix web service** is a process that is used for communication with external web services
+[Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/web_service).
 
 ## Zabbix Proxy
 
 > This helm chart installs Zabbix proxy with SQLite3 support
 
-**Zabbix proxy** is a process that may collect monitoring data from one or more monitored devices and send the information to the Zabbix server, essentially working on behalf of the server. All collected data is buffered locally and then transferred to the **Zabbix server** the proxy belongs to.
+**Zabbix proxy** is a process that may collect monitoring data from one or more monitored devices
+and send the information to the Zabbix server, essentially working on behalf of the server.
+All collected data is buffered locally and then transferred to the **Zabbix server** the
+proxy belongs to
+[Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/proxy).
 
 ## PostgreSQL
 
 A database is required for zabbix to work, in this helm chart we're using Postgresql 14.x.
 
-> We use plain postgresql database by default WITHOUT persistence. If you want persistence or would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
+> We use plain postgresql database by default WITHOUT persistence. If you want persistence or
+would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
 
 ## Configure the chart
 
-The items of section [Configuration](#Configuration) can be set via ``--set`` flag during installation or change the values according to the need of the environment in ``helm-zabbix/values.yaml`` file.
+The items of section [Configuration](#Configuration) can be set via ``--set`` flag during
+installation or change the values according to the need of the environment in
+``helm-zabbix/values.yaml`` file.
 
 ### Configure central database access related settings
 
-All settings referring to how the different components that this Chart installs access the Zabbix Database (either an external, already existing database or one deployed within this Helm chart) are being configured centrally under the ``db_access`` section of the ``values.yaml`` file.
+All settings referring to how the different components that this Chart installs access the
+Zabbix Database (either an external, already existing database or one deployed within
+this Helm chart) are being configured centrally under the ``db_access`` section of the
+``values.yaml`` file.
 
-By default, this Chart will deploy it's own very simple PostgreSQL database. All settings relevant to how to access this database will be held in one central unified secret with the name configured with the ``db_access.unified_secret_name`` setting.
+By default, this Chart will deploy it's own very simple PostgreSQL database. All settings
+relevant to how to access this database will be held in one central unified secret with the
+name configured with the ``db_access.unified_secret_name`` setting.
 
-Instead of letting the Chart automatically generate such a secret with a random password (which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself. Use ``db_access.unified_secret_autocreate=false`` in such a case and read the comments in ``values.yaml`` for how the values inside the secret should be set.
+Instead of letting the Chart automatically generate such a secret with a random password
+(which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself.
+Use ``db_access.unified_secret_autocreate=false`` in such a case and read the comments
+in ``values.yaml`` for how the values inside the secret should be set.
 
-If you want to connect your Zabbix installation to a Postgres database deployed using the [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/), you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it, by just referring to its name with the ``db_access.unified_secret_name`` setting to it.
+If you want to connect your Zabbix installation to a Postgres database deployed using the
+[CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/),
+you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it,
+by just referring to its name with the ``db_access.unified_secret_name`` setting to it.
 
-There is also the possibility to set all DB relevant settings directly inside the ``db_access`` section of the ``values.yaml`` file by using the settings noted there (``db_server_host``, ``postgres_user``, etc). If doing so, you still can use one single secret to told just and only the database password. If you want to do so, supply the ``db_access.postgres_password_secret`` and ``db_access.postgres_password_secret_key`` settings, accordingly.
+There is also the possibility to set all DB relevant settings directly inside the ``db_access``
+section of the ``values.yaml`` file by using the settings noted there
+(``db_server_host``, ``postgres_user``, etc). If doing so, you still can use one single secret
+to told just and only the database password. If you want to do so, supply the
+``db_access.postgres_password_secret`` and ``db_access.postgres_password_secret_key``
+settings, accordingly.
 
 ## Configure Postgresql database to match with your performance expectations
 
-While the default database configuration shipped with this Chart is fine for most (very small, for testing only) Zabbix installations, you will want to set some specific settings to better match your setup. First of all, you should consider enabling Postgresql database persistence (``postgresql.persistence.enabled``), as otherwise all your changes and historical data will be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune Postgresql by supplying extra postgresql runtime parameters using the ``postgresql.extraRuntimeParameters`` dictionary:
+While the default database configuration shipped with this Chart is fine for most (very small,
+for testing only) Zabbix installations, you will want to set some specific settings to better
+match your setup. First of all, you should consider enabling Postgresql database persistence
+(``postgresql.persistence.enabled``), as otherwise all your changes and historical data will
+be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune
+Postgresql by supplying extra postgresql runtime parameters using the
+``postgresql.extraRuntimeParameters`` dictionary:
 
 ```yaml
 postgresql:
@@ -119,7 +171,9 @@ postgresql:
     min_wal_size: 80MB
 ```
 
-Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring to this config file with the ``postgresql.extraRuntimeParameters`` set to:
+Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and
+the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring
+to this config file with the ``postgresql.extraRuntimeParameters`` set to:
 
 ```yaml
 postgresql:
@@ -130,10 +184,14 @@ postgresql:
 ### Configure the way how to expose Zabbix service:
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
-- **IngressRoute**: The custom resource definition if you use the [Traefik](https://traefik.io/traefik/) ingress controller.
+- **IngressRoute**: The custom resource definition if you use the
+[Traefik](https://traefik.io/traefik/) ingress controller.
 - **Route**: The ingress controller used by Red Hat Openshift, based on HAProxy
-- **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
-- **NodePort**: Exposes the service on each Node’s IP at a static port (the NodePort). You’ll be able to contact the NodePort service, from outside the cluster, by requesting ``NodeIP:NodePort``.
+- **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the
+service only reachable from within the cluster.
+- **NodePort**: Exposes the service on each Node’s IP at a static port (the NodePort).
+You’ll be able to contact the NodePort service, from outside the cluster, by requesting
+``NodeIP:NodePort``.
 - **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.
 
 # Installation
@@ -146,7 +204,8 @@ Add Helm repo:
 helm repo add cetic https://cetic.github.io/helm-charts
 ```
 
-Update the list helm chart available for installation (like ``apt-get update``). This is recommend before install/upgrade a helm chart:
+Update the list helm chart available for installation (like ``apt-get update``). This is recommend
+before install/upgrade a helm chart:
 
 ```bash
 helm repo update
@@ -188,7 +247,8 @@ kubectl get pods -n monitoring
 
 # How to access Zabbix
 
-After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service:
+After deploying the chart in your cluster, you can use the following command to access the zabbix
+frontend service:
 
 View informations of ``zabbix`` services.
 
@@ -288,6 +348,8 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
+| postgresql.extraInitContainers | list | `[]` | additional init containers to start within the postgresql pod |
+| postgresql.extraPodSpecs | object | `{}` | additional specifications to the postgresql pod |
 | postgresql.extraRuntimeParameters | object | `{"max_connections":50}` | Extra Postgresql runtime parameters ("-c" options) |
 | postgresql.extraVolumeMounts | list | `[]` | additional volumeMounts to the postgresql container |
 | postgresql.extraVolumes | list | `[]` | additional volumes to make available to the postgresql pod |
@@ -307,7 +369,7 @@ The following tables lists the configurable parameters of the chart and their de
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
 | route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbix_image_tag | string | `"ubuntu-6.0.6"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
+| zabbix_image_tag | string | `"ubuntu-6.2.0"` | zabbix components (server, agent, web frontend, ...) image tag to use. Overwritten by zabbixserver.image.tag etc. |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixagent.ZBX_PASSIVESERVERS | string | `"127.0.0.1"` | The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. |
@@ -336,6 +398,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixproxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
 | zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixproxy.extraInitContainers | list | `[]` | additional init containers to start within the zabbix proxy pod |
+| zabbixproxy.extraPodSpecs | object | `{}` | additional specifications to the zabbix proxy pod |
 | zabbixproxy.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix proxy container |
 | zabbixproxy.extraVolumes | list | `[]` | additional volumes to make available to the zabbix proxy pod |
 | zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -351,6 +415,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixserver.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
 | zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixserver.extraInitContainers | list | `[]` | additional init containers to start within the zabbix server pod |
+| zabbixserver.extraPodSpecs | object | `{}` | additional specifications to the zabbix server pod |
 | zabbixserver.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix server container |
 | zabbixserver.extraVolumes | list | `[]` | additional volumes to make available to the zabbix server pod |
 | zabbixserver.ha_nodes_autoclean | object | `{"delete_older_than_seconds":3600,"enabled":true,"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
@@ -371,6 +437,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
 | zabbixweb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
 | zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixweb.extraInitContainers | list | `[]` | additional init containers to start within the zabbix web pod |
+| zabbixweb.extraPodSpecs | object | `{}` | additional specifications to the zabbix web pod |
 | zabbixweb.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix web container |
 | zabbixweb.extraVolumes | list | `[]` | additional volumes to make available to the zabbix web pod |
 | zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -400,6 +468,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixwebservice.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
 | zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/cetic/helm-zabbix/blob/master/docs/example/kind/values.yaml |
+| zabbixwebservice.extraInitContainers | list | `[]` | additional init containers to start within the zabbix webservice pod |
+| zabbixwebservice.extraPodSpecs | object | `{}` | additional specifications to the zabbix webservice pod |
 | zabbixwebservice.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix webservice container |
 | zabbixwebservice.extraVolumes | list | `[]` | additional volumes to make available to the zabbix webservice pod |
 | zabbixwebservice.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |

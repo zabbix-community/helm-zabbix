@@ -45,6 +45,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
         app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
     spec:
+      {{- with .Values.postgresql.extraPodSpecs }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -93,6 +96,9 @@ spec:
               containerPort: 5432
               protocol: TCP
       {{- with .Values.postgresql.extraContainers }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgresql.extraInitContainers }}
       {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
