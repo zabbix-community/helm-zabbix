@@ -59,9 +59,9 @@ spec:
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
         {{- if .Values.zabbixweb.image.tag }}
-        image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag | default .Chart.AppVersion }}"
+        image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}"
         {{- else }}
-        image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
+        image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbix_image_tag }}"
         {{- end }}
         imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
         env:

@@ -53,9 +53,9 @@ spec:
       initContainers:
         - name: init-wait-for-database-schema
           {{- if .Values.zabbixserver.image.tag }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag | default .Chart.AppVersion}}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
           {{- else }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
           {{- end }}
           env:
             {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 12 }}
@@ -79,9 +79,9 @@ spec:
           resources:
 {{- toYaml .Values.zabbixserver.resources | nindent 12 }}
           {{- if .Values.zabbixserver.image.tag }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
           {{- else }}
-          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
           {{- end }}
           ports:
             - containerPort: 10051
@@ -129,9 +129,9 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           {{- if .Values.zabbixagent.image.tag }}
-          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbixagent.image.tag }}"
           {{- else }}
-          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbix_image_tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.zabbixagent.image.repository }}:{{ .Values.zabbix_image_tag }}"
           {{- end }}
           imagePullPolicy: {{ .Values.zabbixagent.image.pullPolicy }}
           env:
