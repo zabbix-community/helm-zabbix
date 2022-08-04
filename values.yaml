@@ -177,6 +177,15 @@ zabbixproxy:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
+  persistence:
+    # -- whether to enable persistent storage for the postgres container or not
+    enabled: false
+    # -- existing persistent volume claim name to be used to store posgres data
+    existing_claim_name: false
+    # -- size of the PVC to be automatically generated
+    storage_size: 5Gi
+    # -- storage PVC storageclass to use
+    #storage_class: my-storage-class
   # -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
   # -- Zabbix proxy hostname
