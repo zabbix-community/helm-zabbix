@@ -11,6 +11,26 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
 spec:
+  {{- if .Values.zabbixproxy.persistence.enabled }}
+  {{- if not .Values.zabbixproxy.persistence.existing_claim_name }}
+  volumeClaimTemplates:
+    - metadata:
+        name: zabbixproxy-data
+      spec:
+        accessModes:
+          {{- if .Values.zabbixproxy.persistence.claim_access_mode }}
+          - {{ .Values.zabbixproxy.persistence.claim_access_mode }}
+          {{- else }}
+          - ReadWriteOnce
+          {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.zabbixproxy.persistence.storage_size }}
+        {{- if .Values.zabbixproxy.persistence.storage_class }}
+        storageClassName: {{ .Values.zabbixproxy.persistence.storage_class }}
+        {{- end }}
+  {{- end }}
+  {{- end }}
   replicas: {{ .Values.zabbixproxy.replicaCount }}
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
@@ -129,9 +149,13 @@ spec:
             - name: zabbix-proxy
               containerPort: 10051
               protocol: TCP
-          {{- with .Values.zabbixproxy.extraVolumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+          {{- if .Values.zabbixproxy.persistence.enabled }}
+            - name: zabbixproxy-data
+              mountPath: /var/lib/zabbix/db_data
+          {{- end }}
+          {{- with .Values.zabbixproxy.extraVolumeMounts }}
+          {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- with .Values.zabbixproxy.extraContainers }}
         {{- toYaml . | nindent 8 }}
@@ -143,8 +167,15 @@ spec:
       {{- range .Values.zabbixproxy.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
-      {{- with .Values.zabbixproxy.extraVolumes }}
       volumes:
+      {{- if .Values.zabbixproxy.persistence.enabled }}
+      {{- if .Values.zabbixproxy.persistence.existing_claim_name }}
+        - name: zabbixproxy-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.zabbixproxy.persistence.existing_claim_name }}
+      {{- end }}
+      {{- end }}
+      {{- with .Values.zabbixproxy.extraVolumes }}
       {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
