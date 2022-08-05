@@ -177,8 +177,11 @@ zabbixproxy:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
+  securityContext:
+    # -- Support zabbixproxy persistent storage by changing volume ownership to zabbix user
+    fsGroup: 1997
   persistence:
-    # -- whether to enable persistent storage for the postgres container or not
+    # -- whether to enable persistent storage for the zabbix-proxy container or not
     enabled: false
     # -- existing persistent volume claim name to be used to store posgres data
     existing_claim_name: false
