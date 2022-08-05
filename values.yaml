@@ -183,7 +183,7 @@ zabbixproxy:
   persistence:
     # -- whether to enable persistent storage for the zabbix-proxy container or not
     enabled: false
-    # -- existing persistent volume claim name to be used to store posgres data
+    # -- existing persistent volume claim name to be used to store database data
     existing_claim_name: false
     # -- size of the PVC to be automatically generated
     storage_size: 5Gi
