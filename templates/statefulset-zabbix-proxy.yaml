@@ -31,6 +31,10 @@ spec:
         {{- end }}
   {{- end }}
   {{- end }}
+  {{- if .Values.zabbixproxy.securityContext }}
+  securityContext:
+    {{- toYaml .Values.zabbixproxy.securityContext | nindent 12 }}
+  {{- end }}
   replicas: {{ .Values.zabbixproxy.replicaCount }}
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
@@ -69,11 +73,6 @@ spec:
         - name: zabbix-agent
           resources:
 {{- toYaml .Values.zabbixagent.resources | nindent 12 }}
-          {{- if .Values.zabbixproxy.securityContext }}
-          securityContext:
-            {{- toYaml .Values.zabbixproxy.securityContext | nindent 12 }}
-          {{- end }}
-          {{- else }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           {{- if .Values.zabbixagent.image.tag }}
