@@ -31,10 +31,6 @@ spec:
         {{- end }}
   {{- end }}
   {{- end }}
-  {{- if .Values.zabbixproxy.securityContext }}
-  securityContext:
-    {{- toYaml .Values.zabbixproxy.securityContext | nindent 12 }}
-  {{- end }}
   replicas: {{ .Values.zabbixproxy.replicaCount }}
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
@@ -67,6 +63,10 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.zabbixproxy.securityContext }}
+      securityContext:
+        {{- toYaml .Values.zabbixproxy.securityContext | nindent 12 }}
       {{- end }}
       containers:
         {{- if .Values.zabbixagent.enabled }}
