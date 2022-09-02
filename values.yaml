@@ -177,18 +177,6 @@ zabbixproxy:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  securityContext:
-    # -- Support zabbixproxy persistent storage by changing volume ownership to zabbix user
-    fsGroup: 1997
-  persistence:
-    # -- whether to enable persistent storage for the zabbix-proxy container or not
-    enabled: false
-    # -- existing persistent volume claim name to be used to store database data
-    existing_claim_name: false
-    # -- size of the PVC to be automatically generated
-    storage_size: 5Gi
-    # -- storage PVC storageclass to use
-    #storage_class: my-storage-class
   # -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
   # -- Zabbix proxy hostname
@@ -203,7 +191,6 @@ zabbixproxy:
   # ZBX_DEBUGLEVEL: 4
   # The variable is used to specify timeout for processing checks. By default, value is 4.
   #ZBX_TIMEOUT: 4
-
   # -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
   ZBX_JAVAGATEWAY_ENABLE: false
   # -- Cache size
@@ -230,6 +217,8 @@ zabbixproxy:
   extraVolumes: []
   # -- additional specifications to the zabbix proxy pod
   extraPodSpecs: {}
+  # -- extra volumeClaimTemplate for zabbixproxy statefulset
+  # extraVolumeClaimTemplate: []
 
 # **Zabbix Agent** configurations
 zabbixagent:
