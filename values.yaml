@@ -218,7 +218,7 @@ zabbixproxy:
   # -- additional specifications to the zabbix proxy pod
   extraPodSpecs: {}
   # -- extra volumeClaimTemplate for zabbixproxy statefulset
-  # extraVolumeClaimTemplate: []
+  extraVolumeClaimTemplate: []
 
 # **Zabbix Agent** configurations
 zabbixagent:
