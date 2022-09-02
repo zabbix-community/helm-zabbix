@@ -149,6 +149,6 @@ spec:
       {{- end }}
   {{- with .Values.zabbixproxy.extraVolumeClaimTemplate }}
   volumeClaimTemplates:
-    {{- toYaml .Values.zabbixproxy.extraVolumeClaimTemplate | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 {{- end }}
