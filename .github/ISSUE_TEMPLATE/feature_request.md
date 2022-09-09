@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: '[cetic/zabbix] issue title'
+title: '[zabbix-community/zabbix] issue title'
 labels: ''
 assignees: ''
 

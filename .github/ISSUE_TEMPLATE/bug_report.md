@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: '[cetic/zabbix] issue title'
+title: '[zabbix-community/zabbix] issue title'
 labels: ''
 assignees: ''
 
