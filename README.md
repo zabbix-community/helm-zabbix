@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/zabbix-community/helm-zabbix.svg?label=release) ![Version: 3.2.0](https://img.shields.io/badge/Version-3.2.0-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.2.0](https://img.shields.io/badge/Version-3.2.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
