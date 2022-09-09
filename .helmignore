@@ -23,7 +23,6 @@
 .idea/
 *.tmproj
 
-.circleci/
 docs/
 
 # Makefile and other stuff
