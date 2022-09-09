@@ -21,7 +21,7 @@ git clone URL_FORKED_REPOSITORY
 
 ```bash
 git remote -v
-git remote add upstream https://github.com/cetic/helm-zabbix
+git remote add upstream https://github.com/zabbix-community/helm-zabbix
 git remote -v
 ```
 

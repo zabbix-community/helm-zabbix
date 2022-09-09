@@ -1,6 +1,6 @@
 # Helm Chart For Zabbix.
 
-[![CircleCI](https://circleci.com/gh/cetic/helm-zabbix.svg?style=svg)](https://circleci.com/gh/cetic/helm-zabbix/tree/master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/cetic/helm-zabbix.svg?label=release) {{ template "chart.versionBadge" . }}
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/zabbix-community/helm-zabbix.svg?label=release) {{ template "chart.versionBadge" . }}
 
 {{ template "chart.description" . }}
 
@@ -25,7 +25,7 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
   HA functionality of Zabbix will automatically be enabled and it is made sure that 
   the database schema publication will only happen once, and not by all of the Zabbix
   server pods at the same time.
-* More info: https://github.com/cetic/helm-zabbix/pull/54
+* More info: https://github.com/zabbix-community/helm-zabbix/pull/54
 
 > **Break change 2.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
@@ -42,13 +42,13 @@ auto-generated (password will be set to a random string) at chart
 installation, if postgresql.enabled is set to true. With this, an easy
 to use "out-of-the-box" installation with as little customizations as
 possible is possible, while still obtaining a good level of security.
-* More info: https://github.com/cetic/helm-zabbix/pull/53
+* More info: https://github.com/zabbix-community/helm-zabbix/pull/53
 
 > **Break change 1.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * The installation of any component of chart is optional for easy integration with the official
  chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
-* More info: https://github.com/cetic/helm-zabbix/issues/42
+* More info: https://github.com/zabbix-community/helm-zabbix/issues/42
 
 # Prerequisites
 
@@ -210,7 +210,7 @@ Access a Kubernetes cluster.
 Add Helm repo:
 
 ```bash
-helm repo add cetic https://cetic.github.io/helm-charts
+helm repo add zabbix-community https://zabbix-community.github.io/helm-charts
 ```
 
 Update the list helm chart available for installation (like ``apt-get update``). This is recommend 
@@ -223,7 +223,7 @@ helm repo update
 Export default values of chart ``helm-zabbix`` to file ``$HOME/zabbix_values.yaml``:
 
 ```bash
-helm show values cetic/zabbix > $HOME/zabbix_values.yaml
+helm show values zabbix-community/zabbix > $HOME/zabbix_values.yaml
 ```
 
 Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
@@ -233,7 +233,7 @@ See the example of installation in kind in this [tutorial](docs/example/README.m
 Test the installation/upgrade with command:
 
 ```bash
-helm upgrade --install zabbix cetic/zabbix \
+helm upgrade --install zabbix zabbix-community/zabbix \
  --dependency-update \
  --create-namespace \
  -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
@@ -242,7 +242,7 @@ helm upgrade --install zabbix cetic/zabbix \
 Install/upgrade the Zabbix with command:
 
 ```bash
-helm upgrade --install zabbix cetic/zabbix \
+helm upgrade --install zabbix zabbix-community/zabbix \
  --dependency-update \
  --create-namespace \
  -f $HOME/zabbix_values.yaml -n monitoring --debug

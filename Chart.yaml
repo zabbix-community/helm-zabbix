@@ -12,7 +12,7 @@ keywords:
 home: https://www.zabbix.com/
 icon: https://assets.zabbix.com/img/logo/zabbix_logo_500x131.png
 sources:
-  - https://github.com/cetic/helm-zabbix
+  - https://github.com/zabbix-community/helm-zabbix
 maintainers:
   - name: Aecio Pires
     email: aeciopires@gmail.com

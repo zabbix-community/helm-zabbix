@@ -9,7 +9,7 @@
 
 # About
 
-This page presents an example to use the [Zabbix Helm Chart](https://github.com/cetic/helm-zabbix). For more informations, see the [README.md](/README.md) file.
+This page presents an example to use the [Zabbix Helm Chart](https://github.com/zabbix-community/helm-zabbix). For more informations, see the [README.md](/README.md) file.
 
 # Installation
 
@@ -22,7 +22,7 @@ Clone this repository:
 ```bash
 mkdir ~/mygit
 cd ~/mygit
-git clone https://github.com/cetic/helm-zabbix
+git clone https://github.com/zabbix-community/helm-zabbix
 cd ~/mygit/helm-zabbix
 ```
 
@@ -35,7 +35,7 @@ helm upgrade --install zabbix \
  --dependency-update \
  --create-namespace \
  -f ~/mygit/helm-zabbix/docs/example/kind/values.yaml \
- cetic/zabbix -n monitoring --debug --dry-run
+ zabbix-community/zabbix -n monitoring --debug --dry-run
 ```
 
 Install/upgrade Zabbix in the Kubernetes cluster (update the YAML files paths if necessary).
@@ -45,7 +45,7 @@ helm upgrade --install zabbix \
  --dependency-update \
  --create-namespace \
  -f ~/mygit/helm-zabbix/docs/example/kind/values.yaml \
- cetic/zabbix -n monitoring --debug
+ zabbix-community/zabbix -n monitoring --debug
 ```
 
 View the pods.
