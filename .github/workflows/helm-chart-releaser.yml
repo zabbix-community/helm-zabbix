@@ -2,6 +2,8 @@ name: Release Charts
 
 # Reference:
 # https://blog.bradmccoy.io/linking-helm-charts-in-github-pages-to-artifacthub-46e02e19abfe
+# https://github.com/helm/chart-releaser-action
+# https://helm.sh/docs/howto/chart_releaser_action/
 
 on:
   push:
