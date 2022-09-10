@@ -10,6 +10,13 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 ### Important notes
 
+> **About the new home of helm chart**
+* The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
+It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
+* In this [issue](https://github.com/cetic/helm-zabbix/issues/68) it was agreed with [Sebastien Dupont](https://github.com/banzothat) that the repository would get a new home.
+* We are grateful to [Cetic](https://www.cetic.be/) for making the infrastructure available on CircleCI to host the helm chart from the start. Now, the new versions will be hosted on Github.
+* We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) and [Amen Ayadi](https://github.com/AyadiAmen), who were the first developers of the helm chart and who worked at Cetic. Your dedication and effort made it possible to install Zabbix on a Kubernetes cluster.
+
 > **About the Zabbix version supported**
 * This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
 * But by default this helm chart will install the latest LTS version (example: 6.0.x).
