@@ -97,7 +97,7 @@ zabbixserver:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml
   extraEnv: []
     #- name: ENABLE_TIMESCALED
     #  value: "true"
@@ -205,7 +205,7 @@ zabbixproxy:
     # -- Annotations for the zabbix-proxy service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- additional volumeMounts to the zabbix proxy container
   extraVolumeMounts: []
@@ -268,7 +268,7 @@ zabbixagent:
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- additional volumeMounts to the zabbix agent container
   extraVolumeMounts: []
@@ -306,7 +306,7 @@ zabbixweb:
     # -- Annotations for the zabbix-web service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml
   extraEnv: []
     #- name: ZBX_SSO_SETTINGS
     #  value: '{"baseurl": "https://zabbix.example.com"}'
@@ -380,7 +380,7 @@ zabbixwebservice:
     # -- Annotations for the zabbix-web service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- additional volumeMounts to the zabbix webservice container
   extraVolumeMounts: []

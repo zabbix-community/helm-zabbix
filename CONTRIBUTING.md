@@ -42,11 +42,13 @@ git branch
 
 Method using make and docker:
 ```bash
+cd charts/helm-zabbix
 make lint
 ````
 
 Method using locally installed ``helm`` command:
 ```bash
+cd charts/helm-zabbix
 helm lint .
 ```
 
@@ -54,11 +56,13 @@ helm lint .
 
 Method using make and docker:
 ```bash
+cd charts/helm-zabbix
 make gen-docs
 ```
 
 Method using locally installed ``helm-docs`` command:
 ```bash
+cd charts/helm-zabbix
 helm-docs
 ```
 

@@ -26,7 +26,7 @@ git clone https://github.com/zabbix-community/helm-zabbix
 cd ~/mygit/helm-zabbix
 ```
 
-Edit ``~/mygit/helm-zabbix/docs/example/kind/values.yaml`` file.
+Edit ``~/mygit/helm-zabbix/charts/helm-zabbix/docs/example/kind/values.yaml`` file.
 
 Test the installation/upgrade with command (update the YAML files paths if necessary):
 
@@ -34,8 +34,8 @@ Test the installation/upgrade with command (update the YAML files paths if neces
 helm upgrade --install zabbix \
  --dependency-update \
  --create-namespace \
- -f ~/mygit/helm-zabbix/docs/example/kind/values.yaml \
- zabbix-community/zabbix -n monitoring --debug --dry-run
+ -f ~/mygit/helm-zabbix/charts/helm-zabbix/docs/example/kind/values.yaml \
+ zabbix-community/helm-zabbix -n monitoring --debug --dry-run
 ```
 
 Install/upgrade Zabbix in the Kubernetes cluster (update the YAML files paths if necessary).
@@ -44,8 +44,8 @@ Install/upgrade Zabbix in the Kubernetes cluster (update the YAML files paths if
 helm upgrade --install zabbix \
  --dependency-update \
  --create-namespace \
- -f ~/mygit/helm-zabbix/docs/example/kind/values.yaml \
- zabbix-community/zabbix -n monitoring --debug
+ -f ~/mygit/helm-zabbix/charts/helm-zabbix/docs/example/kind/values.yaml \
+ zabbix-community/helm-zabbix -n monitoring --debug
 ```
 
 View the pods.
