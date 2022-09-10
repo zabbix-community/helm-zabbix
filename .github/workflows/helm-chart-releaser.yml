@@ -1,14 +1,19 @@
 name: Release Charts
 
-# Reference:
+# References:
 # https://blog.bradmccoy.io/linking-helm-charts-in-github-pages-to-artifacthub-46e02e19abfe
 # https://github.com/helm/chart-releaser-action
 # https://helm.sh/docs/howto/chart_releaser_action/
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 
 on:
   push:
+    # Sequence of patterns matched against refs/heads
     branches:
       - master
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - v*
 
 jobs:
   release:
