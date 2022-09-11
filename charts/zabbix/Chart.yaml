@@ -9,7 +9,9 @@ keywords:
   - zabbix
   - monitoring
   - metrics
-home: https://www.zabbix.com/
+  - kubernetes
+  - helm
+home: https://www.zabbix.com
 icon: https://assets.zabbix.com/img/logo/zabbix_logo_500x131.png
 sources:
   - https://github.com/zabbix-community/helm-zabbix
