@@ -1,14 +1,18 @@
 # Helm Chart For Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.2.0](https://img.shields.io/badge/Version-3.2.0-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.2.1](https://img.shields.io/badge/Version-3.2.1-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
+
+# TL;DR - just show me how to install
+
+If you have already carefully read all the below and just want to get reminded on how to install, please jump directly to the [Installation](#installation) section.
 
 # Introduction
 
 This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
-### Important notes
+## Important notes
 
 > **About the new home of helm chart**
 * The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
@@ -123,13 +127,13 @@ A database is required for zabbix to work, in this helm chart we're using Postgr
 > We use plain postgresql database by default WITHOUT persistence. If you want persistence or
 would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
 
-## Configure the chart
+# Configure the chart
 
-The items of section [Configuration](#Configuration) can be set via ``--set`` flag during
+The items of section [Configuration](#configuration) can be set via ``--set`` flag during
 installation or change the values according to the need of the environment in
-``helm-zabbix/values.yaml`` file.
+``helm-zabbix/charts/zabbix/values.yaml`` file.
 
-### Configure central database access related settings
+## Configure central database access related settings
 
 All settings referring to how the different components that this Chart installs access the
 Zabbix Database (either an external, already existing database or one deployed within
@@ -194,7 +198,7 @@ postgresql:
     config.file: /path/to/your/config.file
 ```
 
-### Configure the way how to expose Zabbix service:
+## Configure the way how to expose Zabbix service:
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
 - **IngressRoute**: The custom resource definition if you use the
@@ -214,7 +218,7 @@ Access a Kubernetes cluster.
 Add Helm repo:
 
 ```bash
-helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
+helm repo add zabbix-community https://zabbix-community.github.io/zabbix
 ```
 
 Update the list helm chart available for installation (like ``apt-get update``). This is recommend
@@ -224,10 +228,10 @@ before install/upgrade a helm chart:
 helm repo update
 ```
 
-Export default values of chart ``helm-zabbix`` to file ``$HOME/zabbix_values.yaml``:
+Export default values of chart ``zabbix`` to file ``$HOME/zabbix_values.yaml``:
 
 ```bash
-helm show values zabbix-community/helm-zabbix > $HOME/zabbix_values.yaml
+helm show values zabbix-community/zabbix > $HOME/zabbix_values.yaml
 ```
 
 Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
@@ -237,7 +241,7 @@ See the example of installation in kind in this [tutorial](docs/example/README.m
 Test the installation/upgrade with command:
 
 ```bash
-helm upgrade --install zabbix zabbix-community/helm-zabbix \
+helm upgrade --install zabbix zabbix-community/zabbix \
  --dependency-update \
  --create-namespace \
  -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
@@ -246,7 +250,7 @@ helm upgrade --install zabbix zabbix-community/helm-zabbix \
 Install/upgrade the Zabbix with command:
 
 ```bash
-helm upgrade --install zabbix zabbix-community/helm-zabbix \
+helm upgrade --install zabbix zabbix-community/zabbix \
  --dependency-update \
  --create-namespace \
  -f $HOME/zabbix_values.yaml -n monitoring --debug

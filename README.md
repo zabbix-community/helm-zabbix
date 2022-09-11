@@ -10,7 +10,7 @@ We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) an
 
 # About this chart
 
-See the [file](charts/helm-zabbix/README.md).
+See the [README file](charts/helm-zabbix/README.md).
 
 The structure of files and directories had to be changed to make the automatic packaging of helm charts as simple as possible using Github Actions.
 
