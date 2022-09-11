@@ -395,7 +395,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixagent.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixagent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
-| zabbixagent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml |
+| zabbixagent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixagent.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix agent container |
 | zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
@@ -414,7 +414,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixproxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
-| zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml |
+| zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixproxy.extraInitContainers | list | `[]` | additional init containers to start within the zabbix proxy pod |
 | zabbixproxy.extraPodSpecs | object | `{}` | additional specifications to the zabbix proxy pod |
 | zabbixproxy.extraVolumeClaimTemplate | list | `[]` | extra volumeClaimTemplate for zabbixproxy statefulset |
@@ -432,7 +432,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixserver.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
-| zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml |
+| zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixserver.extraInitContainers | list | `[]` | additional init containers to start within the zabbix server pod |
 | zabbixserver.extraPodSpecs | object | `{}` | additional specifications to the zabbix server pod |
 | zabbixserver.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix server container |
@@ -454,7 +454,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
 | zabbixweb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
-| zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml |
+| zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixweb.extraInitContainers | list | `[]` | additional init containers to start within the zabbix web pod |
 | zabbixweb.extraPodSpecs | object | `{}` | additional specifications to the zabbix web pod |
 | zabbixweb.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix web container |
@@ -485,7 +485,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
 | zabbixwebservice.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
-| zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/helm-zabbix/docs/example/kind/values.yaml |
+| zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixwebservice.extraInitContainers | list | `[]` | additional init containers to start within the zabbix webservice pod |
 | zabbixwebservice.extraPodSpecs | object | `{}` | additional specifications to the zabbix webservice pod |
 | zabbixwebservice.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix webservice container |
