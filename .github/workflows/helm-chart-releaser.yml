@@ -9,11 +9,11 @@ name: Release Charts
 on:
   push:
     # Sequence of patterns matched against refs/heads
-    #branches:
-    #  - master
+    branches:
+      - master
     # Sequence of patterns matched against refs/tags
-    tags:
-      - '*'
+    #tags:
+    #  - '*'
 
 jobs:
   release:
