@@ -218,7 +218,7 @@ Access a Kubernetes cluster.
 Add Helm repo:
 
 ```bash
-helm repo add zabbix-community https://zabbix-community.github.io/zabbix
+helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
 ```
 
 Update the list helm chart available for installation (like ``apt-get update``). This is recommend
