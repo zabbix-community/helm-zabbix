@@ -1,4 +1,4 @@
-# Helm Chart For Zabbix.
+# Helm chart for Zabbix.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.2.2](https://img.shields.io/badge/Version-3.2.2-informational?style=flat-square)
 
@@ -218,7 +218,7 @@ Access a Kubernetes cluster.
 Add Helm repo:
 
 ```bash
-helm repo add zabbix-community https://zabbix-community.github.io/zabbix
+helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
 ```
 
 Update the list helm chart available for installation (like ``apt-get update``). This is recommend
