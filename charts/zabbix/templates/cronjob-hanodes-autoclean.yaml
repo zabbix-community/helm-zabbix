@@ -19,6 +19,13 @@ spec:
     spec:
       template:
         spec:
+          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraPodSpecs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraInitContainers }}
+          initContainers:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           containers:
           - name: hanodes-autoclean
             image: {{ .Values.zabbixserver.ha_nodes_autoclean.image.repository }}:{{ .Values.zabbixserver.ha_nodes_autoclean.image.tag }}
@@ -29,9 +36,24 @@ spec:
             - echo "deleting all stopped and unavailable HANodes older than {{ .Values.zabbixserver.ha_nodes_autoclean.delete_older_than_seconds }} seconds..." && psql -c "delete from ha_node where status in (1,2) and extract(epoch from now())-lastaccess>{{ .Values.zabbixserver.ha_nodes_autoclean.delete_older_than_seconds }}"
             env:
             {{- include "zabbix.db_access.env_vars" (list $ . "db_client") | nindent 12 }}
+            {{- range $item := .Values.zabbixserver.ha_nodes_autoclean.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value | quote }}
+            {{- end }}
+            {{- with .Values.zabbixserver.ha_nodes_autoclean.extraVolumeMounts }}
+            volumeMounts:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraContainers }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           imagePullSecrets:
           {{- range .Values.zabbixserver.image.pullSecrets }}
             - name: {{ . | quote }}
           {{- end }}
           restartPolicy: OnFailure
+          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraVolumes }}
+          volumes:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
 {{- end }}

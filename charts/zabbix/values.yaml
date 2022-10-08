@@ -85,6 +85,18 @@ zabbixserver:
       pullSecrets: []
     schedule: "0 1 * * *"
     delete_older_than_seconds: 3600
+    # -- Extra environment variables. A list of additional environment variables.
+    extraEnv: []
+    # -- additional volumeMounts to the cronjob hanodes autoclean
+    extraVolumeMounts: []
+    # -- additional containers to start within the cronjob hanodes autoclean
+    extraContainers: []
+    # -- additional init containers to start within the cronjob hanodes autoclean
+    extraInitContainers: []
+    # -- additional volumes to make available to the cronjob hanodes autoclean
+    extraVolumes: []
+    # -- additional specifications to the cronjob hanodes autoclean
+    extraPodSpecs: {}
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP

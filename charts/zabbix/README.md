@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.2.2](https://img.shields.io/badge/Version-3.2.2-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.3.0](https://img.shields.io/badge/Version-3.3.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -386,7 +386,7 @@ The following tables lists the configurable parameters of the chart and their de
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
 | route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbix_image_tag | string | `"ubuntu-6.0.8"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbix_image_tag | string | `"ubuntu-6.0.9"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixagent.ZBX_PASSIVESERVERS | string | `"127.0.0.1"` | The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. |
@@ -437,9 +437,15 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.extraPodSpecs | object | `{}` | additional specifications to the zabbix server pod |
 | zabbixserver.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix server container |
 | zabbixserver.extraVolumes | list | `[]` | additional volumes to make available to the zabbix server pod |
-| zabbixserver.ha_nodes_autoclean | object | `{"delete_older_than_seconds":3600,"enabled":true,"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixserver.ha_nodes_autoclean | object | `{"delete_older_than_seconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixserver.ha_nodes_autoclean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
+| zabbixserver.ha_nodes_autoclean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
+| zabbixserver.ha_nodes_autoclean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |
+| zabbixserver.ha_nodes_autoclean.extraPodSpecs | object | `{}` | additional specifications to the cronjob hanodes autoclean |
+| zabbixserver.ha_nodes_autoclean.extraVolumeMounts | list | `[]` | additional volumeMounts to the cronjob hanodes autoclean |
+| zabbixserver.ha_nodes_autoclean.extraVolumes | list | `[]` | additional volumes to make available to the cronjob hanodes autoclean |
 | zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
-| zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs  |
+| zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs |
 | zabbixserver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixserver.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixserver.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
