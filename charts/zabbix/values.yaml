@@ -8,7 +8,7 @@
 #See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 #When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version
 #here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbix_image_tag: ubuntu-6.0.8
+zabbix_image_tag: ubuntu-6.0.9
 
 # **Zabbix DB access / credentials** configurations
 # with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend
@@ -17,7 +17,7 @@ zabbix_image_tag: ubuntu-6.0.8
 db_access:
   # under this section you can configure DB access and credentials centrally for the entire helm chart.
   # All relevant components installed by this chart will respect it: zabbixserver, zabbixweb and postgresql (if enabled)
-  # 
+  #
   # USING ONE SECRET CONTAINING ALL DB RELEVANT SETTINGS
   # DB access details all in one existing secret (matches the structure of secrets the CrunchyData pgo operator generates)
   # if this option is chosen the below listed "db_server_*" and "postgres_*" settings are being ignored
@@ -60,7 +60,7 @@ zabbixserver:
   replicaCount: 1
   # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
   pod_anti_affinity: true
-  # -- optional set true open a port direct on node where zabbix server runs 
+  # -- optional set true open a port direct on node where zabbix server runs
   hostPort: false
   # -- optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
@@ -138,7 +138,7 @@ postgresql:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
     # -- Cluster IP for Zabbix server
-    clusterIP: 
+    clusterIP:
     # -- Port of service in Kubernetes cluster
     port: 5432
     # -- Annotations for the zabbix-server service
@@ -374,7 +374,7 @@ zabbixwebservice:
     # -- Type of service for Zabbix web
     type: ClusterIP
     # -- Cluster IP for Zabbix web
-    clusterIP: 
+    clusterIP:
     # -- Port to expose service
     port: 10053
     # -- Annotations for the zabbix-web service

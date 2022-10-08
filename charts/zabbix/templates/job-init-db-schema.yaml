@@ -1,4 +1,4 @@
-{{- if gt (.Values.zabbixserver.replicaCount | int) 1 }}
+{{- if and .Values.zabbixserver.enabled (gt (.Values.zabbixserver.replicaCount | int) 1) }}
 apiVersion: batch/v1
 kind: Job
 metadata:

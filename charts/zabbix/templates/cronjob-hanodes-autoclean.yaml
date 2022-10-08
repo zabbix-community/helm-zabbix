@@ -1,4 +1,4 @@
-{{- if .Values.zabbixserver.ha_nodes_autoclean.enabled }}
+{{- if and .Values.zabbixserver.enabled .Values.zabbixserver.ha_nodes_autoclean.enabled }}
 {{- if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}
 apiVersion: batch/v1
 {{- else }}
