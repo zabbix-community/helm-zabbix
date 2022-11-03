@@ -17,6 +17,7 @@ spec:
   schedule: {{ .Values.zabbixserver.ha_nodes_autoclean.schedule|quote }}
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: 86400
       template:
         spec:
           {{- with .Values.zabbixserver.ha_nodes_autoclean.extraPodSpecs }}

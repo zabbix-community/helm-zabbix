@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-init-db-schema
     app.kubernetes.io/managed-by: {{ .Release.Service }}-init-db-schema
 spec:
+  ttlSecondsAfterFinished: 120
   template:
     spec:
       containers:
