@@ -22,9 +22,19 @@ spec:
         {{- end }}
         env:
           {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 10 }}
+          {{- range $item := .Values.zabbixserver.extraEnv }}
+          - name: {{ $item.name }}
+            value: {{ $item.value | quote }}
+          {{- end }}
+          - name: ZBX_AUTOHANODENAME
+            value: "hostname"
+          - name: ZBX_NODEADDRESS
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
         command:
           - "/bin/sh"
           - "-c"
           - 'sed -e "s/^exec \"\$@\"$/prepare_server/" -e "/^ *update_zbx_config$/d" /usr/bin/docker-entrypoint.sh >~/docker-entrypoint.sh && bash ~/docker-entrypoint.sh'
       restartPolicy: Never
-{{- end}}
+{{- end }}

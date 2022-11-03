@@ -111,7 +111,7 @@ zabbixserver:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-    #- name: ENABLE_TIMESCALED
+    #- name: ENABLE_TIMESCALEDB
     #  value: "true"
   # -- additional volumeMounts to the zabbix server container
   extraVolumeMounts: []
