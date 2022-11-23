@@ -18,6 +18,9 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixserver.service.type }}
+  {{- if .Values.zabbixserver.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.zabbixserver.service.externalTrafficPolicy }}
+  {{- end }}
   {{- if .Values.zabbixserver.service.clusterIP }}
   clusterIP: {{ .Values.zabbixserver.service.clusterIP }}
   {{- end }}
