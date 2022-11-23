@@ -33,7 +33,7 @@ spec:
       memory: {{ .Values.karpenter.limits.resources.memory }}
 
   provider:
-    ## Bottlerocket (53s to Ready) or AL2 (70s to Ready)
+    ## Bottlerocket (53s to Ready) or AL2 (Amazon Linux 2, 70s to Ready)
     amiFamily: Bottlerocket
     securityGroupSelector:
       {{ .Values.karpenter.tag }}
