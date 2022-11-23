@@ -1,0 +1,66 @@
+# References: https://karpenter.sh/v0.19.2/
+#             https://karpenter.sh/v0.19.2/provisioner/
+#             https://karpenter.sh/v0.19.2/aws/provisioning/
+#             https://karpenter.sh/v0.19.2/faq/
+{{- if .Values.karpenter.enabled }}
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: {{ template "zabbix.fullname" . }}
+spec:
+  ## Enables consolidation which attempts to reduce cluster cost by both removing un-needed nodes and down-sizing those
+  ## that can't be removed.  Mutually exclusive with the ttlSecondsAfterEmpty parameter.
+  consolidation:
+    enabled: true
+
+  # If omitted, the feature is disabled and nodes will never expire.  If set to less time than it requires for a node
+  # to become ready, the node may expire before any pods successfully start.
+  # ttlSecondsUntilExpired: 30
+
+  # If omitted, the feature is disabled, nodes will never scale down due to low utilization
+  # ttlSecondsAfterEmpty: 600
+
+  # Labels are arbitrary key-values that are applied to all nodes
+  labels:
+    karpenter: "true"
+    app: "zabbix"
+
+  # Resource limits constrain the total size of the cluster.
+  # Limits prevent Karpenter from creating new instances once the limit is exceeded.
+  limits:
+    resources:
+      cpu: {{ .Values.karpenter.limits.resources.cpu }}
+      memory: {{ .Values.karpenter.limits.resources.memory }}
+
+  provider:
+    ## Bottlerocket (53s to Ready) or AL2 (70s to Ready)
+    amiFamily: Bottlerocket
+    securityGroupSelector:
+      {{ .Values.karpenter.tag }}
+    subnetSelector:
+      {{ .Values.karpenter.tag }}
+    tags:
+      {{ .Values.karpenter.tag }}
+
+  # Requirements that constrain the parameters of provisioned nodes.
+  # These requirements are combined with pod.spec.affinity.nodeAffinity rules.
+  # Operators { In, NotIn } are supported to enable including or excluding values
+  requirements:
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values:
+        - spot
+        - ondemand
+    - key: karpenter.k8s.aws/instance-size
+      operator: In
+      values:
+        - nano
+        - micro
+        - small
+        - medium
+        - large
+    - key: kubernetes.io/arch
+      operator: In
+      values:
+        - amd64
+{{- end }}

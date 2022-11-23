@@ -309,13 +309,13 @@ zabbixweb:
   #saml_certs_secret_name: zabbix-web-samlcerts
   service:
     # -- Type of service for Zabbix web
-    type: ClusterIP
+    type: NodePort
     # -- Cluster IP for Zabbix web
     clusterIP:
     # -- Port to expose service
     port: 80
     # -- NodePort port to allocate (only if service.type = NodePort)
-    #nodePort: 31080
+    nodePort: 31080
     # -- Annotations for the zabbix-web service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
@@ -468,3 +468,16 @@ tolerations: []
 
 # -- Affinity configurations
 affinity: {}
+
+karpenter:
+  # -- Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2.
+  enabled: false
+  # -- Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter.
+  clusterName: "CHANGE_HERE"
+  # -- Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag.
+  tag: "karpenter.sh/discovery/CHANGE_HERE: CHANGE_HERE"
+  # -- Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded.
+  limits:
+    resources:
+      cpu: "1000"
+      memory: 1000Gi
