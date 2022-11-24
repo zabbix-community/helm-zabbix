@@ -13,7 +13,7 @@ metadata:
   {{- if .Values.zabbixserver.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixserver.service.annotations }}
-    {{ $key }}: {{ $value }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
   {{- end }}
 spec:
