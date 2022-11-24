@@ -89,7 +89,7 @@ zabbixweb:
   ZBX_SERVER_HOST: zabbix-zabbix-server
   ZBX_SERVER_PORT: 10051
   service:
-    type: NodePort
+    type: ClusterIP
     port: 80
   extraEnv:
     - name: "ZBX_EXAMPLE_MY_ENV_10"

@@ -309,13 +309,13 @@ zabbixweb:
   #saml_certs_secret_name: zabbix-web-samlcerts
   service:
     # -- Type of service for Zabbix web
-    type: NodePort
+    type: ClusterIP
     # -- Cluster IP for Zabbix web
     clusterIP:
     # -- Port to expose service
     port: 80
     # -- NodePort port to allocate (only if service.type = NodePort)
-    nodePort: 31080
+    #nodePort: 31080
     # -- Annotations for the zabbix-web service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips

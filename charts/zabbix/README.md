@@ -488,12 +488,11 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | zabbixweb.replicaCount | int | `1` | Number of replicas of ``zabbixweb`` module |
 | zabbixweb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixweb.service | object | `{"annotations":{},"clusterIP":null,"nodePort":31080,"port":80,"type":"NodePort"}` | Certificate containing certificates for SAML configuration saml_certs_secret_name: zabbix-web-samlcerts |
+| zabbixweb.service | object | `{"annotations":{},"clusterIP":null,"port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration saml_certs_secret_name: zabbix-web-samlcerts |
 | zabbixweb.service.annotations | object | `{}` | Annotations for the zabbix-web service |
 | zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
-| zabbixweb.service.nodePort | int | `31080` | NodePort port to allocate (only if service.type = NodePort) |
 | zabbixweb.service.port | int | `80` | Port to expose service |
-| zabbixweb.service.type | string | `"NodePort"` | Type of service for Zabbix web |
+| zabbixweb.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
 | zabbixwebservice.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
 | zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |

@@ -2,6 +2,7 @@
 #             https://karpenter.sh/v0.19.2/provisioner/
 #             https://karpenter.sh/v0.19.2/aws/provisioning/
 #             https://karpenter.sh/v0.19.2/faq/
+#             https://aws.github.io/aws-eks-best-practices/karpenter/
 {{- if .Values.karpenter.enabled }}
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
