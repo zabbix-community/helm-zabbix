@@ -28,7 +28,7 @@ spec:
       {{- with .Values.zabbixproxy.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-       {{- with .Values.zabbixproxy.extraInitContainers }}
+      {{- with .Values.zabbixproxy.extraInitContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}
       {{- end }}
