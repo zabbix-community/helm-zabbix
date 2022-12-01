@@ -9,6 +9,10 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
+  annotations:
+    {{- range $key,$value := .Values.zabbixwebservice.deploymentAnnotations }}
+    {{ $key }}: {{ $value|quote }}
+    {{- end }}
 spec:
   replicas: {{ .Values.zabbixwebservice.replicaCount }}
   selector:

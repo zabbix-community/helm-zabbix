@@ -10,6 +10,10 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+  annotations:
+    {{- range $key,$value := .Values.zabbixproxy.statefulSetAnnotations }}
+    {{ $key }}: {{ $value|quote }}
+    {{- end }}
 spec:
   replicas: {{ .Values.zabbixproxy.replicaCount }}
   serviceName: {{ template "zabbix.fullname" . }}
