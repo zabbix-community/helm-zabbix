@@ -20,6 +20,10 @@ spec:
       app:  {{ template "zabbix.fullname" . }}-zabbix-web
   template:
     metadata:
+      annotations:
+        {{- range $key,$value := .Values.zabbixweb.containerAnnotations }}
+        {{ $key }}: {{ $value|quote }}
+        {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-zabbix-web
         app.kubernetes.io/name: zabbix-web

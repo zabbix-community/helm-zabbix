@@ -42,6 +42,10 @@ spec:
       app: {{ template "zabbix.fullname" . }}-postgresql
   template:
     metadata:
+      annotations:
+        {{- range $key,$value := .Values.postgresql.containerAnnotations }}
+        {{ $key }}: {{ $value|quote }}
+        {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-postgresql
         app.kubernetes.io/name: postgresql
