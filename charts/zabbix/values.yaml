@@ -115,6 +115,8 @@ zabbixserver:
     #  value: "true"
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix server container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix server pod
@@ -166,6 +168,8 @@ postgresql:
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the postgresql container
   extraVolumeMounts: []
   # -- additional containers to start within the postgresql pod
@@ -226,6 +230,8 @@ zabbixproxy:
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix proxy container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix proxy pod
@@ -333,6 +339,8 @@ zabbixweb:
     #  value: Demo Zabbix
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix web container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix web pod
@@ -405,6 +413,8 @@ zabbixwebservice:
   extraEnv: []
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix webservice container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix webservice pod

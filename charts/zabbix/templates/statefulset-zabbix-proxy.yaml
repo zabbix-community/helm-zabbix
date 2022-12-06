@@ -22,6 +22,10 @@ spec:
       app: {{ template "zabbix.fullname" . }}-zabbix-proxy
   template:
     metadata:
+      annotations:
+        {{- range $key,$value := .Values.zabbixproxy.containerAnnotations }}
+        {{ $key }}: {{ $value|quote }}
+        {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-zabbix-proxy
         app.kubernetes.io/name: zabbix-proxy
