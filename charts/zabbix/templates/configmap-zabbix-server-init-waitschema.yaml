@@ -15,50 +15,25 @@ data:
 
     set -o pipefail
 
-    set +e
+    # Check prerequisites for MySQL database
+    check_variables_mysql() {
+        file_env MYSQL_ROOT_PASSWORD
+        file_env MYSQL_USER
+        file_env MYSQL_PASSWORD
 
-    # Script trace mode
-    if [ "${DEBUG_MODE,,}" == "true" ]; then
-        set -o xtrace
-    fi
+        : ${DB_SERVER_HOST:="mysql-server"}
+        : ${DB_SERVER_PORT:="3306"}
+        : ${DB_SERVER_DBNAME:="zabbix"}
+        : ${DB_SERVER_SCHEMA:="zabbix"}
+        : ${MYSQL_DATABASE:="zabbix"}
+        : ${MYSQL_INITDB_SKIP_TZINFO:="yes"}
 
-    # Default directories
-    # User 'zabbix' home directory
-    ZABBIX_USER_HOME_DIR="/var/lib/zabbix"
-    # Configuration files directory
-    ZABBIX_ETC_DIR="/etc/zabbix"
+        DB_SERVER_ROOT_USER=${MYSQL_USER:-"root"}
+        DB_SERVER_ROOT_PASS=${MYSQL_ROOT_PASSWORD:-""}
 
-    # usage: file_env VAR [DEFAULT]
-    # as example: file_env 'MYSQL_PASSWORD' 'zabbix'
-    #    (will allow for "$MYSQL_PASSWORD_FILE" to fill in the value of "$MYSQL_PASSWORD" from a file)
-    # unsets the VAR_FILE afterwards and just leaving VAR
-    file_env() {
-        local var="$1"
-        local fileVar="${var}_FILE"
-        local defaultValue="${2:-}"
-
-        if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
-            echo "**** Both variables $var and $fileVar are set (but are exclusive)"
-            exit 1
-        fi
-
-        local val="$defaultValue"
-
-        if [ "${!var:-}" ]; then
-            val="${!var}"
-            echo "** Using ${var} variable from ENV"
-        elif [ "${!fileVar:-}" ]; then
-            if [ ! -f "${!fileVar}" ]; then
-                echo "**** Secret file \"${!fileVar}\" is not found"
-                exit 1
-            fi
-            val="$(< "${!fileVar}")"
-            echo "** Using ${var} variable from secret file"
-        fi
-        export "$var"="$val"
-        unset "$fileVar"
+        DB_SERVER_ZBX_USER=${MYSQL_USER:-"zabbix"}
+        DB_SERVER_ZBX_PASS=${MYSQL_PASSWORD:-"zabbix"}
     }
-
     # Check prerequisites for PostgreSQL database
     check_variables_postgresql() {
         file_env POSTGRES_USER
@@ -88,101 +63,176 @@ data:
             echo "* DB_SERVER_ZBX_USER: ${DB_SERVER_ZBX_USER}"
             echo "* DB_SERVER_ZBX_PASS: ${DB_SERVER_ZBX_PASS}"
         fi
-        echo "********************"
 
-        if [ -n "${DB_SERVER_ZBX_PASS}" ]; then
-            export PGPASSWORD="${DB_SERVER_ZBX_PASS}"
-        fi
-
-        WAIT_TIMEOUT=5
-
-        if [ -n "${DB_SERVER_SCHEMA}" ]; then
-            PGOPTIONS="--search_path=${DB_SERVER_SCHEMA}"
-            export PGOPTIONS
-        fi
-
-        while true :
-        do
-            psql --host ${DB_SERVER_HOST} --port ${DB_SERVER_PORT} --username ${DB_SERVER_ROOT_USER} --list --quiet 1>/dev/null 2>&1 && break
-            psql --host ${DB_SERVER_HOST} --port ${DB_SERVER_PORT} --username ${DB_SERVER_ROOT_USER} --list --dbname ${DB_SERVER_DBNAME} --quiet 1>/dev/null 2>&1 && break
-
-            echo "**** PostgreSQL server is not available. Waiting $WAIT_TIMEOUT seconds..."
-            sleep $WAIT_TIMEOUT
+        until psql "host=${DB_SERVER_HOST} port=${DB_SERVER_PORT} dbname=${DB_SERVER_DBNAME} user=${DB_SERVER_ZBX_USER} password=${DB_SERVER_ZBX_PASS}" -c 'SELECT 1'; do
+            >&2 echo "PostgreSQL is unavailable - sleeping"
+            sleep 1
         done
 
-        unset PGPASSWORD
-        unset PGOPTIONS
+        >&2 echo "PostgreSQL is up - continuing..."
     }
+
+
+
+    if [ -n "$MYSQL_USER" ] && [ -n "$MYSQL_PASSWORD" ]; then
+        check_variables_mysql
+        check_db_connect_mysql
+    elif [ -n "$POSTGRES_USER" ] && [ -n "$POSTGRES_PASSWORD" ]; then
+        check_variables_postgresql
+        check_db_connect_postgresql
+    else
+        echo "Error: No MySQL or PostgreSQL variables were set. Please set either MYSQL_USER and MYSQL_PASSWORD or POSTGRES_USER and POSTGRES_PASSWORD."
+        exit 1
+    fi
+
+    check_db_connect_mysql() {
+        echo "********************"
+        echo "* DB_SERVER_HOST: ${DB_SERVER_HOST}"
+        echo "* DB_SERVER_PORT: ${DB_SERVER_PORT}"
+        echo "* DB_SERVER_DBNAME: ${DB_SERVER_DBNAME}"
+        echo "* DB_SERVER_SCHEMA: ${DB_SERVER_SCHEMA}"
+        if [ "${DEBUG_MODE,,}" == "true" ]; then
+            echo "* DB_SERVER_ZBX_USER: ${DB_SERVER_ZBX_USER}"
+            echo "* DB_SERVER_ZBX_PASS: ${DB_SERVER_ZBX_PASS}"
+        fi
+
+        until mysql -h "${DB_SERVER_HOST}" -P "${DB_SERVER_PORT}" -u "${DB_SERVER_ZBX_USER}" -p"${DB_SERVER_ZBX_PASS}" "${DB_SERVER_DBNAME}" -e "select 1"; do
+            >&2 echo "MySQL is unavailable - sleeping"
+            sleep 1
+        done
+
+        >&2 echo "MySQL is up - continuing..."
+    }
+      
+    mysql_query() {
+        query="${1}"
+        query_success_msg="${2}"
+        query_fail_msg="${3}"
+        query_result=""
+
+        query_result=$(mysql -h "${DB_SERVER_HOST}" -P "${DB_SERVER_PORT}" -u "${DB_SERVER_ZBX_USER}" --password="${DB_SERVER_ZBX_PASS}" "${DB_SERVER_DBNAME}" -e "${query}" 2>/dev/null)
+
+        if [ "$?" -eq 0 ]; then
+            echo "${query_success_msg}"
+        else
+            echo "${query_fail_msg}"
+            exit 1
+        fi
+    }
+    # Check prerequisites for PostgreSQL database
+    check_variables_postgresql() {
+        file_env POSTGRES_USER
+        file_env POSTGRES_PASSWORD
+
+        : ${DB_SERVER_HOST:="postgres-server"}
+        : ${DB_SERVER_PORT:="5432"}
+
+        DB_SERVER_ROOT_USER=${POSTGRES_USER:-"postgres"}
+        DB_SERVER_ROOT_PASS=${POSTGRES_PASSWORD:-""}
+
+        DB_SERVER_ZBX_USER=${POSTGRES_USER:-"zabbix"}
+        DB_SERVER_ZBX_PASS=${POSTGRES_PASSWORD:-"zabbix"}
+
+        : ${DB_SERVER_SCHEMA:="public"}
+
+        DB_SERVER_DBNAME=${POSTGRES_DB:-"zabbix"}
+    }
+
+    check_db_connect_postgresql() {
+        echo "********************"
+        echo "* DB_SERVER_HOST: ${DB_SERVER_HOST}"
+        echo "* DB_SERVER_PORT: ${DB_SERVER_PORT}"
+        echo "* DB_SERVER_DBNAME: ${DB_SERVER_DBNAME}"
+        echo "* DB_SERVER_SCHEMA: ${DB_SERVER_SCHEMA}"
+        if [ "${DEBUG_MODE,,}" == "true" ]; then
+            echo "* DB_SERVER_ZBX_USER: ${DB_SERVER_ZBX_USER}"
+            echo "* DB_SERVER_ZBX_PASS: ${DB_SERVER_ZBX_PASS}"
+        fi
+
+        until psql "host=${DB_SERVER_HOST} port=${DB_SERVER_PORT} dbname=${DB_SERVER_DBNAME} user=${DB_SERVER_ZBX_USER} password=${DB_SERVER_ZBX_PASS}" -c '\q'; do
+            >&2 echo "PostgreSQL is unavailable - sleeping"
+            sleep 1
+        done
+
+        >&2 echo "PostgreSQL is up - continuing..."
+    }
+
 
     psql_query() {
-        query=$1
-        db=$2
+        query="${1}"
+        query_success_msg="${2}"
+        query_fail_msg="${3}"
+        query_result=""
 
-        local result=""
-
-        if [ -n "${DB_SERVER_ZBX_PASS}" ]; then
-            export PGPASSWORD="${DB_SERVER_ZBX_PASS}"
+        query_result=$(psql -h "${DB_SERVER_HOST}" -p "${DB_SERVER_PORT}" -U "${DB_SERVER_ZBX_USER}" -d "${DB_SERVER_DBNAME}" -c "${query}")
+        if [ $? -ne 0 ]; then
+            >&2 echo "${query_fail_msg}"
+            exit 1
+        else
+            if [ "${DEBUG_MODE,,}" == "true" ]; then
+                echo "${query_success_msg}"
+            fi
         fi
-
-        if [ -n "${DB_SERVER_SCHEMA}" ]; then
-            PGOPTIONS="--search_path=${DB_SERVER_SCHEMA}"
-            export PGOPTIONS
-        fi
-
-        result=$(psql --no-align --quiet --tuples-only --host "${DB_SERVER_HOST}" --port "${DB_SERVER_PORT}" \
-                --username "${DB_SERVER_ROOT_USER}" --command "$query" --dbname "$db" 2>/dev/null);
-
-        unset PGPASSWORD
-        unset PGOPTIONS
-
-        echo $result
     }
 
+
     check_db_schema_present() {
-        WAIT_TIMEOUT=5
-        while true :
-        do
-            DBVERSION_TABLE_EXISTS=$(psql_query "SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = 
-                c.relnamespace WHERE  n.nspname = '$DB_SERVER_SCHEMA' AND c.relname = 'dbversion'" "${DB_SERVER_DBNAME}")
+        local result=0
+        if [ "${DB_TYPE}" == "MYSQL" ]; then
+            echo "********** MySQL: Checking if schema is present in the database..."
+            mysql_query "SELECT COUNT(1) FROM information_schema.tables WHERE table_schema='${DB_SERVER_DBNAME}' AND table_name='hosts';"
+            result=$?
+        elif [ "${DB_TYPE}" == "POSTGRESQL" ]; then
+            echo "********** PostgreSQL: Checking if schema is present in the database..."
+            psql_query "SELECT COUNT(1) FROM information_schema.tables WHERE table_schema='${DB_SERVER_SCHEMA}' AND table_name='hosts';"
+            result=$?
+        fi
 
-            if [ -n "${DBVERSION_TABLE_EXISTS}" ]; then
-                echo "** Table '${DB_SERVER_DBNAME}.dbversion' exists."
-                ZBX_DB_VERSION=$(psql_query "SELECT mandatory FROM ${DB_SERVER_SCHEMA}.dbversion" "${DB_SERVER_DBNAME}")
-            fi
-
-            if [ -n "${ZBX_DB_VERSION}" ]; then
-                echo "** dbversion is ${ZBX_DB_VERSION}, continuing with next step of checks..."
-                break
-            fi
-
-            echo "**** DB Version not found yet, assuming DB schema is not yet created. Waiting $WAIT_TIMEOUT seconds..."
-            sleep $WAIT_TIMEOUT
-        done
+        if [ "$result" -ne 0 ]; then
+            echo "FAILED: schema is not present in the database."
+            exit 1
+        else
+            echo "OK: schema is present in the database."
+        fi
     }
 
     check_db_users() {
-        WAIT_TIMEOUT=5
-        while true :
-        do
-            DB_AMOUNT_USERS=$(psql_query "SELECT count(*) FROM users" "${DB_SERVER_DBNAME}")
-            
-            if [ ${DB_AMOUNT_USERS} -gt 0 ]; then
-                echo "** amount of users in users table is ${DB_AMOUNT_USERS}, letting the Zabbix Server container start"
-                break
-            fi
-
-            echo "**** DB amount of entries in user table is ${DB_AMOUNT_USERS}. Waiting $WAIT_TIMEOUT seconds..."
-            sleep $WAIT_TIMEOUT
-        done
+        if [ "${DEBUG_MODE,,}" == "true" ]; then
+            echo "** Checking database users"
+        fi
+        if [ "${DB_TYPE,,}" == "postgresql" ]; then
+            check_db_users_postgresql
+        else
+            check_db_users_mysql
+        fi
     }
 
     wait_for_db_and_schema() {
-        echo "** waiting for Zabbix DB to be operational to start Zabbix server container"
-        check_variables_postgresql
-        check_db_connect_postgresql
-        check_db_schema_present
-        check_db_users
-    }
+        echo "********************"
+        if [ "${DEBUG_MODE,,}" == "true" ]; then
+            echo "* Waiting for database server at ${DB_SERVER_HOST}:${DB_SERVER_PORT}"
+        fi
 
+        if ! wait_for_db; then
+            echo "**** Failed to connect to database server"
+            exit 1
+        fi
+
+        if ! check_db_schema_present; then
+            echo "**** Database schema is not present, trying to create"
+            if ! create_db_schema; then
+                echo "**** Failed to create database schema"
+                exit 1
+            fi
+        fi
+
+        if ! check_db_users; then
+            echo "**** Database user is not present, trying to create"
+            if ! create_db_users; then
+                echo "**** Failed to create database user"
+                exit 1
+            fi
+        fi
+    }
     wait_for_db_and_schema
 {{- end }}
