@@ -115,7 +115,46 @@ Return the entire logic of setting DB access related env vars for the containers
 {{- $dbvar = "PGDATABASE" }}
 {{- end }}
 {{- with index . 1 }}
-{{- if .Values.postgresql.enabled }}
+{{- if .Values.mysql.enabled }}
+  {{/* MySQL environment variables */}}
+  - name: {{ $hostvar }}
+    value: {{ .Values.mysql.service.host | quote }}
+  - name: {{ $portvar }}
+    value: {{ .Values.mysql.service.port | quote }}
+  {{- if .Values.db_access.use_unified_secret }}
+  - name: {{ $uservar }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.db_access.unified_secret_name }}
+        key: user
+        optional: true
+  - name: {{ $passwordvar }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.db_access.unified_secret_name }}
+        key: password
+  - name: {{ $dbvar }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.db_access.unified_secret_name }}
+        key: dbname
+        optional: true
+  {{- else }}
+  - name: {{ $uservar }}
+    value: {{ .Values.db_access.mysql_user | quote }}
+  - name: {{ $passwordvar }}
+    {{- if .Values.db_access.mysql_password_secret }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.db_access.mysql_password_secret }}
+        key: {{ default "password" .Values.db_access.mysql_password_secret_key }}
+    {{- else  }}
+    value: {{ .Values.db_access.mysql_password | quote }}
+    {{- end }}
+  - name: {{ $dbvar }}
+    value: {{ .Values.db_access.mysql_db | quote }}
+  {{- end }}
+{{- else if .Values.postgresql.enabled }}
 - name: {{ $hostvar }}
   value: {{ template "zabbix.fullname" . }}-postgresql
 - name: {{ $portvar }}
