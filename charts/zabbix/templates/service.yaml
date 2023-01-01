@@ -94,6 +94,9 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixweb.service.type }}
+  {{- if .Values.zabbixweb.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.zabbixweb.service.externalTrafficPolicy }}
+  {{- end }}
   {{- if .Values.zabbixweb.service.clusterIP }}
   clusterIP: {{ .Values.zabbixweb.service.clusterIP }}
   {{- end }}
