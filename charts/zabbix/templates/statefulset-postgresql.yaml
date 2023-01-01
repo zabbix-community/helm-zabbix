@@ -10,6 +10,10 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
     app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+  annotations:
+    {{- range $key,$value := .Values.postgresql.statefulSetAnnotations }}
+    {{ $key }}: {{ $value|quote }}
+    {{- end }}
 spec:
   {{- if .Values.postgresql.persistence.enabled }}
   {{- if not .Values.postgresql.persistence.existing_claim_name }}
@@ -38,6 +42,10 @@ spec:
       app: {{ template "zabbix.fullname" . }}-postgresql
   template:
     metadata:
+      annotations:
+        {{- range $key,$value := .Values.postgresql.containerAnnotations }}
+        {{ $key }}: {{ $value|quote }}
+        {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-postgresql
         app.kubernetes.io/name: postgresql

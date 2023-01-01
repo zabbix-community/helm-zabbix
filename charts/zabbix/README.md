@@ -366,6 +366,7 @@ The following tables lists the configurable parameters of the chart and their de
 | karpenter.limits | object | `{"resources":{"cpu":"1000","memory":"1000Gi"}}` | Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded. |
 | karpenter.tag | string | `"karpenter.sh/discovery/CHANGE_HERE: CHANGE_HERE"` | Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag. |
 | nodeSelector | object | `{}` | nodeSelector configurations |
+| postgresql.containerAnnotations | object | `{}` | annotations to add to the containers |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
@@ -385,6 +386,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
 | postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
+| postgresql.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
 | route.annotations | object | `{}` | Openshift Route extra annotations |
 | route.enabled | bool | `false` | Enables Route object for Openshift |
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
@@ -416,6 +418,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
 | zabbixproxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
 | zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
+| zabbixproxy.containerAnnotations | object | `{}` | annotations to add to the containers |
 | zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixproxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
 | zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -434,6 +437,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixproxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
 | zabbixproxy.service.port | int | `10051` | Port to expose service |
 | zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
+| zabbixproxy.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
+| zabbixserver.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixserver.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
 | zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixserver.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
 | zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -462,6 +468,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.service.nodePort | int | `31051` | NodePort of service on each node |
 | zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
+| zabbixweb.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixweb.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
 | zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
 | zabbixweb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
 | zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -493,6 +501,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
 | zabbixweb.service.port | int | `80` | Port to expose service |
 | zabbixweb.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
+| zabbixwebservice.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixwebservice.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
 | zabbixwebservice.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
 | zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |

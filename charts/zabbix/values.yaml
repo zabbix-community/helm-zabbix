@@ -115,6 +115,10 @@ zabbixserver:
   extraEnv: []
     #- name: ENABLE_TIMESCALEDB
     #  value: "true"
+  # -- annotations to add to the deployment
+  deploymentAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix server container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix server pod
@@ -164,6 +168,10 @@ postgresql:
     max_connections: 50
   # -- Extra environment variables. A list of additional environment variables.
   extraEnv: []
+  # -- annotations to add to the statefulset
+  statefulSetAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the postgresql container
   extraVolumeMounts: []
   # -- additional containers to start within the postgresql pod
@@ -222,6 +230,10 @@ zabbixproxy:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
+  # -- annotations to add to the statefulset
+  statefulSetAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix proxy container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix proxy pod
@@ -329,6 +341,10 @@ zabbixweb:
     #  value: '{"baseurl": "https://zabbix.example.com"}'
     #- name: ZBX_SERVER_NAME
     #  value: Demo Zabbix
+  # -- annotations to add to the deployment
+  deploymentAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix web container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix web pod
@@ -399,6 +415,10 @@ zabbixwebservice:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
+  # -- annotations to add to the deployment
+  deploymentAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
   # -- additional volumeMounts to the zabbix webservice container
   extraVolumeMounts: []
   # -- additional containers to start within the zabbix webservice pod
