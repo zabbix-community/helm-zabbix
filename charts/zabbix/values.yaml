@@ -472,3 +472,16 @@ tolerations: []
 
 # -- Affinity configurations
 affinity: {}
+
+karpenter:
+  # -- Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2.
+  enabled: false
+  # -- Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter.
+  clusterName: "CHANGE_HERE"
+  # -- Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag.
+  tag: "karpenter.sh/discovery/CHANGE_HERE: CHANGE_HERE"
+  # -- Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded.
+  limits:
+    resources:
+      cpu: "1000"
+      memory: 1000Gi

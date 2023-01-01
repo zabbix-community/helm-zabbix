@@ -1,6 +1,6 @@
 # Custom values for zabbix.
 
-zabbix_image_tag: alpine-6.2.3
+zabbix_image_tag: alpine-6.2.4
 
 db_access:
   # central place for all database related parameters (db name, host, user, password) in one secret
@@ -126,3 +126,12 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+karpenter:
+  enabled: false
+  clusterName: "CLUSTER_NAME"
+  tag: "karpenter.sh/discovery/CLUSTER_NAME: CLUSTER_NAME"
+  limits:
+    resources:
+      cpu: "20"
+      memory: 100Gi
