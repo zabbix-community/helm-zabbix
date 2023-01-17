@@ -79,7 +79,7 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
         env:
-          {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 10 }}
+          {{- include "zabbix.postgres_access.env_vars" (list $ . "zabbix") | nindent 10 }}
           {{- range $item := .Values.zabbixweb.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value | quote  }}
