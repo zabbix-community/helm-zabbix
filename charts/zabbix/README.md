@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.4.3](https://img.shields.io/badge/Version-3.4.3-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 4.0.0](https://img.shields.io/badge/Version-4.0.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -26,6 +26,15 @@ It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
 * But by default this helm chart will install the latest LTS version (example: 6.0.x).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 * When you want use a non-LTS version (example: 6.2.x), you have to set this in values.yaml yourself.
+
+> **Break change 4.0.0**
+* Will be used Postgresql 14.x and Zabbix 6.x.
+* This release changes parameter names in preparation for addressing these issues in the future. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
+  * ``db_access`` -> ``postgres_access``
+  * ``db_access.db_server_host`` -> ``postgres_access.postgres_host``
+  * ``db_access.db_server_port`` -> ``postgres_access.postgres_port``
+  * ``db_access.postgres_db`` -> ``postgres_access.postgres_database``
+* Also, install zabbix-agent2 as deployment instead sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
 
 > **Break change 3.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
@@ -136,29 +145,29 @@ installation or change the values according to the need of the environment in
 ## Configure central database access related settings
 
 All settings referring to how the different components that this Chart installs access the
-Zabbix Database (either an external, already existing database or one deployed within
-this Helm chart) are being configured centrally under the ``db_access`` section of the
+Zabbix PostgreSQL Database (either an external, already existing database or one deployed within
+this Helm chart) are being configured centrally under the ``postgres_access`` section of the
 ``values.yaml`` file.
 
 By default, this Chart will deploy it's own very simple PostgreSQL database. All settings
 relevant to how to access this database will be held in one central unified secret with the
-name configured with the ``db_access.unified_secret_name`` setting.
+name configured with the ``postgres_access.unified_secret_name`` setting.
 
 Instead of letting the Chart automatically generate such a secret with a random password
 (which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself.
-Use ``db_access.unified_secret_autocreate=false`` in such a case and read the comments
+Use ``postgres_access.unified_secret_autocreate=false`` in such a case and read the comments
 in ``values.yaml`` for how the values inside the secret should be set.
 
 If you want to connect your Zabbix installation to a Postgres database deployed using the
 [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/),
 you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it,
-by just referring to its name with the ``db_access.unified_secret_name`` setting to it.
+by just referring to its name with the ``postgres_access.unified_secret_name`` setting to it.
 
-There is also the possibility to set all DB relevant settings directly inside the ``db_access``
+There is also the possibility to set all DB relevant settings directly inside the ``postgres_access``
 section of the ``values.yaml`` file by using the settings noted there
-(``db_server_host``, ``postgres_user``, etc). If doing so, you still can use one single secret
+(``postgres_host``, ``postgres_user``, etc). If doing so, you still can use one single secret
 to told just and only the database password. If you want to do so, supply the
-``db_access.postgres_password_secret`` and ``db_access.postgres_password_secret_key``
+``postgres_access.postgres_password_secret`` and ``postgres_access.postgres_password_secret_key``
 settings, accordingly.
 
 ## Configure Postgresql database to match with your performance expectations
@@ -344,14 +353,6 @@ The following tables lists the configurable parameters of the chart and their de
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity configurations |
-| db_access.db_server_host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
-| db_access.db_server_port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true |
-| db_access.postgres_db | string | `"zabbix"` | Name of database |
-| db_access.postgres_password | string | `"zabbix"` | Password of database - ignored if postgres_password_secret is set |
-| db_access.postgres_user | string | `"zabbix"` | User of database |
-| db_access.unified_secret_autocreate | bool | `true` | automatically create secret if not already present (works only in combination with postgresql.enabled=true) |
-| db_access.unified_secret_name | string | `"zabbixdb-pguser-zabbix"` | Name of one secret for unified configuration of DB access |
-| db_access.use_unified_secret | bool | `true` | Whether to use the unified db access secret |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
@@ -366,6 +367,14 @@ The following tables lists the configurable parameters of the chart and their de
 | karpenter.limits | object | `{"resources":{"cpu":"1000","memory":"1000Gi"}}` | Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded. |
 | karpenter.tag | string | `"karpenter.sh/discovery/CHANGE_HERE: CHANGE_HERE"` | Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag. |
 | nodeSelector | object | `{}` | nodeSelector configurations |
+| postgres_access.postgres_database | string | `"zabbix"` | Name of database |
+| postgres_access.postgres_host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
+| postgres_access.postgres_password | string | `"zabbix"` | Password of database - ignored if postgres_password_secret is set |
+| postgres_access.postgres_port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true |
+| postgres_access.postgres_user | string | `"zabbix"` | User of database |
+| postgres_access.unified_secret_autocreate | bool | `true` | automatically create secret if not already present (works only in combination with postgresql.enabled=true) |
+| postgres_access.unified_secret_name | string | `"zabbixdb-pguser-zabbix"` | Name of one secret for unified configuration of PostgreSQL access |
+| postgres_access.use_unified_secret | bool | `true` | Whether to use the unified PostgreSQL access secret |
 | postgresql.containerAnnotations | object | `{}` | annotations to add to the containers |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |

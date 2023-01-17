@@ -27,6 +27,15 @@ It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 * When you want use a non-LTS version (example: 6.2.x), you have to set this in values.yaml yourself.
 
+> **Break change 4.0.0**
+* Will be used Postgresql 14.x and Zabbix 6.x.
+* This release changes parameter names in preparation for addressing these issues in the future. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
+  * ``db_access`` -> ``postgres_access``
+  * ``db_access.db_server_host`` -> ``postgres_access.postgres_host``
+  * ``db_access.db_server_port`` -> ``postgres_access.postgres_port``
+  * ``db_access.postgres_db`` -> ``postgres_access.postgres_database``
+* Also, install zabbix-agent2 as deployment instead sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
+
 > **Break change 3.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version removes the possibility to specify database username/password per
@@ -139,29 +148,29 @@ installation or change the values according to the need of the environment in
 ## Configure central database access related settings
 
 All settings referring to how the different components that this Chart installs access the 
-Zabbix Database (either an external, already existing database or one deployed within 
-this Helm chart) are being configured centrally under the ``db_access`` section of the 
+Zabbix PostgreSQL Database (either an external, already existing database or one deployed within 
+this Helm chart) are being configured centrally under the ``postgres_access`` section of the 
 ``values.yaml`` file.
 
 By default, this Chart will deploy it's own very simple PostgreSQL database. All settings 
 relevant to how to access this database will be held in one central unified secret with the 
-name configured with the ``db_access.unified_secret_name`` setting.
+name configured with the ``postgres_access.unified_secret_name`` setting.
 
 Instead of letting the Chart automatically generate such a secret with a random password 
 (which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself. 
-Use ``db_access.unified_secret_autocreate=false`` in such a case and read the comments 
+Use ``postgres_access.unified_secret_autocreate=false`` in such a case and read the comments 
 in ``values.yaml`` for how the values inside the secret should be set.
 
 If you want to connect your Zabbix installation to a Postgres database deployed using the 
 [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/), 
 you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it, 
-by just referring to its name with the ``db_access.unified_secret_name`` setting to it.
+by just referring to its name with the ``postgres_access.unified_secret_name`` setting to it.
 
-There is also the possibility to set all DB relevant settings directly inside the ``db_access`` 
+There is also the possibility to set all DB relevant settings directly inside the ``postgres_access`` 
 section of the ``values.yaml`` file by using the settings noted there 
-(``db_server_host``, ``postgres_user``, etc). If doing so, you still can use one single secret 
+(``postgres_host``, ``postgres_user``, etc). If doing so, you still can use one single secret 
 to told just and only the database password. If you want to do so, supply the 
-``db_access.postgres_password_secret`` and ``db_access.postgres_password_secret_key`` 
+``postgres_access.postgres_password_secret`` and ``postgres_access.postgres_password_secret_key`` 
 settings, accordingly.
 
 ## Configure Postgresql database to match with your performance expectations
