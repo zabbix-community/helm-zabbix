@@ -94,7 +94,7 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            {{- include "zabbix.db_access.env_vars" (list $ . "database") | nindent 12 }}
+            {{- include "zabbix.postgres_access.env_vars" (list $ . "database") | nindent 12 }}
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
             {{- range $item := .Values.zabbixproxy.extraEnv }}
