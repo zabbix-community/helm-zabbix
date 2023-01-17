@@ -21,7 +21,7 @@ spec:
         image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
         {{- end }}
         env:
-          {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 10 }}
+          {{- include "zabbix.postgres_access.env_vars" (list $ . "zabbix") | nindent 10 }}
           {{- range $item := .Values.zabbixserver.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value | quote }}
