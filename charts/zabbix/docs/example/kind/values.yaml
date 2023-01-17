@@ -2,7 +2,7 @@
 
 zabbix_image_tag: alpine-6.2-latest
 
-db_access:
+postgres_access:
   # central place for all database related parameters (db name, host, user, password) in one secret
   # which will be used by all relevant components which are installed by this chart (Zabbix server,
   # database, frontend).
