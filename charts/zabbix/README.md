@@ -29,12 +29,36 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 
 > **Break change 4.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
-* This release changes parameter names in preparation for addressing these issues in the future. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
-  * ``db_access`` -> ``postgres_access``
-  * ``db_access.db_server_host`` -> ``postgres_access.postgres_host``
-  * ``db_access.db_server_port`` -> ``postgres_access.postgres_port``
-  * ``db_access.postgres_db`` -> ``postgres_access.postgres_database``
-* Also, install zabbix-agent2 as deployment instead sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
+* Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
+* This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
+  * ``db_access`` -> ``postgresAccess``
+  * ``db_access.use_unified_secret`` -> ``postgresAccess.useUnifiedSecret``
+  * ``db_access.unified_secret_name`` -> ``postgresAccess.unifiedSecretName``
+  * ``db_access.unified_secret_autocreate`` -> ``postgresAccess.unifiedSecretAutoCreate``
+  * ``db_access.db_server_host`` -> ``postgresAccess.host``
+  * ``db_access.db_server_port`` -> ``postgresAccess.port``
+  * ``db_access.postgres_user`` -> ``postgresAccess.user``
+  * ``db_access.postgres_password`` -> ``postgresAccess.password``
+  * ``db_access.postgres_db`` -> ``postgresAccess.database``
+  * ``db_access.postgres_password_secret`` -> ``postgresAccess.passwordSecret``
+  * ``db_access.postgres_password_secret_key`` -> ``postgresAccess.passwordSecretKey``
+  * ``ingressroute`` -> ``ingressRoute``
+  * ``postgresql.existing_claim_name`` -> ``postgresql.existingClaimName``
+  * ``postgresql.storage_size`` -> ``postgresql.storageSize``
+  * ``postgresql.storage_class`` -> ``postgresql.storageClass``
+  * ``zabbix_image_tag`` -> ``zabbixImageTag``
+  * ``zabbixagent`` -> ``zabbixAgent``
+  * ``zabbixproxy`` -> ``zabbixProxy``
+  * ``zabbixserver`` -> ``zabbixServer``
+  * ``zabbixserver.pod_anti_affinity`` -> ``zabbixServer.podAntiAffinity``
+  * ``zabbixserver.ha_nodes_autoclean`` -> ``zabbixServer.haNodesAutoClean``
+  * ``zabbixserver.ha_nodes_autoclean.delete_older_than_seconds`` -> ``zabbixServer.haNodesAutoClean.deleteOlderThanSeconds``
+  * ``zabbixweb`` -> ``zabbixWeb``
+  * ``zabbixweb.pod_anti_affinity`` -> ``zabbixWeb.podAntiAffinity``
+  * ``zabbixweb.saml_certs_secret_name`` -> ``zabbixWeb.samlCertsSecretName``
+  * ``zabbixwebservice`` -> ``zabbixWebService``
+  * ``zabbixwebservice.pod_anti_affinity`` -> ``zabbixWebService.podAntiAffinity``
+  * ``zabbixwebservice.ignore_url_cert_errors`` -> ``zabbixWebService.ignoreURLCertErrors``
 
 > **Break change 3.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
@@ -51,7 +75,7 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version implements a central way of managing database access credentials
 using a secret, which then will be respected by all the components
-installed by this chart: zabbixserver, zabbixweb and postgresql.
+installed by this chart: zabbixServer, zabbixWeb and postgresql.
 * The secret must contain a number of keys indicating DB host, DB name,
 user and password and can direct towards a database installed within
 this chart, or an external database.
@@ -146,28 +170,28 @@ installation or change the values according to the need of the environment in
 
 All settings referring to how the different components that this Chart installs access the
 Zabbix PostgreSQL Database (either an external, already existing database or one deployed within
-this Helm chart) are being configured centrally under the ``postgres_access`` section of the
+this Helm chart) are being configured centrally under the ``postgresAccess`` section of the
 ``values.yaml`` file.
 
 By default, this Chart will deploy it's own very simple PostgreSQL database. All settings
 relevant to how to access this database will be held in one central unified secret with the
-name configured with the ``postgres_access.unified_secret_name`` setting.
+name configured with the ``postgresAccess.unifiedSecretName`` setting.
 
 Instead of letting the Chart automatically generate such a secret with a random password
 (which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself.
-Use ``postgres_access.unified_secret_autocreate=false`` in such a case and read the comments
+Use ``postgresAccess.unifiedSecretAutoCreate=false`` in such a case and read the comments
 in ``values.yaml`` for how the values inside the secret should be set.
 
 If you want to connect your Zabbix installation to a Postgres database deployed using the
 [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/),
 you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it,
-by just referring to its name with the ``postgres_access.unified_secret_name`` setting to it.
+by just referring to its name with the ``postgresAccess.unifiedSecretName`` setting to it.
 
-There is also the possibility to set all DB relevant settings directly inside the ``postgres_access``
+There is also the possibility to set all DB relevant settings directly inside the ``postgresAccess``
 section of the ``values.yaml`` file by using the settings noted there
 (``postgres_host``, ``postgres_user``, etc). If doing so, you still can use one single secret
 to told just and only the database password. If you want to do so, supply the
-``postgres_access.postgres_password_secret`` and ``postgres_access.postgres_password_secret_key``
+``postgresAccess.passwordSecret`` and ``postgresAccess.passwordSecretKey``
 settings, accordingly.
 
 ## Configure Postgresql database to match with your performance expectations
@@ -185,7 +209,7 @@ postgresql:
   enabled: true
   persistence:
     enabled: true
-    storage_size: 50Gi
+    storageSize: 50Gi
   extraRuntimeParameters:
     max_connections: 250
     dynamic_shared_memory_type: posix
@@ -358,23 +382,23 @@ The following tables lists the configurable parameters of the chart and their de
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
 | ingress.pathType | string | `"Prefix"` | pathType is only for k8s >= 1.1= |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
-| ingressroute.annotations | object | `{}` | IngressRoute annotations |
-| ingressroute.enabled | bool | `false` | Enables Traefik IngressRoute |
-| ingressroute.entryPoints | list | `["websecure"]` | Ingressroute entrypoints |
-| ingressroute.hostName | string | `"chart-example.local"` | Ingressroute host name |
+| ingressRoute.annotations | object | `{}` | IngressRoute annotations |
+| ingressRoute.enabled | bool | `false` | Enables Traefik IngressRoute |
+| ingressRoute.entryPoints | list | `["websecure"]` | Ingressroute entrypoints |
+| ingressRoute.hostName | string | `"chart-example.local"` | Ingressroute host name |
 | karpenter.clusterName | string | `"CHANGE_HERE"` | Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. |
 | karpenter.enabled | bool | `false` | Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2. |
 | karpenter.limits | object | `{"resources":{"cpu":"1000","memory":"1000Gi"}}` | Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded. |
 | karpenter.tag | string | `"karpenter.sh/discovery/CHANGE_HERE: CHANGE_HERE"` | Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag. |
 | nodeSelector | object | `{}` | nodeSelector configurations |
-| postgres_access.postgres_database | string | `"zabbix"` | Name of database |
-| postgres_access.postgres_host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
-| postgres_access.postgres_password | string | `"zabbix"` | Password of database - ignored if postgres_password_secret is set |
-| postgres_access.postgres_port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true |
-| postgres_access.postgres_user | string | `"zabbix"` | User of database |
-| postgres_access.unified_secret_autocreate | bool | `true` | automatically create secret if not already present (works only in combination with postgresql.enabled=true) |
-| postgres_access.unified_secret_name | string | `"zabbixdb-pguser-zabbix"` | Name of one secret for unified configuration of PostgreSQL access |
-| postgres_access.use_unified_secret | bool | `true` | Whether to use the unified PostgreSQL access secret |
+| postgresAccess.database | string | `"zabbix"` | Name of database |
+| postgresAccess.host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
+| postgresAccess.password | string | `"zabbix"` | Password of database - ignored if passwordSecret is set |
+| postgresAccess.port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true |
+| postgresAccess.unifiedSecretAutoCreate | bool | `true` | automatically create secret if not already present (works only in combination with postgresql.enabled=true) |
+| postgresAccess.unifiedSecretName | string | `"zabbixdb-pguser-zabbix"` | Name of one secret for unified configuration of PostgreSQL access |
+| postgresAccess.useUnifiedSecret | bool | `true` | Whether to use the unified PostgreSQL access secret |
+| postgresAccess.user | string | `"zabbix"` | User of database |
 | postgresql.containerAnnotations | object | `{}` | annotations to add to the containers |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
@@ -389,8 +413,8 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
 | postgresql.image.tag | Zabbix supports only TimescaleDB 2.7.x | `14` |  |
 | postgresql.persistence.enabled | bool | `false` | whether to enable persistent storage for the postgres container or not |
-| postgresql.persistence.existing_claim_name | bool | `false` | existing persistent volume claim name to be used to store posgres data |
-| postgresql.persistence.storage_size | string | `"5Gi"` | size of the PVC to be automatically generated |
+| postgresql.persistence.existingClaimName | bool | `false` | existing persistent volume claim name to be used to store posgres data |
+| postgresql.persistence.storageSize | string | `"5Gi"` | size of the PVC to be automatically generated |
 | postgresql.service.annotations | object | `{}` | Annotations for the zabbix-server service |
 | postgresql.service.clusterIP | string | `nil` | Cluster IP for Zabbix server |
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
@@ -401,133 +425,133 @@ The following tables lists the configurable parameters of the chart and their de
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
 | route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | tolerations | list | `[]` | Tolerations configurations |
-| zabbix_image_tag | string | `"ubuntu-6.0.12"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
-| zabbixagent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
-| zabbixagent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
-| zabbixagent.ZBX_PASSIVESERVERS | string | `"127.0.0.1"` | The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. |
-| zabbixagent.ZBX_PASSIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true |
-| zabbixagent.ZBX_SERVER_HOST | string | `"127.0.0.1"` | Zabbix server host |
-| zabbixagent.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
-| zabbixagent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
-| zabbixagent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
-| zabbixagent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixagent.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix agent container |
-| zabbixagent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
-| zabbixagent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixagent.image.repository | string | `"zabbix/zabbix-agent2"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
-| zabbixagent.image.tag | string | `nil` | Zabbix agent Docker image tag, if you want to override zabbix_image_tag |
-| zabbixagent.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixagent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
-| zabbixagent.service.clusterIP | string | `nil` | Cluster IP for Zabbix agent |
-| zabbixagent.service.port | int | `10050` | Port to expose service |
-| zabbixagent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
-| zabbixproxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix proxy hostname Case sensitive hostname |
-| zabbixproxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
-| zabbixproxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1. |
-| zabbixproxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
-| zabbixproxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
-| zabbixproxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
-| zabbixproxy.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixproxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
-| zabbixproxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
-| zabbixproxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixproxy.extraInitContainers | list | `[]` | additional init containers to start within the zabbix proxy pod |
-| zabbixproxy.extraPodSpecs | object | `{}` | additional specifications to the zabbix proxy pod |
-| zabbixproxy.extraVolumeClaimTemplate | list | `[]` | extra volumeClaimTemplate for zabbixproxy statefulset |
-| zabbixproxy.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix proxy container |
-| zabbixproxy.extraVolumes | list | `[]` | additional volumes to make available to the zabbix proxy pod |
-| zabbixproxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
-| zabbixproxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixproxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
-| zabbixproxy.image.tag | string | `nil` | Zabbix proxy Docker image tag, if you want to override zabbix_image_tag |
-| zabbixproxy.replicaCount | int | `1` | Number of replicas of ``zabbixproxy`` module |
-| zabbixproxy.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixproxy.service.annotations | object | `{}` | Annotations for the zabbix-proxy service |
-| zabbixproxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
-| zabbixproxy.service.port | int | `10051` | Port to expose service |
-| zabbixproxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
-| zabbixproxy.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
-| zabbixserver.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixserver.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
-| zabbixserver.enabled | bool | `true` | Enables use of **Zabbix Server** |
-| zabbixserver.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
-| zabbixserver.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixserver.extraInitContainers | list | `[]` | additional init containers to start within the zabbix server pod |
-| zabbixserver.extraPodSpecs | object | `{}` | additional specifications to the zabbix server pod |
-| zabbixserver.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix server container |
-| zabbixserver.extraVolumes | list | `[]` | additional volumes to make available to the zabbix server pod |
-| zabbixserver.ha_nodes_autoclean | object | `{"delete_older_than_seconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
-| zabbixserver.ha_nodes_autoclean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
-| zabbixserver.ha_nodes_autoclean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
-| zabbixserver.ha_nodes_autoclean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |
-| zabbixserver.ha_nodes_autoclean.extraPodSpecs | object | `{}` | additional specifications to the cronjob hanodes autoclean |
-| zabbixserver.ha_nodes_autoclean.extraVolumeMounts | list | `[]` | additional volumeMounts to the cronjob hanodes autoclean |
-| zabbixserver.ha_nodes_autoclean.extraVolumes | list | `[]` | additional volumes to make available to the cronjob hanodes autoclean |
-| zabbixserver.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
-| zabbixserver.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs |
-| zabbixserver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
-| zabbixserver.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixserver.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
-| zabbixserver.image.tag | string | `nil` | Zabbix server Docker image tag, if you want to override zabbix_image_tag |
-| zabbixserver.pod_anti_affinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
-| zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
-| zabbixserver.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixserver.service.annotations | object | `{}` | Annotations for the zabbix-server service |
-| zabbixserver.service.clusterIP | string | `nil` | externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
-| zabbixserver.service.nodePort | int | `31051` | NodePort of service on each node |
-| zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
-| zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
-| zabbixweb.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixweb.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
-| zabbixweb.enabled | bool | `true` | Enables use of **Zabbix Web** |
-| zabbixweb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
-| zabbixweb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixweb.extraInitContainers | list | `[]` | additional init containers to start within the zabbix web pod |
-| zabbixweb.extraPodSpecs | object | `{}` | additional specifications to the zabbix web pod |
-| zabbixweb.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix web container |
-| zabbixweb.extraVolumes | list | `[]` | additional volumes to make available to the zabbix web pod |
-| zabbixweb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
-| zabbixweb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixweb.image.repository | string | `"zabbix/zabbix-web-nginx-pgsql"` | Zabbix web Docker image name |
-| zabbixweb.image.tag | string | `nil` | Zabbix web Docker image tag, if you want to override zabbix_image_tag |
-| zabbixweb.livenessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
-| zabbixweb.livenessProbe.initialDelaySeconds | int | `30` | Number of seconds after the container has started before liveness |
-| zabbixweb.livenessProbe.path | string | `"/"` | Path of health check of application |
-| zabbixweb.livenessProbe.periodSeconds | int | `10` | Specifies that the kubelet should perform a liveness probe every N seconds |
-| zabbixweb.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
-| zabbixweb.livenessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
-| zabbixweb.pod_anti_affinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
-| zabbixweb.readinessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
-| zabbixweb.readinessProbe.initialDelaySeconds | int | `5` | Number of seconds after the container has started before readiness |
-| zabbixweb.readinessProbe.path | string | `"/"` | Path of health check of application |
-| zabbixweb.readinessProbe.periodSeconds | int | `10` | Specifies that the kubelet should perform a readiness probe every N seconds |
-| zabbixweb.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
-| zabbixweb.readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
-| zabbixweb.replicaCount | int | `1` | Number of replicas of ``zabbixweb`` module |
-| zabbixweb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixweb.service | object | `{"annotations":{},"clusterIP":null,"port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration saml_certs_secret_name: zabbix-web-samlcerts |
-| zabbixweb.service.annotations | object | `{}` | Annotations for the zabbix-web service |
-| zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
-| zabbixweb.service.port | int | `80` | Port to expose service |
-| zabbixweb.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
-| zabbixwebservice.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixwebservice.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
-| zabbixwebservice.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
-| zabbixwebservice.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
-| zabbixwebservice.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixwebservice.extraInitContainers | list | `[]` | additional init containers to start within the zabbix webservice pod |
-| zabbixwebservice.extraPodSpecs | object | `{}` | additional specifications to the zabbix webservice pod |
-| zabbixwebservice.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix webservice container |
-| zabbixwebservice.extraVolumes | list | `[]` | additional volumes to make available to the zabbix webservice pod |
-| zabbixwebservice.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
-| zabbixwebservice.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
-| zabbixwebservice.image.repository | string | `"zabbix/zabbix-web-service"` | Zabbix webservice Docker image name |
-| zabbixwebservice.image.tag | string | `nil` | Zabbix webservice Docker image tag, if you want to override zabbix_image_tag |
-| zabbixwebservice.pod_anti_affinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
-| zabbixwebservice.replicaCount | int | `1` | Number of replicas of ``zabbixwebservice`` module |
-| zabbixwebservice.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixwebservice.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | set the IgnoreURLCertErrors configuration setting of Zabbix web service ignore_url_cert_errors=1 |
-| zabbixwebservice.service.annotations | object | `{}` | Annotations for the zabbix-web service |
-| zabbixwebservice.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
-| zabbixwebservice.service.port | int | `10053` | Port to expose service |
-| zabbixwebservice.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
+| zabbixAgent.ZBX_ACTIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of active checks |
+| zabbixAgent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
+| zabbixAgent.ZBX_PASSIVESERVERS | string | `"127.0.0.1"` | The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. |
+| zabbixAgent.ZBX_PASSIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true |
+| zabbixAgent.ZBX_SERVER_HOST | string | `"127.0.0.1"` | Zabbix server host |
+| zabbixAgent.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
+| zabbixAgent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
+| zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
+| zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixAgent.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix agent container |
+| zabbixAgent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixAgent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixAgent.image.repository | string | `"zabbix/zabbix-agent2"` | Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
+| zabbixAgent.image.tag | string | `nil` | Zabbix agent Docker image tag, if you want to override zabbixImageTag |
+| zabbixAgent.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixAgent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
+| zabbixAgent.service.clusterIP | string | `nil` | Cluster IP for Zabbix agent |
+| zabbixAgent.service.port | int | `10050` | Port to expose service |
+| zabbixAgent.service.type | string | `"ClusterIP"` | Type of service for Zabbix agent |
+| zabbixImageTag | string | `"ubuntu-6.0.12"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixServer.image.tag, etc). |
+| zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix proxy hostname Case sensitive hostname |
+| zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
+| zabbixProxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1. |
+| zabbixProxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix server host |
+| zabbixProxy.ZBX_SERVER_PORT | int | `10051` | Zabbix server port |
+| zabbixProxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
+| zabbixProxy.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
+| zabbixProxy.extraContainers | list | `[]` | additional containers to start within the zabbix proxy pod |
+| zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixProxy.extraInitContainers | list | `[]` | additional init containers to start within the zabbix proxy pod |
+| zabbixProxy.extraPodSpecs | object | `{}` | additional specifications to the zabbix proxy pod |
+| zabbixProxy.extraVolumeClaimTemplate | list | `[]` | extra volumeClaimTemplate for zabbixProxy statefulset |
+| zabbixProxy.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix proxy container |
+| zabbixProxy.extraVolumes | list | `[]` | additional volumes to make available to the zabbix proxy pod |
+| zabbixProxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixProxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixProxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix proxy Docker image name |
+| zabbixProxy.image.tag | string | `nil` | Zabbix proxy Docker image tag, if you want to override zabbixImageTag |
+| zabbixProxy.replicaCount | int | `1` | Number of replicas of ``zabbixProxy`` module |
+| zabbixProxy.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixProxy.service.annotations | object | `{}` | Annotations for the zabbix-proxy service |
+| zabbixProxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix proxy |
+| zabbixProxy.service.port | int | `10051` | Port to expose service |
+| zabbixProxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix proxy |
+| zabbixProxy.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
+| zabbixServer.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixServer.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
+| zabbixServer.enabled | bool | `true` | Enables use of **Zabbix Server** |
+| zabbixServer.extraContainers | list | `[]` | additional containers to start within the zabbix server pod |
+| zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixServer.extraInitContainers | list | `[]` | additional init containers to start within the zabbix server pod |
+| zabbixServer.extraPodSpecs | object | `{}` | additional specifications to the zabbix server pod |
+| zabbixServer.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix server container |
+| zabbixServer.extraVolumes | list | `[]` | additional volumes to make available to the zabbix server pod |
+| zabbixServer.haNodesAutoClean | object | `{"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
+| zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraPodSpecs | object | `{}` | additional specifications to the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraVolumeMounts | list | `[]` | additional volumeMounts to the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraVolumes | list | `[]` | additional volumes to make available to the cronjob hanodes autoclean |
+| zabbixServer.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
+| zabbixServer.hostPort | bool | `false` | optional set true open a port direct on node where zabbix server runs |
+| zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixServer.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix server Docker image name |
+| zabbixServer.image.tag | string | `nil` | Zabbix server Docker image tag, if you want to override zabbixImageTag |
+| zabbixServer.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
+| zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
+| zabbixServer.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixServer.service.annotations | object | `{}` | Annotations for the zabbix-server service |
+| zabbixServer.service.clusterIP | string | `nil` | externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
+| zabbixServer.service.nodePort | int | `31051` | NodePort of service on each node |
+| zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
+| zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
+| zabbixWeb.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixWeb.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
+| zabbixWeb.enabled | bool | `true` | Enables use of **Zabbix Web** |
+| zabbixWeb.extraContainers | list | `[]` | additional containers to start within the zabbix web pod |
+| zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixWeb.extraInitContainers | list | `[]` | additional init containers to start within the zabbix web pod |
+| zabbixWeb.extraPodSpecs | object | `{}` | additional specifications to the zabbix web pod |
+| zabbixWeb.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix web container |
+| zabbixWeb.extraVolumes | list | `[]` | additional volumes to make available to the zabbix web pod |
+| zabbixWeb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixWeb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixWeb.image.repository | string | `"zabbix/zabbix-web-nginx-pgsql"` | Zabbix web Docker image name |
+| zabbixWeb.image.tag | string | `nil` | Zabbix web Docker image tag, if you want to override zabbixImageTag |
+| zabbixWeb.livenessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
+| zabbixWeb.livenessProbe.initialDelaySeconds | int | `30` | Number of seconds after the container has started before liveness |
+| zabbixWeb.livenessProbe.path | string | `"/"` | Path of health check of application |
+| zabbixWeb.livenessProbe.periodSeconds | int | `10` | Specifies that the kubelet should perform a liveness probe every N seconds |
+| zabbixWeb.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
+| zabbixWeb.livenessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
+| zabbixWeb.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
+| zabbixWeb.readinessProbe.failureThreshold | int | `6` | When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready |
+| zabbixWeb.readinessProbe.initialDelaySeconds | int | `5` | Number of seconds after the container has started before readiness |
+| zabbixWeb.readinessProbe.path | string | `"/"` | Path of health check of application |
+| zabbixWeb.readinessProbe.periodSeconds | int | `10` | Specifies that the kubelet should perform a readiness probe every N seconds |
+| zabbixWeb.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed |
+| zabbixWeb.readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
+| zabbixWeb.replicaCount | int | `1` | Number of replicas of ``zabbixWeb`` module |
+| zabbixWeb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixWeb.service | object | `{"annotations":{},"clusterIP":null,"port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration samlCertsSecretName: zabbix-web-samlcerts |
+| zabbixWeb.service.annotations | object | `{}` | Annotations for the zabbix-web service |
+| zabbixWeb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
+| zabbixWeb.service.port | int | `80` | Port to expose service |
+| zabbixWeb.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
+| zabbixWebService.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixWebService.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
+| zabbixWebService.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
+| zabbixWebService.extraContainers | list | `[]` | additional containers to start within the zabbix webservice pod |
+| zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixWebService.extraInitContainers | list | `[]` | additional init containers to start within the zabbix webservice pod |
+| zabbixWebService.extraPodSpecs | object | `{}` | additional specifications to the zabbix webservice pod |
+| zabbixWebService.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix webservice container |
+| zabbixWebService.extraVolumes | list | `[]` | additional volumes to make available to the zabbix webservice pod |
+| zabbixWebService.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixWebService.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixWebService.image.repository | string | `"zabbix/zabbix-web-service"` | Zabbix webservice Docker image name |
+| zabbixWebService.image.tag | string | `nil` | Zabbix webservice Docker image tag, if you want to override zabbixImageTag |
+| zabbixWebService.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
+| zabbixWebService.replicaCount | int | `1` | Number of replicas of ``zabbixWebService`` module |
+| zabbixWebService.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixWebService.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | set the IgnoreURLCertErrors configuration setting of Zabbix web service ignoreURLCertErrors=1 |
+| zabbixWebService.service.annotations | object | `{}` | Annotations for the zabbix-web service |
+| zabbixWebService.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
+| zabbixWebService.service.port | int | `10053` | Port to expose service |
+| zabbixWebService.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |

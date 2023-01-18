@@ -98,7 +98,7 @@ Define env var names
 {{/*
 Return the entire logic of setting PostgreSQL access related env vars for the containers which need them
 */}}
-{{- define "zabbix.postgres_access.env_vars" -}}
+{{- define "zabbix.postgresAccess.variables" -}}
 {{- $ := index . 0 }}
 {{- $cntxt := index . 2 }}
 {{- $hostvar := "DB_SERVER_HOST" }}
@@ -120,56 +120,56 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
   value: {{ template "zabbix.fullname" . }}-postgresql
 - name: {{ $portvar }}
   value: {{ .Values.postgresql.service.port | quote }}
-{{- else if .Values.postgres_access.use_unified_secret }}
+{{- else if .Values.postgresAccess.useUnifiedSecret }}
 - name: {{ $hostvar }}
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.postgres_access.unified_secret_name }}
+      name: {{ .Values.postgresAccess.unifiedSecretName }}
       key: host
 - name: {{ $portvar }}
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.postgres_access.unified_secret_name }}
+      name: {{ .Values.postgresAccess.unifiedSecretName }}
       key: port
       optional: true
 {{- else }}
 - name: {{ $hostvar }}
-  value: {{ .Values.postgres_access.postgres_host | quote }}
+  value: {{ .Values.postgresAccess.host | quote }}
 - name: {{ $portvar }}
-  value: {{ .Values.postgres_access.postgres_port | quote }}
+  value: {{ .Values.postgresAccess.port | quote }}
 {{- end }}
-{{- if .Values.postgres_access.use_unified_secret }}
+{{- if .Values.postgresAccess.useUnifiedSecret }}
 - name: {{ $uservar }}
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.postgres_access.unified_secret_name }}
+      name: {{ .Values.postgresAccess.unifiedSecretName }}
       key: user
       optional: true
 - name: {{ $passwordvar }}
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.postgres_access.unified_secret_name }}
+      name: {{ .Values.postgresAccess.unifiedSecretName }}
       key: password
 - name: {{ $dbvar }}
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.postgres_access.unified_secret_name }}
+      name: {{ .Values.postgresAccess.unifiedSecretName }}
       key: dbname
       optional: true
 {{- else }}
 - name: {{ $uservar }}
-  value: {{ .Values.postgres_access.postgres_user | quote }}
+  value: {{ .Values.postgresAccess.user | quote }}
 - name: {{ $passwordvar }}
-  {{- if .Values.postgres_access.postgres_password_secret }}
+  {{- if .Values.postgresAccess.passwordSecret }}
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.postgres_access.postgres_password_secret }}
-      key: {{ default "password" .Values.postgres_access.postgres_password_secret_key }}
+      name: {{ .Values.postgresAccess.passwordSecret }}
+      key: {{ default "password" .Values.postgresAccess.passwordSecretKey }}
   {{- else  }}
-  value: {{ .Values.postgres_access.postgres_password | quote }}
+  value: {{ .Values.postgresAccess.password | quote }}
   {{- end }}
 - name: {{ $dbvar }}
-  value: {{ .Values.postgres_access.postgres_database | quote }}
+  value: {{ .Values.postgresAccess.database | quote }}
 {{- end }}
 {{- end }}
 {{- end -}}

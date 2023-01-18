@@ -16,7 +16,7 @@ metadata:
     {{- end }}
 spec:
   {{- if .Values.postgresql.persistence.enabled }}
-  {{- if not .Values.postgresql.persistence.existing_claim_name }}
+  {{- if not .Values.postgresql.persistence.existingClaimName }}
   volumeClaimTemplates:
     - metadata:
         name: postgresql-data
@@ -29,9 +29,9 @@ spec:
           {{- end }}
         resources:
           requests:
-            storage: {{ .Values.postgresql.persistence.storage_size }}
-        {{- if .Values.postgresql.persistence.storage_class }}
-        storageClassName: {{ .Values.postgresql.persistence.storage_class }}
+            storage: {{ .Values.postgresql.persistence.storageSize }}
+        {{- if .Values.postgresql.persistence.storageClass }}
+        storageClassName: {{ .Values.postgresql.persistence.storageClass }}
         {{- end }}
   {{- end }}
   {{- end }}
@@ -94,10 +94,10 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            {{- include "zabbix.postgres_access.env_vars" (list $ . "database") | nindent 12 }}
+            {{- include "zabbix.postgresAccess.variables" (list $ . "database") | nindent 12 }}
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
-            {{- range $item := .Values.zabbixproxy.extraEnv }}
+            {{- range $item := .Values.zabbixProxy.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
             {{- end }}
@@ -118,10 +118,10 @@ spec:
       {{- end }}
       volumes:
       {{- if .Values.postgresql.persistence.enabled }}
-      {{- if .Values.postgresql.persistence.existing_claim_name }}
+      {{- if .Values.postgresql.persistence.existingClaimName }}
         - name: postgresql-data
           persistentVolumeClaim:
-            claimName: {{ .Values.postgresql.persistence.existing_claim_name }}
+            claimName: {{ .Values.postgresql.persistence.existingClaimName }}
       {{- end }}
       {{- end }}
       {{- with .Values.postgresql.extraVolumes }}

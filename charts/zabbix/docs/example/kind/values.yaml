@@ -1,13 +1,13 @@
 # Custom values for zabbix.
 
-zabbix_image_tag: 6.2.6-alpine
+zabbixImageTag: 6.2.6-alpine
 
-postgres_access:
-  use_unified_secret: true
-  unified_secret_name: zabbixdb-pguser-zabbix
-  unified_secret_autocreate: true
+postgresAccess:
+  useUnifiedSecret: true
+  unifiedSecretName: zabbixdb-pguser-zabbix
+  unifiedSecretAutoCreate: true
 
-zabbixserver:
+zabbixServer:
   enabled: true
   replicaCount: 2
   service:
@@ -27,10 +27,10 @@ postgresql:
   max_connections: 100
   persistence:
     enabled: true
-    existing_claim_name: false
-    storage_size: 5Gi # generate a PVC in default storage class with the given size for the DB
+    existingClaimName: false
+    storageSize: 5Gi # generate a PVC in default storage class with the given size for the DB
 
-zabbixproxy:
+zabbixProxy:
   enabled: false
   replicaCount: 1
   ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
@@ -53,7 +53,7 @@ zabbixproxy:
     - name: "ZBX_EXAMPLE_MY_ENV_6"
       value: "100"
 
-zabbixagent:
+zabbixAgent:
   enabled: true
   ZBX_HOSTNAME: zabbix-agent
   ZBX_SERVER_HOST: 127.0.0.1
@@ -78,7 +78,7 @@ zabbixagent:
     - name: "ZBX_EXAMPLE_MY_ENV_9"
       value: "100"
 
-zabbixweb:
+zabbixWeb:
   enabled: true
   ZBX_SERVER_HOST: zabbix-zabbix-server
   ZBX_SERVER_PORT: 10051

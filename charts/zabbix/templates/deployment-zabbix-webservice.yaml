@@ -1,4 +1,4 @@
-{{- if .Values.zabbixwebservice.enabled }}
+{{- if .Values.zabbixWebService.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,18 +10,18 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
   annotations:
-    {{- range $key,$value := .Values.zabbixwebservice.deploymentAnnotations }}
+    {{- range $key,$value := .Values.zabbixWebService.deploymentAnnotations }}
     {{ $key }}: {{ $value|quote }}
     {{- end }}
 spec:
-  replicas: {{ .Values.zabbixwebservice.replicaCount }}
+  replicas: {{ .Values.zabbixWebService.replicaCount }}
   selector:
     matchLabels:
       app:  {{ template "zabbix.fullname" . }}-zabbix-webservice
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixwebservice.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixWebService.containerAnnotations }}
         {{ $key }}: {{ $value|quote }}
         {{- end }}
       labels:
@@ -31,10 +31,10 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
     spec:
-      {{- with .Values.zabbixwebservice.extraPodSpecs }}
+      {{- with .Values.zabbixWebService.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      {{- with .Values.zabbixwebservice.extraInitContainers }}
+      {{- with .Values.zabbixWebService.extraInitContainers }}
       initContainers:
       {{- toYaml . | nindent 6 }}
       {{- end }}
@@ -51,7 +51,7 @@ spec:
       {{- if gt (len .Values.affinity) 0 }}
       affinity:
         {{- toYaml .Values.affinity | nindent 8 }}
-      {{- else if .Values.zabbixwebservice.pod_anti_affinity }}
+      {{- else if .Values.zabbixWebService.podAntiAffinity }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -69,21 +69,21 @@ spec:
       containers:
       - name: zabbix-webservice
         resources:
-          {{- toYaml .Values.zabbixwebservice.resources | nindent 10 }}
+          {{- toYaml .Values.zabbixWebService.resources | nindent 10 }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
-        {{- if .Values.zabbixwebservice.image.tag }}
-        image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbixwebservice.image.tag }}"
+        {{- if .Values.zabbixWebService.image.tag }}
+        image: "{{ .Values.zabbixWebService.image.repository }}:{{ .Values.zabbixWebService.image.tag }}"
         {{- else }}
-        image: "{{ .Values.zabbixwebservice.image.repository }}:{{ .Values.zabbix_image_tag }}"
+        image: "{{ .Values.zabbixWebService.image.repository }}:{{ .Values.zabbixImageTag }}"
         {{- end }}
-        imagePullPolicy: {{ .Values.zabbixwebservice.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.zabbixWebService.image.pullPolicy }}
         env:
-          {{- if .Values.zabbixwebservice.ignore_url_cert_errors }}
+          {{- if .Values.zabbixWebService.ignoreURLCertErrors }}
           - name: ZBX_IGNOREURLCERTERRORS
-            value: {{ .Values.zabbixwebservice.ignore_url_cert_errors }}
+            value: {{ .Values.zabbixWebService.ignoreURLCertErrors }}
           {{- end }}
-          {{- range $item := .Values.zabbixwebservice.extraEnv }}
+          {{- range $item := .Values.zabbixWebService.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value | quote  }}
           {{- end }}
@@ -93,18 +93,18 @@ spec:
           - name: webservice
             containerPort: 10053
             protocol: TCP
-        {{- with .Values.zabbixwebservice.extraVolumeMounts }}
+        {{- with .Values.zabbixWebService.extraVolumeMounts }}
         volumeMounts:
           {{ toYaml . | nindent 10 }}
         {{- end }}
-      {{- with .Values.zabbixwebservice.extraContainers }}
+      {{- with .Values.zabbixWebService.extraContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
       imagePullSecrets:
-      {{- range .Values.zabbixweb.image.pullSecrets }}
+      {{- range .Values.zabbixWeb.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
-      {{- with .Values.zabbixwebservice.extraVolumes }}
+      {{- with .Values.zabbixWebService.extraVolumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}

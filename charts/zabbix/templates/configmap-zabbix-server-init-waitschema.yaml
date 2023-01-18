@@ -1,4 +1,4 @@
-{{- if and .Values.zabbixserver.enabled (gt (.Values.zabbixserver.replicaCount | int) 1) }}
+{{- if and .Values.zabbixServer.enabled (gt (.Values.zabbixServer.replicaCount | int) 1) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

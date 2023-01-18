@@ -1,4 +1,4 @@
-{{- if and .Values.zabbixserver.enabled .Values.zabbixserver.ha_nodes_autoclean.enabled }}
+{{- if and .Values.zabbixServer.enabled .Values.zabbixServer.haNodesAutoClean.enabled }}
 {{- if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}
 apiVersion: batch/v1
 {{- else }}
@@ -14,46 +14,46 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-nodesclean
     app.kubernetes.io/managed-by: {{ .Release.Service }}-nodesclean
 spec:
-  schedule: {{ .Values.zabbixserver.ha_nodes_autoclean.schedule|quote }}
+  schedule: {{ .Values.zabbixServer.haNodesAutoClean.schedule|quote }}
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 86400
       template:
         spec:
-          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraPodSpecs }}
+          {{- with .Values.zabbixServer.haNodesAutoClean.extraPodSpecs }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraInitContainers }}
+          {{- with .Values.zabbixServer.haNodesAutoClean.extraInitContainers }}
           initContainers:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           containers:
           - name: hanodes-autoclean
-            image: {{ .Values.zabbixserver.ha_nodes_autoclean.image.repository }}:{{ .Values.zabbixserver.ha_nodes_autoclean.image.tag }}
-            imagePullPolicy: {{ .Values.zabbixserver.ha_nodes_autoclean.image.pullPolicy }}
+            image: {{ .Values.zabbixServer.haNodesAutoClean.image.repository }}:{{ .Values.zabbixServer.haNodesAutoClean.image.tag }}
+            imagePullPolicy: {{ .Values.zabbixServer.haNodesAutoClean.image.pullPolicy }}
             command:
             - /bin/bash
             - -c
-            - echo "deleting all stopped and unavailable HANodes older than {{ .Values.zabbixserver.ha_nodes_autoclean.delete_older_than_seconds }} seconds..." && psql -c "delete from ha_node where status in (1,2) and extract(epoch from now())-lastaccess>{{ .Values.zabbixserver.ha_nodes_autoclean.delete_older_than_seconds }}"
+            - echo "deleting all stopped and unavailable HANodes older than {{ .Values.zabbixServer.haNodesAutoClean.deleteOlderThanSeconds }} seconds..." && psql -c "delete from ha_node where status in (1,2) and extract(epoch from now())-lastaccess>{{ .Values.zabbixServer.haNodesAutoClean.deleteOlderThanSeconds }}"
             env:
-            {{- include "zabbix.postgres_access.env_vars" (list $ . "db_client") | nindent 12 }}
-            {{- range $item := .Values.zabbixserver.ha_nodes_autoclean.extraEnv }}
+            {{- include "zabbix.postgresAccess.variables" (list $ . "db_client") | nindent 12 }}
+            {{- range $item := .Values.zabbixServer.haNodesAutoClean.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
             {{- end }}
-            {{- with .Values.zabbixserver.ha_nodes_autoclean.extraVolumeMounts }}
+            {{- with .Values.zabbixServer.haNodesAutoClean.extraVolumeMounts }}
             volumeMounts:
               {{- toYaml . | nindent 14 }}
             {{- end }}
-          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraContainers }}
+          {{- with .Values.zabbixServer.haNodesAutoClean.extraContainers }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
           imagePullSecrets:
-          {{- range .Values.zabbixserver.image.pullSecrets }}
+          {{- range .Values.zabbixServer.image.pullSecrets }}
             - name: {{ . | quote }}
           {{- end }}
           restartPolicy: OnFailure
-          {{- with .Values.zabbixserver.ha_nodes_autoclean.extraVolumes }}
+          {{- with .Values.zabbixServer.haNodesAutoClean.extraVolumes }}
           volumes:
             {{- toYaml . | nindent 12 }}
           {{- end }}

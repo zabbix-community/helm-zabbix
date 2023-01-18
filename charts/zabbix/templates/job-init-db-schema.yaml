@@ -1,4 +1,4 @@
-{{- if and .Values.zabbixserver.enabled (gt (.Values.zabbixserver.replicaCount | int) 1) }}
+{{- if and .Values.zabbixServer.enabled (gt (.Values.zabbixServer.replicaCount | int) 1) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -15,14 +15,14 @@ spec:
     spec:
       containers:
       - name: init-db-schema
-        {{- if .Values.zabbixserver.image.tag }}
-        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
+        {{- if .Values.zabbixServer.image.tag }}
+        image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}"
         {{- else }}
-        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
+        image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixImageTag }}"
         {{- end }}
         env:
-          {{- include "zabbix.postgres_access.env_vars" (list $ . "zabbix") | nindent 10 }}
-          {{- range $item := .Values.zabbixserver.extraEnv }}
+          {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
+          {{- range $item := .Values.zabbixServer.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value | quote }}
           {{- end }}

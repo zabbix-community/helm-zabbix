@@ -29,12 +29,36 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 
 > **Break change 4.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
-* This release changes parameter names in preparation for addressing these issues in the future. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
-  * ``db_access`` -> ``postgres_access``
-  * ``db_access.db_server_host`` -> ``postgres_access.postgres_host``
-  * ``db_access.db_server_port`` -> ``postgres_access.postgres_port``
-  * ``db_access.postgres_db`` -> ``postgres_access.postgres_database``
-* Also, install zabbix-agent2 as deployment instead sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
+* Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
+* This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
+  * ``db_access`` -> ``postgresAccess``
+  * ``db_access.use_unified_secret`` -> ``postgresAccess.useUnifiedSecret``
+  * ``db_access.unified_secret_name`` -> ``postgresAccess.unifiedSecretName``
+  * ``db_access.unified_secret_autocreate`` -> ``postgresAccess.unifiedSecretAutoCreate``
+  * ``db_access.db_server_host`` -> ``postgresAccess.host``
+  * ``db_access.db_server_port`` -> ``postgresAccess.port``
+  * ``db_access.postgres_user`` -> ``postgresAccess.user``
+  * ``db_access.postgres_password`` -> ``postgresAccess.password``
+  * ``db_access.postgres_db`` -> ``postgresAccess.database``
+  * ``db_access.postgres_password_secret`` -> ``postgresAccess.passwordSecret``
+  * ``db_access.postgres_password_secret_key`` -> ``postgresAccess.passwordSecretKey``
+  * ``ingressroute`` -> ``ingressRoute``
+  * ``postgresql.existing_claim_name`` -> ``postgresql.existingClaimName``
+  * ``postgresql.storage_size`` -> ``postgresql.storageSize``
+  * ``postgresql.storage_class`` -> ``postgresql.storageClass``
+  * ``zabbix_image_tag`` -> ``zabbixImageTag``
+  * ``zabbixagent`` -> ``zabbixAgent``
+  * ``zabbixproxy`` -> ``zabbixProxy``
+  * ``zabbixserver`` -> ``zabbixServer``
+  * ``zabbixserver.pod_anti_affinity`` -> ``zabbixServer.podAntiAffinity``
+  * ``zabbixserver.ha_nodes_autoclean`` -> ``zabbixServer.haNodesAutoClean``
+  * ``zabbixserver.ha_nodes_autoclean.delete_older_than_seconds`` -> ``zabbixServer.haNodesAutoClean.deleteOlderThanSeconds``
+  * ``zabbixweb`` -> ``zabbixWeb``
+  * ``zabbixweb.pod_anti_affinity`` -> ``zabbixWeb.podAntiAffinity``
+  * ``zabbixweb.saml_certs_secret_name`` -> ``zabbixWeb.samlCertsSecretName``
+  * ``zabbixwebservice`` -> ``zabbixWebService``
+  * ``zabbixwebservice.pod_anti_affinity`` -> ``zabbixWebService.podAntiAffinity``
+  * ``zabbixwebservice.ignore_url_cert_errors`` -> ``zabbixWebService.ignoreURLCertErrors``
 
 > **Break change 3.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
@@ -51,7 +75,7 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version implements a central way of managing database access credentials 
 using a secret, which then will be respected by all the components
-installed by this chart: zabbixserver, zabbixweb and postgresql.
+installed by this chart: zabbixServer, zabbixWeb and postgresql.
 * The secret must contain a number of keys indicating DB host, DB name,
 user and password and can direct towards a database installed within
 this chart, or an external database.
@@ -149,28 +173,28 @@ installation or change the values according to the need of the environment in
 
 All settings referring to how the different components that this Chart installs access the 
 Zabbix PostgreSQL Database (either an external, already existing database or one deployed within 
-this Helm chart) are being configured centrally under the ``postgres_access`` section of the 
+this Helm chart) are being configured centrally under the ``postgresAccess`` section of the 
 ``values.yaml`` file.
 
 By default, this Chart will deploy it's own very simple PostgreSQL database. All settings 
 relevant to how to access this database will be held in one central unified secret with the 
-name configured with the ``postgres_access.unified_secret_name`` setting.
+name configured with the ``postgresAccess.unifiedSecretName`` setting.
 
 Instead of letting the Chart automatically generate such a secret with a random password 
 (which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself. 
-Use ``postgres_access.unified_secret_autocreate=false`` in such a case and read the comments 
+Use ``postgresAccess.unifiedSecretAutoCreate=false`` in such a case and read the comments 
 in ``values.yaml`` for how the values inside the secret should be set.
 
 If you want to connect your Zabbix installation to a Postgres database deployed using the 
 [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/), 
 you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it, 
-by just referring to its name with the ``postgres_access.unified_secret_name`` setting to it.
+by just referring to its name with the ``postgresAccess.unifiedSecretName`` setting to it.
 
-There is also the possibility to set all DB relevant settings directly inside the ``postgres_access`` 
+There is also the possibility to set all DB relevant settings directly inside the ``postgresAccess`` 
 section of the ``values.yaml`` file by using the settings noted there 
 (``postgres_host``, ``postgres_user``, etc). If doing so, you still can use one single secret 
 to told just and only the database password. If you want to do so, supply the 
-``postgres_access.postgres_password_secret`` and ``postgres_access.postgres_password_secret_key`` 
+``postgresAccess.passwordSecret`` and ``postgresAccess.passwordSecretKey`` 
 settings, accordingly.
 
 ## Configure Postgresql database to match with your performance expectations
@@ -188,7 +212,7 @@ postgresql:
   enabled: true
   persistence:
     enabled: true
-    storage_size: 50Gi
+    storageSize: 50Gi
   extraRuntimeParameters:
     max_connections: 250
     dynamic_shared_memory_type: posix
