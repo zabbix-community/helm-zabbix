@@ -62,21 +62,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      initContainers:
-      - name: update-zabbix-server-host-interface
-        # References:
-        # https://medium.com/@xcoulon/initializing-containers-in-order-with-kubernetes-18173b9cc222
-        # https://github.com/aeciopires/zabbix-scripts
-        # https://hub.docker.com/r/aeciopires/zabbix-scripts
-        image: aeciopires/zabbix-scripts:v0.1.1
-        command: ['bash', '-c', 
-          'export ZABBIX_AGENT_ADDRESS=zabbix-zabbix-agent;
-          export ZABBIX_WEB_URL=http://zabbix-zabbix-web:80;
-          export ZABBIX_WEB_LOGIN=Admin;
-          export ZABBIX_WEB_PASS=zabbix;
-          until python updateZabbixServerHostInterface.py;
-          do echo waiting for zabbix-web; sleep 2; done;']
       {{- with .Values.zabbixWebService.extraInitContainers }}
+      initContainers:
       {{- toYaml . | nindent 6 }}
       {{- end }}
       containers:
