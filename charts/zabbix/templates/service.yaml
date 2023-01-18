@@ -29,7 +29,7 @@ spec:
       targetPort: 10051
       name: zabbix-server
       protocol: TCP
-      {{- if and .Values.zabbixServer.service.nodePort (eq .Values.zabbixServer.service.type "NodePort") }}
+      {{- if ( and (eq .Values.zabbixServer.service.type "NodePort" ) (not (empty .Values.zabbixServer.service.nodePort)) ) }}
       nodePort: {{ .Values.zabbixServer.service.nodePort }}
       {{- end }}
     - port: 10052
@@ -67,6 +67,9 @@ spec:
   ports:
     - port: {{ .Values.zabbixAgent.service.port }}
       targetPort: 10050
+      {{- if ( and (eq .Values.zabbixAgent.service.type "NodePort" ) (not (empty .Values.zabbixAgent.service.nodePort)) ) }}
+      nodePort: {{ .Values.zabbixAgent.service.nodePort }}
+      {{- end }}
       protocol: TCP
       name: zabbix-agent
   selector:
@@ -105,7 +108,7 @@ spec:
       targetPort: 8080
       protocol: TCP
       name: zabbix-web
-      {{- if .Values.zabbixWeb.service.nodePort }}
+      {{- if ( and (eq .Values.zabbixWeb.service.type "NodePort" ) (not (empty .Values.zabbixWeb.service.nodePort)) ) }}
       nodePort: {{ .Values.zabbixWeb.service.nodePort }}
       {{- end }}
   selector:

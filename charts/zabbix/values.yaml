@@ -101,7 +101,7 @@ zabbixServer:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
     # -- Cluster IP for Zabbix Server
-    # -- externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    # -- externalTrafficPolicy for Zabbix Server. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
     clusterIP:
     # -- Port of service in Kubernetes cluster
@@ -111,7 +111,7 @@ zabbixServer:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
     #- name: ENABLE_TIMESCALEDB
     #  value: "true"
@@ -228,7 +228,7 @@ zabbixProxy:
     # -- Annotations for the zabbix-proxy service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
@@ -251,8 +251,6 @@ zabbixProxy:
 zabbixAgent:
   # -- Enables use of **Zabbix Agent**
   enabled: true
-  # -- Execute **Zabbix Agent** as [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset)
-  runAsDaemonSet: true
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
@@ -265,24 +263,23 @@ zabbixAgent:
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
   # -- Zabbix Server host
-  ZBX_SERVER_HOST: 127.0.0.1
+  ZBX_SERVER_HOST: 0.0.0.0/0
   # -- Zabbix Server port
   ZBX_SERVER_PORT: 10051
   # -- This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
   ZBX_PASSIVE_ALLOW: true
   # -- The variable is comma separated list of allowed Zabbix Server or proxy hosts for connections to Zabbix Agent container.
-  ZBX_PASSIVESERVERS: 127.0.0.1
+  ZBX_PASSIVESERVERS: 0.0.0.0/0
   # -- This variable is boolean (true or false) and enables or disables feature of active checks
-  ZBX_ACTIVE_ALLOW: true
-  # The variable is comma separated list of allowed Zabbix Server or proxy hosts for connections to Zabbix Agent container. You may specify port.
-  # ZBX_ACTIVESERVERS:
-  # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
-  # ZBX_LOADMODULE: dummy1.so,dummy2.so
-  # The variable is used to specify debug level, from 0 to 5
-  #ZBX_DEBUGLEVEL: 3
-  # The variable is used to specify timeout for processing checks. By default, value is 4.
-  #ZBX_TIMEOUT: 4
-
+  ZBX_ACTIVE_ALLOW: false
+  # -- The variable is comma separated list of allowed Zabbix Server or proxy hosts for connections to Zabbix Agent container. You may specify port.
+  #ZBX_ACTIVESERVERS: ''
+  # -- The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
+  #ZBX_LOADMODULE: dummy1.so,dummy2.so
+  # -- The variable is used to specify debug level, from 0 to 5
+  ZBX_DEBUGLEVEL: 3
+  # -- The variable is used to specify timeout for processing checks. By default, value is 4.
+  ZBX_TIMEOUT: 4
   # -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
   ZBX_JAVAGATEWAY_ENABLE: false
   # -- Cache size
@@ -294,13 +291,32 @@ zabbixAgent:
     clusterIP:
     # -- Port to expose service
     port: 10050
+    # -- externalTrafficPolicy for Zabbix Agent service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    #externalTrafficPolicy: Local
+    listenOnAllInterfaces: true
+    # -- NodePort port to allocate (only if service.type = NodePort)
+    #nodePort: 31050
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- If true, agent pods mounts host / at /host/root
+  hostRootFsMount: true
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-  # -- additional volumeMounts to the zabbix agent container
+  # -- additional volumeMounts to the zabbix Agent container
   extraVolumeMounts: []
+  # -- annotations to add to the daemonSet
+  daemonSetAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
+  # -- additional containers to start within the Zabbix Agent pod
+  extraContainers: []
+  # -- additional init containers to start within the Zabbix Agent pod
+  extraInitContainers: []
+  # -- additional volumes to make available to the Zabbix Agent pod
+  extraVolumes: []
+  # -- additional specifications to the Zabbix Agent pod
+  extraPodSpecs: {}
 
 # **Zabbix Web** configurations
 zabbixWeb:
@@ -326,7 +342,7 @@ zabbixWeb:
   service:
     # -- Type of service for Zabbix Web
     type: ClusterIP
-    # -- externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    # -- externalTrafficPolicy for Zabbix Web. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
     # -- Cluster IP for Zabbix Web
     clusterIP:
@@ -334,10 +350,10 @@ zabbixWeb:
     port: 80
     # -- NodePort port to allocate (only if service.type = NodePort)
     #nodePort: 31080
-    # -- Annotations for the zabbix-web service
+    # -- Annotations for the Zabbix Web
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
     #- name: ZBX_SSO_SETTINGS
     #  value: '{"baseurl": "https://zabbix.example.com"}'
@@ -403,33 +419,33 @@ zabbixWebService:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- set the IgnoreURLCertErrors configuration setting of Zabbix web service
+  # -- set the IgnoreURLCertErrors configuration setting of Zabbix Web Service
   #ignoreURLCertErrors=1
   service:
-    # -- Type of service for Zabbix web
+    # -- Type of service for Zabbix Web
     type: ClusterIP
-    # -- Cluster IP for Zabbix web
+    # -- Cluster IP for Zabbix Web
     clusterIP:
     # -- Port to expose service
     port: 10053
-    # -- Annotations for the zabbix-web service
+    # -- Annotations for the Zabbix Web Service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
-  # -- additional volumeMounts to the Zabbix Webservice container
+  # -- additional volumeMounts to the Zabbix Web Service container
   extraVolumeMounts: []
-  # -- additional containers to start within the Zabbix Webservice pod
+  # -- additional containers to start within the Zabbix Web Service pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Webservice pod
+  # -- additional init containers to start within the Zabbix Web Service pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Webservice pod
+  # -- additional volumes to make available to the Zabbix Web Service pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Webservice pod
+  # -- additional specifications to the Zabbix Web Service pod
   extraPodSpecs: {}
 
 # Ingress configurations
@@ -486,14 +502,17 @@ route:
   # -- Openshift Route extra annotations
   annotations: {}
 
-# -- nodeSelector configurations
+# -- nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 nodeSelector: {}
 
-# -- Tolerations configurations
+# -- Tolerations configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
 
-# -- Affinity configurations
+# -- Affinity configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 affinity: {}
+
+# -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+securityContext: {}
 
 karpenter:
   # -- Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2.
