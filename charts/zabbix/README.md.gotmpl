@@ -68,7 +68,7 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 * It is now possible to start the Zabbix Server pods with replicas of more than 1.
   HA functionality of Zabbix will automatically be enabled and it is made sure that 
   the database schema publication will only happen once, and not by all of the Zabbix
-  server pods at the same time.
+  Server pods at the same time.
 * More info: https://github.com/cetic/helm-zabbix/pull/54
 
 > **Break change 2.0.0**
@@ -108,7 +108,7 @@ Install requirement ``kubectl`` and ``helm`` following the instructions this
 
 ## Zabbix Server
 
-**Zabbix server** is the central process of Zabbix software.
+**Zabbix Server** is the central process of Zabbix software.
 
 The server performs the polling and trapping of data, it calculates triggers, sends notifications 
 to users. It is the central component to which Zabbix agents and proxies report data on availability 
@@ -117,41 +117,41 @@ and mail servers) using simple service checks
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/server).
 
 Zabbix Server can be operated in a High Availability mode since version 6.0 which is automatically 
-enabled by this Helm chart when setting the Zabbix server component to run more than 1 replica. 
-In this HA mode, all Zabbix server instances periodically send a heartbeat to the Database server 
+enabled by this Helm chart when setting the Zabbix Server component to run more than 1 replica. 
+In this HA mode, all Zabbix Server instances periodically send a heartbeat to the Database server 
 (just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case 
 the active node does not send a heartbeat within a certain time, any of the remaining ones 
 automatically take over. It is everytime possible to join new nodes to the HA cluster by just 
-raising the amount of replicas of the Zabbix server.
+raising the amount of replicas of the Zabbix Server.
 
 
 ## Zabbix Agent
 
 > **zabbix-agent2** is supported in this helm chart.
 
-**Zabbix agent** is deployed on a monitoring target to actively monitor local resources and 
+**Zabbix Agent** is deployed on a monitoring target to actively monitor local resources and 
 applications (hard drives, memory, processor statistics etc)
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/agent).
 
 
 ## Zabbix Web (frontend)
 
-**Zabbix web** interface is a part of Zabbix software. It is used to manage resources under 
+**Zabbix Web** interface is a part of Zabbix software. It is used to manage resources under 
 monitoring and view monitoring statistics 
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/web_interface).
 
 ## Zabbix Web Service
 
-**Zabbix web service** is a process that is used for communication with external web services 
+**Zabbix Web Service** is a process that is used for communication with external web services 
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/web_service).
 
 ## Zabbix Proxy
 
-> This helm chart installs Zabbix proxy with SQLite3 support
+> This helm chart installs Zabbix Proxy with SQLite3 support
 
-**Zabbix proxy** is a process that may collect monitoring data from one or more monitored devices 
-and send the information to the Zabbix server, essentially working on behalf of the server. 
-All collected data is buffered locally and then transferred to the **Zabbix server** the 
+**Zabbix Proxy** is a process that may collect monitoring data from one or more monitored devices 
+and send the information to the Zabbix Server, essentially working on behalf of the server. 
+All collected data is buffered locally and then transferred to the **Zabbix Server** the 
 proxy belongs to 
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/proxy).
 
