@@ -7,8 +7,8 @@
 #But by default this helm chart will install the latest LTS version (example: 6.0.x).
 #See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 #When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version
-#here or overwrite in each component (example: zabbixServer.image.tag, etc).
-zabbixImageTag: ubuntu-6.0.12
+#here or overwrite in each component (example: zabbixserver.image.tag, etc).
+zabbixImageTag: ubuntu-6.0.13
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
