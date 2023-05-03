@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.4.4](https://img.shields.io/badge/Version-3.4.4-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 3.4.7](https://img.shields.io/badge/Version-3.4.7-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -464,7 +464,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixserver.replicaCount | int | `1` | Number of replicas of ``zabbixserver`` module |
 | zabbixserver.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixserver.service.annotations | object | `{}` | Annotations for the zabbix-server service |
-| zabbixserver.service.clusterIP | string | `nil` | externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
+| zabbixserver.service.clusterIP | string | `nil` |  |
+| zabbixserver.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
+| zabbixserver.service.loadBalancerIP | string | `""` |  |
 | zabbixserver.service.nodePort | int | `31051` | NodePort of service on each node |
 | zabbixserver.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixserver.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
@@ -496,9 +498,10 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixweb.readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | zabbixweb.replicaCount | int | `1` | Number of replicas of ``zabbixweb`` module |
 | zabbixweb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixweb.service | object | `{"annotations":{},"clusterIP":null,"port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration saml_certs_secret_name: zabbix-web-samlcerts |
+| zabbixweb.service | object | `{"annotations":{},"clusterIP":null,"externalIPs":[],"loadBalancerIP":"","port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration saml_certs_secret_name: zabbix-web-samlcerts |
 | zabbixweb.service.annotations | object | `{}` | Annotations for the zabbix-web service |
 | zabbixweb.service.clusterIP | string | `nil` | Cluster IP for Zabbix web |
+| zabbixweb.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
 | zabbixweb.service.port | int | `80` | Port to expose service |
 | zabbixweb.service.type | string | `"ClusterIP"` | Type of service for Zabbix web |
 | zabbixwebservice.containerAnnotations | object | `{}` | annotations to add to the containers |

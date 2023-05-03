@@ -103,6 +103,9 @@ zabbixserver:
     # -- Cluster IP for Zabbix server
     # -- externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
+    # -- IPs if use service type LoadBalancer"
+    externalIPs: []
+    loadBalancerIP: ""
     clusterIP:
     # -- Port of service in Kubernetes cluster
     port: 10051
@@ -326,6 +329,9 @@ zabbixweb:
     type: ClusterIP
     # -- externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
+    # -- IPs if use service type LoadBalancer"
+    externalIPs: []
+    loadBalancerIP: ""
     # -- Cluster IP for Zabbix web
     clusterIP:
     # -- Port to expose service

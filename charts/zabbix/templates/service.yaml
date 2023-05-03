@@ -21,6 +21,12 @@ spec:
   {{- if .Values.zabbixserver.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.zabbixserver.service.externalTrafficPolicy }}
   {{- end }}
+  {{- if .Values.zabbixserver.service.externalIPs }}
+  externalIPs: {{ .Values.zabbixserver.service.externalIPs | toYaml | nindent 6 }}
+  {{- end }}
+  {{- if .Values.zabbixserver.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.zabbixserver.service.loadBalancerIP }}
+  {{- end }}
   {{- if .Values.zabbixserver.service.clusterIP }}
   clusterIP: {{ .Values.zabbixserver.service.clusterIP }}
   {{- end }}
@@ -96,6 +102,12 @@ spec:
   type: {{ .Values.zabbixweb.service.type }}
   {{- if .Values.zabbixweb.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.zabbixweb.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if .Values.zabbixweb.service.externalIPs }}
+  externalIPs: {{ .Values.zabbixweb.service.externalIPs | toYaml | nindent 6 }}
+  {{- end }}
+  {{- if .Values.zabbixweb.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.zabbixweb.service.loadBalancerIP }}
   {{- end }}
   {{- if .Values.zabbixweb.service.clusterIP }}
   clusterIP: {{ .Values.zabbixweb.service.clusterIP }}
