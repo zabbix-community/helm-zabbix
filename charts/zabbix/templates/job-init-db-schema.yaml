@@ -36,5 +36,9 @@ spec:
           - "/bin/sh"
           - "-c"
           - 'export V=$(zabbix_server -V | head -n 1 | sed "s/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\)/\1/"); if [ "$V" = "`echo -e "$V\n6.2.6" | sort -V | head -n1`" ]; then sed -e "s/^exec \"\$@\"$/prepare_server/" -e "/^ *update_zbx_config$/d" /usr/bin/docker-entrypoint.sh >~/docker-entrypoint.sh && bash ~/docker-entrypoint.sh; else /usr/bin/docker-entrypoint.sh init_db_only; fi'
+      imagePullSecrets:
+      {{- range .Values.zabbixserver.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
       restartPolicy: Never
 {{- end }}
