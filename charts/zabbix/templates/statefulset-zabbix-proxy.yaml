@@ -59,7 +59,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar -}}
+        {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
         - name: zabbix-agent
           resources:
 {{- toYaml .Values.zabbixAgent.resources | nindent 12 }}
