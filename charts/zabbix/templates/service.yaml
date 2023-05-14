@@ -79,7 +79,12 @@ spec:
       protocol: TCP
       name: zabbix-agent
   selector:
+    {{- if .Values.zabbixAgent.runAsSidecar }}
     app: {{ template "zabbix.fullname" . }}-zabbix-server
+    {{- end }}
+    {{- if .Values.zabbixAgent.runAsDaemonSet }}
+    app: {{ template "zabbix.fullname" . }}-zabbix-agent
+    {{- end }}
 {{- end }}
 
 
