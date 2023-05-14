@@ -1,4 +1,4 @@
-{{- if and .Values.zabbixAgent.enabled -}}
+{{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsDaemonSet }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:

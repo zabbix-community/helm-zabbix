@@ -25,7 +25,7 @@ It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
 * This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
 * But by default this helm chart will install the latest LTS version (example: 6.0.x).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-* When you want use a non-LTS version (example: 6.2.x), you have to set this in values.yaml yourself.
+* When you want use a non-LTS version (example: 6.4.x), you have to set this in values.yaml yourself.
 
 > **Break change 4.0.0**
 * Will be used Postgresql 14.x and Zabbix 6.x.
@@ -450,12 +450,14 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.image.repository | string | `"zabbix/zabbix-agent2"` | Zabbix Agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2 |
 | zabbixAgent.image.tag | string | `nil` | Zabbix Agent Docker image tag, if you want to override zabbixImageTag |
 | zabbixAgent.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixAgent.runAsDaemonSet | bool | `false` | Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false. |
+| zabbixAgent.runAsSidecar | bool | `true` | Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet |
 | zabbixAgent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
 | zabbixAgent.service.clusterIP | string | `nil` | Cluster IP for Zabbix Agent |
 | zabbixAgent.service.listenOnAllInterfaces | bool | `true` | externalTrafficPolicy for Zabbix Agent service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
 | zabbixAgent.service.port | int | `10050` | Port to expose service |
 | zabbixAgent.service.type | string | `"ClusterIP"` | Type of service for Zabbix Agent |
-| zabbixImageTag | string | `"ubuntu-6.0.13"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixImageTag | string | `"ubuntu-6.0.17"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname Case sensitive hostname |
 | zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixProxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix Proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1. |
@@ -508,7 +510,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
 | zabbixServer.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixServer.service.annotations | object | `{}` | Annotations for the zabbix-server service |
-| zabbixServer.service.clusterIP | string | `nil` | externalTrafficPolicy for Zabbix Server. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
+| zabbixServer.service.clusterIP | string | `nil` |  |
+| zabbixServer.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
+| zabbixServer.service.loadBalancerIP | string | `""` |  |
 | zabbixServer.service.nodePort | int | `31051` | NodePort of service on each node |
 | zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
@@ -540,9 +544,10 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | zabbixWeb.replicaCount | int | `1` | Number of replicas of ``zabbixWeb`` module |
 | zabbixWeb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixWeb.service | object | `{"annotations":{},"clusterIP":null,"port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration samlCertsSecretName: zabbix-web-samlcerts |
+| zabbixWeb.service | object | `{"annotations":{},"clusterIP":null,"externalIPs":[],"loadBalancerIP":"","port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration samlCertsSecretName: zabbix-web-samlcerts |
 | zabbixWeb.service.annotations | object | `{}` | Annotations for the Zabbix Web |
 | zabbixWeb.service.clusterIP | string | `nil` | Cluster IP for Zabbix Web |
+| zabbixWeb.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
 | zabbixWeb.service.port | int | `80` | Port to expose service |
 | zabbixWeb.service.type | string | `"ClusterIP"` | Type of service for Zabbix Web |
 | zabbixWebService.containerAnnotations | object | `{}` | annotations to add to the containers |

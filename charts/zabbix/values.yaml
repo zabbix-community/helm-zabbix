@@ -8,7 +8,7 @@
 #See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 #When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version
 #here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbixImageTag: ubuntu-6.0.13
+zabbixImageTag: ubuntu-6.0.17
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
@@ -103,6 +103,9 @@ zabbixServer:
     # -- Cluster IP for Zabbix Server
     # -- externalTrafficPolicy for Zabbix Server. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
+    # -- IPs if use service type LoadBalancer"
+    externalIPs: []
+    loadBalancerIP: ""
     clusterIP:
     # -- Port of service in Kubernetes cluster
     port: 10051
@@ -251,6 +254,10 @@ zabbixProxy:
 zabbixAgent:
   # -- Enables use of **Zabbix Agent**
   enabled: true
+  # -- Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet
+  runAsSidecar: true
+  # -- Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false.
+  runAsDaemonSet: false
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
@@ -344,6 +351,9 @@ zabbixWeb:
     type: ClusterIP
     # -- externalTrafficPolicy for Zabbix Web. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
+    # -- IPs if use service type LoadBalancer"
+    externalIPs: []
+    loadBalancerIP: ""
     # -- Cluster IP for Zabbix Web
     clusterIP:
     # -- Port to expose service
