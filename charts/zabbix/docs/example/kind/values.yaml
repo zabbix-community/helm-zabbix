@@ -14,13 +14,13 @@ zabbixServer:
     enabled: true
     image:
       # Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
-      #repository: postgres
-      repository: timescale/timescaledb
+      repository: postgres
+      #repository: timescale/timescaledb
       # Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb
       # (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.4/en/manual/installation/requirements)
       # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
-      #tag: 15
-      tag: 2.10.3-pg15
+      tag: 15
+      #tag: 2.10.3-pg15
   service:
     type: NodePort
     port: 10051
