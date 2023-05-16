@@ -29,7 +29,7 @@ spec:
           {{- end }}
           containers:
           - name: hanodes-autoclean
-            image: {{ .Values.zabbixServer.haNodesAutoClean.image.repository }}:{{ .Values.zabbixServer.haNodesAutoClean.image.tag }}
+            image: "{{ .Values.zabbixServer.haNodesAutoClean.image.repository }}:{{ .Values.zabbixServer.haNodesAutoClean.image.tag }}"
             imagePullPolicy: {{ .Values.zabbixServer.haNodesAutoClean.image.pullPolicy }}
             command:
             - /bin/bash
