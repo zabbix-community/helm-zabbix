@@ -9,7 +9,18 @@ postgresAccess:
 
 zabbixServer:
   enabled: true
-  replicaCount: 2
+  replicaCount: 1
+  haNodesAutoClean:
+    enabled: true
+    image:
+      # Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
+      #repository: postgres
+      repository: timescale/timescaledb
+      # Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb
+      # (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.4/en/manual/installation/requirements)
+      # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
+      #tag: 15
+      tag: 2.10.3-pg15
   service:
     type: NodePort
     port: 10051
@@ -24,6 +35,15 @@ zabbixServer:
 
 postgresql:
   enabled: true
+  image:
+    # Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
+    repository: postgres
+    #repository: timescale/timescaledb
+    # Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb
+    # (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.4/en/manual/installation/requirements)
+    # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
+    tag: 15
+    #tag: 2.10.3-pg15
   max_connections: 100
   persistence:
     enabled: true
@@ -31,7 +51,7 @@ postgresql:
     storageSize: 5Gi # generate a PVC in default storage class with the given size for the DB
 
 zabbixProxy:
-  enabled: false
+  enabled: true
   replicaCount: 1
   ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
   ZBX_HOSTNAME: zabbix-proxy # This variable is unique, case sensitive hostname.
