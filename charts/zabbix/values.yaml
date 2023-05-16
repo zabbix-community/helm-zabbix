@@ -79,8 +79,12 @@ zabbixServer:
   haNodesAutoClean:
     enabled: true
     image:
+      # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
       repository: postgres
-      tag: "14"
+      # -- Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb
+      # (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements)
+      # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
+      tag: 15
       pullPolicy: IfNotPresent
       pullSecrets: []
     schedule: "0 1 * * *"
@@ -140,9 +144,10 @@ postgresql:
   image:
     # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
     repository: postgres
-    # -- Tag of Docker image of Postgresql server, chose "14" for postgres "2.7.2-pg14" for timescaledb
-    # -- (Zabbix supports only TimescaleDB 2.7.x)
-    tag: 14
+    # -- Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb
+    # (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements)
+    # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
+    tag: 15
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
