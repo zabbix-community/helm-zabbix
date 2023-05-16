@@ -28,7 +28,7 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 * When you want use a non-LTS version (example: 6.4.x), you have to set this in values.yaml yourself.
 
 > **Break change 4.0.0**
-* Will be used Postgresql 14.x and Zabbix 6.x.
+* Will be used Postgresql 15.x and Zabbix 6.x.
 * Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
 * This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
   * ``db_access`` -> ``postgresAccess``
@@ -411,7 +411,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | postgresql.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
-| postgresql.image.tag | Zabbix supports only TimescaleDB 2.7.x | `14` |  |
+| postgresql.image.tag | int | `15` | Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements) Added support for PostgreSQL versions 15.x since Zabbix 6.0.10 |
 | postgresql.persistence.enabled | bool | `false` | whether to enable persistent storage for the postgres container or not |
 | postgresql.persistence.existingClaimName | bool | `false` | existing persistent volume claim name to be used to store posgres data |
 | postgresql.persistence.storageSize | string | `"5Gi"` | size of the PVC to be automatically generated |
@@ -492,13 +492,15 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server pod |
 | zabbixServer.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server container |
 | zabbixServer.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Server pod |
-| zabbixServer.haNodesAutoClean | object | `{"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":"14"},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean | object | `{"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
 | zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraPodSpecs | object | `{}` | additional specifications to the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraVolumeMounts | list | `[]` | additional volumeMounts to the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraVolumes | list | `[]` | additional volumes to make available to the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
+| zabbixServer.haNodesAutoClean.image.tag | int | `15` | Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements) Added support for PostgreSQL versions 15.x since Zabbix 6.0.10 |
 | zabbixServer.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
 | zabbixServer.hostPort | bool | `false` | optional set true open a port direct on node where Zabbix Server runs |
 | zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |

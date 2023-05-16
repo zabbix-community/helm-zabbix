@@ -28,7 +28,7 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 * When you want use a non-LTS version (example: 6.4.x), you have to set this in values.yaml yourself.
 
 > **Break change 4.0.0**
-* Will be used Postgresql 14.x and Zabbix 6.x.
+* Will be used Postgresql 15.x and Zabbix 6.x.
 * Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
 * This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
   * ``db_access`` -> ``postgresAccess``
