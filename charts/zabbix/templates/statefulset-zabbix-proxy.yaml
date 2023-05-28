@@ -134,7 +134,7 @@ spec:
             - name: ZBX_TIMEOUT
               value: {{ .Values.zabbixproxy.ZBX_TIMEOUT | quote }}
             - name: ZBX_JAVAGATEWAY_ENABLE
-              value: {{ .Values.zabbixproxy.ZBX_VMWARECACHESIZE | quote }}
+              value: {{ .Values.zabbixproxy.ZBX_JAVAGATEWAY_ENABLE | quote }}
             {{- range $item := .Values.zabbixproxy.extraEnv }}
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
