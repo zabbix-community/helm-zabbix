@@ -1,19 +1,24 @@
 <!-- TOC -->
 
 - [About](#about)
-- [Prerequisites to develop and test Helm Charts](#prerequisites-to-develop-and-test-helm-charts)
+- [Prerequisites to develop and test this helm chart](#prerequisites-to-develop-and-test-this-helm-chart)
 - [Example to install Zabbix in Kubernetes](#example-to-install-zabbix-in-kubernetes)
+- [More informations](#more-informations)
 
 <!-- TOC -->
 
 # About
 
-Documentation section of this repository.
+Documentation of this repository.
 
-# Prerequisites to develop and test Helm Charts
+# Prerequisites to develop and test this helm chart
 
-Visit the [requirements.md](requirements.md) file.
+Install the [requirements](requirements.md).
 
 # Example to install Zabbix in Kubernetes
 
-Visit this [tutorial](example/README.md).
+See the installation example in [kind](https://kind.sigs.k8s.io) cluster in this [tutorial](example/README.md).
+
+# More informations
+
+See [README.md](../README.md).

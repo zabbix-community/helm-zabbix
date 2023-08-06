@@ -1,4 +1,4 @@
-{{- if .Values.zabbixweb.enabled }}
+{{- if .Values.zabbixWeb.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,18 +10,18 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
   annotations:
-    {{- range $key,$value := .Values.zabbixweb.deploymentAnnotations }}
+    {{- range $key,$value := .Values.zabbixWeb.deploymentAnnotations }}
     {{ $key }}: {{ $value|quote }}
     {{- end }}
 spec:
-  replicas: {{ .Values.zabbixweb.replicaCount }}
+  replicas: {{ .Values.zabbixWeb.replicaCount }}
   selector:
     matchLabels:
       app:  {{ template "zabbix.fullname" . }}-zabbix-web
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixweb.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixWeb.containerAnnotations }}
         {{ $key }}: {{ $value|quote }}
         {{- end }}
       labels:
@@ -31,10 +31,10 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
     spec:
-      {{- with .Values.zabbixweb.extraPodSpecs }}
+      {{- with .Values.zabbixWeb.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      {{- with .Values.zabbixweb.extraInitContainers }}
+      {{- with .Values.zabbixWeb.extraInitContainers }}
       initContainers:
       {{- toYaml . | nindent 6 }}
       {{- end }}
@@ -51,7 +51,7 @@ spec:
       {{- if gt (len .Values.affinity) 0 }}
       affinity:
         {{- toYaml .Values.affinity | nindent 8 }}
-      {{- else if .Values.zabbixweb.pod_anti_affinity }}
+      {{- else if .Values.zabbixWeb.podAntiAffinity }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -69,18 +69,18 @@ spec:
       containers:
       - name: zabbix-web
         resources:
-          {{- toYaml .Values.zabbixweb.resources | nindent 10 }}
+          {{- toYaml .Values.zabbixWeb.resources | nindent 10 }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
-        {{- if .Values.zabbixweb.image.tag }}
-        image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbixweb.image.tag }}"
+        {{- if .Values.zabbixWeb.image.tag }}
+        image: "{{ .Values.zabbixWeb.image.repository }}:{{ .Values.zabbixWeb.image.tag }}"
         {{- else }}
-        image: "{{ .Values.zabbixweb.image.repository }}:{{ .Values.zabbix_image_tag }}"
+        image: "{{ .Values.zabbixWeb.image.repository }}:{{ .Values.zabbixImageTag }}"
         {{- end }}
-        imagePullPolicy: {{ .Values.zabbixweb.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.zabbixWeb.image.pullPolicy }}
         env:
-          {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 10 }}
-          {{- range $item := .Values.zabbixweb.extraEnv }}
+          {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
+          {{- range $item := .Values.zabbixWeb.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value | quote  }}
           {{- end }}
@@ -89,45 +89,45 @@ spec:
             containerPort: 8080
             protocol: TCP
         volumeMounts:
-        {{- if .Values.zabbixweb.saml_certs_secret_name }}
+        {{- if .Values.zabbixWeb.samlCertsSecretName }}
           - name: zabbix-web-samlcerts
             mountPath: /etc/zabbix/web/certs
         {{- end }}
-        {{- with .Values.zabbixweb.extraVolumeMounts }}
+        {{- with .Values.zabbixWeb.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
         {{- end }}
         livenessProbe:
           httpGet:
-            path: {{ .Values.zabbixweb.livenessProbe.path }}
+            path: {{ .Values.zabbixWeb.livenessProbe.path }}
             port: zabbix-web
-          initialDelaySeconds: {{ .Values.zabbixweb.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.zabbixweb.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.zabbixweb.livenessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.zabbixweb.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.zabbixweb.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.zabbixWeb.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.zabbixWeb.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.zabbixWeb.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.zabbixWeb.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.zabbixWeb.livenessProbe.failureThreshold }}
         readinessProbe:
           httpGet:
-            path: {{ .Values.zabbixweb.readinessProbe.path }}
+            path: {{ .Values.zabbixWeb.readinessProbe.path }}
             port: zabbix-web
-          initialDelaySeconds: {{ .Values.zabbixweb.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.zabbixweb.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.zabbixweb.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.zabbixweb.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.zabbixweb.readinessProbe.failureThreshold }}
-      {{- with .Values.zabbixweb.extraContainers }}
+          initialDelaySeconds: {{ .Values.zabbixWeb.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.zabbixWeb.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.zabbixWeb.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.zabbixWeb.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.zabbixWeb.readinessProbe.failureThreshold }}
+      {{- with .Values.zabbixWeb.extraContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
       imagePullSecrets:
-      {{- range .Values.zabbixweb.image.pullSecrets }}
+      {{- range .Values.zabbixWeb.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
       volumes:
-      {{- if .Values.zabbixweb.saml_certs_secret_name }}
+      {{- if .Values.zabbixWeb.samlCertsSecretName }}
         - name: zabbix-web-samlcerts
           secret:
-            secretName: {{ .Values.zabbixweb.saml_certs_secret_name }}
+            secretName: {{ .Values.zabbixWeb.samlCertsSecretName }}
       {{- end }}
-      {{- with .Values.zabbixweb.extraVolumes }}
+      {{- with .Values.zabbixWeb.extraVolumes }}
       {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}

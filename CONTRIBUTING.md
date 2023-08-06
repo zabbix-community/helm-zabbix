@@ -7,21 +7,22 @@
 
 # Contributing
 
-* Have the ``make`` command and *docker* installed on your system. With this, you don't need the below mentioned ``helm`` and ``helm-docs`` and use containers for the needed steps instead.
+* Configure authentication on your Github account to use the SSH protocol instead of HTTP. Watch this tutorial to learn how to set up: https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account
+* Have the ``make`` and ``docker`` commands installed on your system. With this, you don't need the below mentioned ``helm`` and ``helm-docs`` and use containers for the needed steps instead.
 * [OPTIONAL] Install the follow packages: ``git``, ``kubectl``, ``helm``, ``helm-docs``. See this [tutorial](docs/requirements.md).
-* [OPTIONAL] Configure authentication on your Github account to use the SSH protocol instead of HTTP. Watch this tutorial to learn how to set up: https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account
+
 * Create a fork this repository.
 * Clone the forked repository to your local system:
 
 ```bash
-git clone URL_FORKED_REPOSITORY
+git clone FORKED_REPOSITORY
 ```
 
 * Add the address for the remote original repository:
 
 ```bash
 git remote -v
-git remote add upstream https://github.com/zabbix-community/helm-zabbix
+git remote add upstream git@github.com:zabbix-community/helm-zabbix.git
 git remote -v
 ```
 
@@ -41,12 +42,14 @@ git branch
 * Verify your changed do not introduce syntactical/semantic errors:
 
 Method using make and docker:
+
 ```bash
 cd charts/zabbix
 make lint
-````
+```
 
-Method using locally installed ``helm`` command:
+* Method using locally installed ``helm`` command:
+
 ```bash
 cd charts/zabbix
 helm lint .
@@ -55,12 +58,14 @@ helm lint .
 * Run command ``helm-docs`` to update content of ``README.md`` file using the ``README.md.gotmpl`` template. More info about [helm-docs](https://github.com/norwoodj/helm-docs).
 
 Method using make and docker:
+
 ```bash
 cd charts/zabbix
 make gen-docs
 ```
 
 Method using locally installed ``helm-docs`` command:
+
 ```bash
 cd charts/zabbix
 helm-docs
@@ -73,9 +78,9 @@ helm-docs
 git push --set-upstream origin BRANCH_NAME
 ```
 
-* Create Pull Request (PR) to the `develop` branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+* Create Pull Request (PR) to the `master` branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
 * Update the content with the suggestions of the reviewer (if necessary).
-* After your pull request is merged to the `develop` and `master` branches, update your local clone:
+* After your pull request is merged to the `master` branch, update your local clone:
 
 ```bash
 git checkout master

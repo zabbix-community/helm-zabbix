@@ -8,83 +8,87 @@
 #See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 #When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version
 #here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbix_image_tag: ubuntu-6.0.13
+zabbixImageTag: ubuntu-6.0.20
 
-# **Zabbix DB access / credentials** configurations
-# with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend
+# **Zabbix Postgresql access / credentials** configurations
+# with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
 # you can either chose from having all this in one named (preexisting) secret or setting the values one by one with vars
-# whatever set here overrides the credential settings within the "zabbixserver" and "zabbixweb" sections.
-db_access:
-  # under this section you can configure DB access and credentials centrally for the entire helm chart.
-  # All relevant components installed by this chart will respect it: zabbixserver, zabbixweb and postgresql (if enabled)
+# whatever set here overrides the credential settings within the "zabbixServer" and "zabbixWeb" sections.
+postgresAccess:
+  # under this section you can configure PostgreSQL access and credentials centrally for the entire helm chart.
+  # All relevant components installed by this chart will respect it: zabbixServer, zabbixWeb and postgresql (if enabled)
   #
   # USING ONE SECRET CONTAINING ALL DB RELEVANT SETTINGS
-  # DB access details all in one existing secret (matches the structure of secrets the CrunchyData pgo operator generates)
-  # if this option is chosen the below listed "db_server_*" and "postgres_*" settings are being ignored
+  # PostgreSQL access details all in one existing secret (matches the structure of secrets the CrunchyData pgo operator generates)
+  # if this option is chosen the below listed settings are being ignored
   # the secret must contain the following keys:
   #   * host
   #   * port
-  #   * dbname
   #   * user
   #   * password
-  # -- Whether to use the unified db access secret
-  use_unified_secret: true
-  # -- Name of one secret for unified configuration of DB access
-  unified_secret_name: zabbixdb-pguser-zabbix
+  #   * database
+  # -- Whether to use the unified PostgreSQL access secret
+  useUnifiedSecret: true
+  # -- Name of one secret for unified configuration of PostgreSQL access
+  unifiedSecretName: zabbixdb-pguser-zabbix
   # -- automatically create secret if not already present (works only in combination with postgresql.enabled=true)
-  unified_secret_autocreate: true
+  unifiedSecretAutoCreate: true
   #
   # If you do NOT want to use one unified secret for all settings, you can still set the credentials manually here.
   # These settings will be used for all components of this chart where it makes sense (zabbix server, postgresql,
   # web frontend, ...)
   # -- Address of database host - ignored if postgresql.enabled=true
-  db_server_host: "zabbix-postgresql"
+  host: "zabbix-postgresql"
   # -- Port of database host - ignored if postgresql.enabled=true
-  db_server_port: "5432"
+  port: "5432"
   # -- User of database
-  postgres_user: "zabbix"
+  user: "zabbix"
   # -- Name of a secret used for Postgres Password, if set, it overrules the POSTGRES_PASSWORD value
-  #postgres_password_secret: mysecret
+  #passwordSecret: mysecret
   # -- Key of the secret used for Postgres Password, requires POSTGRES_PASSWORD_SECRET, defaults to password
-  #postgres_password_secret_key: "password"
-  # -- Password of database - ignored if postgres_password_secret is set
-  postgres_password: "zabbix"
+  #passwordSecretKey: "password"
+  # -- Password of database - ignored if passwordSecret is set
+  password: "zabbix"
   # -- Name of database
-  postgres_db: "zabbix"
+  database: "zabbix"
 
 # **Zabbix Server** configurations
-zabbixserver:
+zabbixServer:
   # -- Enables use of **Zabbix Server**
   enabled: true
-  # -- Number of replicas of ``zabbixserver`` module
+  # -- Number of replicas of ``zabbixServer`` module
   replicaCount: 1
   # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
-  pod_anti_affinity: true
-  # -- optional set true open a port direct on node where zabbix server runs
+  podAntiAffinity: true
+  # -- optional set true open a port direct on node where Zabbix Server runs
   hostPort: false
   # -- optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
-    # -- Zabbix server Docker image name
+    # -- Zabbix Server Docker image name
     repository: zabbix/zabbix-server-pgsql
-    # -- Zabbix server Docker image tag, if you want to override zabbix_image_tag
+    # -- Zabbix Server Docker image tag, if you want to override zabbixImageTag
     tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
   # -- automatically clean orphaned ha nodes from ha_nodes db table
-  ha_nodes_autoclean:
+  haNodesAutoClean:
     enabled: true
     image:
+      # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
       repository: postgres
-      tag: "14"
+      # -- Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb
+      # (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements)
+      # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
+      tag: 15
       pullPolicy: IfNotPresent
       pullSecrets: []
     schedule: "0 1 * * *"
-    delete_older_than_seconds: 3600
+    deleteOlderThanSeconds: 3600
     # -- Extra environment variables. A list of additional environment variables.
     extraEnv: []
     # -- additional volumeMounts to the cronjob hanodes autoclean
@@ -100,9 +104,12 @@ zabbixserver:
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
-    # -- Cluster IP for Zabbix server
-    # -- externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    # -- Cluster IP for Zabbix Server
+    # -- externalTrafficPolicy for Zabbix Server. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
+    # -- IPs if use service type LoadBalancer"
+    externalIPs: []
+    loadBalancerIP: ""
     clusterIP:
     # -- Port of service in Kubernetes cluster
     port: 10051
@@ -111,7 +118,7 @@ zabbixserver:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
     #- name: ENABLE_TIMESCALEDB
     #  value: "true"
@@ -119,15 +126,15 @@ zabbixserver:
   deploymentAnnotations: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
-  # -- additional volumeMounts to the zabbix server container
+  # -- additional volumeMounts to the Zabbix Server container
   extraVolumeMounts: []
-  # -- additional containers to start within the zabbix server pod
+  # -- additional containers to start within the Zabbix Server pod
   extraContainers: []
-  # -- additional init containers to start within the zabbix server pod
+  # -- additional init containers to start within the Zabbix Server pod
   extraInitContainers: []
-  # -- additional volumes to make available to the zabbix server pod
+  # -- additional volumes to make available to the Zabbix Server pod
   extraVolumes: []
-  # -- additional specifications to the zabbix server pod
+  # -- additional specifications to the Zabbix Server pod
   extraPodSpecs: {}
 
 # **PostgreSQL** configurations
@@ -137,9 +144,10 @@ postgresql:
   image:
     # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
     repository: postgres
-    # -- Tag of Docker image of Postgresql server, chose "14" for postgres "2.7.2-pg14" for timescaledb
-    # -- (Zabbix supports only TimescaleDB 2.7.x)
-    tag: 14
+    # -- Tag of Docker image of Postgresql server, choice "15" for postgres "2.11.1-pg15" for timescaledb
+    # (Zabbix supports TimescaleDB 2.0.1-2.11.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements)
+    # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
+    tag: 15
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -148,15 +156,15 @@ postgresql:
     # -- whether to enable persistent storage for the postgres container or not
     enabled: false
     # -- existing persistent volume claim name to be used to store posgres data
-    existing_claim_name: false
+    existingClaimName: false
     # -- size of the PVC to be automatically generated
-    storage_size: 5Gi
+    storageSize: 5Gi
     # -- storage PVC storageclass to use
-    #storage_class: my-storage-class
+    #storageClass: my-storage-class
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
-    # -- Cluster IP for Zabbix server
+    # -- Cluster IP for Zabbix Server
     clusterIP:
     # -- Port of service in Kubernetes cluster
     port: 5432
@@ -184,30 +192,30 @@ postgresql:
   extraPodSpecs: {}
 
 # **Zabbix Proxy** configurations
-zabbixproxy:
+zabbixProxy:
   # -- Enables use of **Zabbix Proxy**
   enabled: false
-  # -- Number of replicas of ``zabbixproxy`` module
+  # -- Number of replicas of ``zabbixProxy`` module
   replicaCount: 1
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
-    # -- Zabbix proxy Docker image name
+    # -- Zabbix Proxy Docker image name
     repository: zabbix/zabbix-proxy-sqlite3
-    # -- Zabbix proxy Docker image tag, if you want to override zabbix_image_tag
+    # -- Zabbix Proxy Docker image tag, if you want to override zabbixImageTag
     tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- The variable allows to switch Zabbix proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
+  # -- The variable allows to switch Zabbix Proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
-  # -- Zabbix proxy hostname
+  # -- Zabbix Proxy hostname
   # Case sensitive hostname
   ZBX_HOSTNAME: zabbix-proxy # This variable is unique, case sensitive hostname.
-  # -- Zabbix server host
+  # -- Zabbix Server host
   ZBX_SERVER_HOST: zabbix-zabbix-server
-  # -- Zabbix server port
+  # -- Zabbix Server port
   ZBX_SERVER_PORT: 10051
   # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
   # The variable is used to specify debug level, from 0 to 5
@@ -219,123 +227,144 @@ zabbixproxy:
   # -- Cache size
   ZBX_VMWARECACHESIZE: 128M
   service:
-    # -- Type of service for Zabbix proxy
+    # -- Type of service for Zabbix Proxy
     type: ClusterIP
-    # -- Cluster IP for Zabbix proxy
+    # -- Cluster IP for Zabbix Proxy
     clusterIP:
     # -- Port to expose service
     port: 10051
     # -- Annotations for the zabbix-proxy service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
-  # -- additional volumeMounts to the zabbix proxy container
+  # -- additional volumeMounts to the Zabbix Proxy container
   extraVolumeMounts: []
-  # -- additional containers to start within the zabbix proxy pod
+  # -- additional containers to start within the Zabbix Proxy pod
   extraContainers: []
-  # -- additional init containers to start within the zabbix proxy pod
+  # -- additional init containers to start within the Zabbix Proxy pod
   extraInitContainers: []
-  # -- additional volumes to make available to the zabbix proxy pod
+  # -- additional volumes to make available to the Zabbix Proxy pod
   extraVolumes: []
-  # -- additional specifications to the zabbix proxy pod
+  # -- additional specifications to the Zabbix Proxy pod
   extraPodSpecs: {}
-  # -- extra volumeClaimTemplate for zabbixproxy statefulset
+  # -- extra volumeClaimTemplate for zabbixProxy statefulset
   extraVolumeClaimTemplate: []
 
 # **Zabbix Agent** configurations
-zabbixagent:
+zabbixAgent:
   # -- Enables use of **Zabbix Agent**
   enabled: true
+  # -- Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet
+  runAsSidecar: true
+  # -- Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false.
+  runAsDaemonSet: false
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
-    # -- Zabbix agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
+    # -- Zabbix Agent Docker image name. Can use zabbix/zabbix-agent or zabbix/zabbix-agent2
     repository: zabbix/zabbix-agent2
-    # -- Zabbix agent Docker image tag, if you want to override zabbix_image_tag
+    # -- Zabbix Agent Docker image tag, if you want to override zabbixImageTag
     tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- Zabbix server host
-  ZBX_SERVER_HOST: 127.0.0.1
-  # -- Zabbix server port
+  # -- Zabbix Server host
+  ZBX_SERVER_HOST: 0.0.0.0/0
+  # -- Zabbix Server port
   ZBX_SERVER_PORT: 10051
   # -- This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
   ZBX_PASSIVE_ALLOW: true
-  # -- The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container.
-  ZBX_PASSIVESERVERS: 127.0.0.1
+  # -- The variable is comma separated list of allowed Zabbix Server or proxy hosts for connections to Zabbix Agent container. Example: Server=127.0.0.1,192.168.1.0/24,::1,2001:db8::/32,zabbix.example.com
+  #ZBX_PASSIVESERVERS: ''
   # -- This variable is boolean (true or false) and enables or disables feature of active checks
-  ZBX_ACTIVE_ALLOW: true
-  # The variable is comma separated list of allowed Zabbix server or proxy hosts for connections to Zabbix agent container. You may specify port.
-  # ZBX_ACTIVESERVERS:
-  # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
-  # ZBX_LOADMODULE: dummy1.so,dummy2.so
-  # The variable is used to specify debug level, from 0 to 5
-  #ZBX_DEBUGLEVEL: 3
-  # The variable is used to specify timeout for processing checks. By default, value is 4.
-  #ZBX_TIMEOUT: 4
-
-  # -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
-  ZBX_JAVAGATEWAY_ENABLE: false
-  # -- Cache size
-  ZBX_VMWARECACHESIZE: 128M
+  ZBX_ACTIVE_ALLOW: false
+  # -- The variable is comma separated list of allowed Zabbix Server or proxy hosts for connections to Zabbix Agent container. You may specify port.
+  #ZBX_ACTIVESERVERS: ''
+  # -- The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
+  #ZBX_LOADMODULE: dummy1.so,dummy2.so
+  # -- The variable is used to specify debug level, from 0 to 5
+  ZBX_DEBUGLEVEL: 3
+  # -- The variable is used to specify timeout for processing checks. By default, value is 4.
+  ZBX_TIMEOUT: 4
   service:
-    # -- Type of service for Zabbix agent
+    # -- Type of service for Zabbix Agent
     type: ClusterIP
-    # -- Cluster IP for Zabbix agent
+    # -- Cluster IP for Zabbix Agent
     clusterIP:
     # -- Port to expose service
     port: 10050
+    # -- externalTrafficPolicy for Zabbix Agent service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    #externalTrafficPolicy: Local
+    listenOnAllInterfaces: true
+    # -- NodePort port to allocate (only if service.type = NodePort)
+    #nodePort: 31050
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- If true, agent pods mounts host / at /host/root
+  hostRootFsMount: true
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-  # -- additional volumeMounts to the zabbix agent container
+  # -- additional volumeMounts to the zabbix Agent container
   extraVolumeMounts: []
+  # -- annotations to add to the daemonSet
+  daemonSetAnnotations: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
+  # -- additional containers to start within the Zabbix Agent pod
+  extraContainers: []
+  # -- additional init containers to start within the Zabbix Agent pod
+  extraInitContainers: []
+  # -- additional volumes to make available to the Zabbix Agent pod
+  extraVolumes: []
+  # -- additional specifications to the Zabbix Agent pod
+  extraPodSpecs: {}
 
 # **Zabbix Web** configurations
-zabbixweb:
+zabbixWeb:
   # -- Enables use of **Zabbix Web**
   enabled: true
-  # -- Number of replicas of ``zabbixweb`` module
+  # -- Number of replicas of ``zabbixWeb`` module
   replicaCount: 1
   # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
-  pod_anti_affinity: true
+  podAntiAffinity: true
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
-    # -- Zabbix web Docker image name
+    # -- Zabbix Web Docker image name
     repository: zabbix/zabbix-web-nginx-pgsql
-    # -- Zabbix web Docker image tag, if you want to override zabbix_image_tag
+    # -- Zabbix Web Docker image tag, if you want to override zabbixImageTag
     tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
   # -- Certificate containing certificates for SAML configuration
-  #saml_certs_secret_name: zabbix-web-samlcerts
+  #samlCertsSecretName: zabbix-web-samlcerts
   service:
-    # -- Type of service for Zabbix web
+    # -- Type of service for Zabbix Web
     type: ClusterIP
-    # -- externalTrafficPolicy for Zabbix Server service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    # -- externalTrafficPolicy for Zabbix Web. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
-    # -- Cluster IP for Zabbix web
+    # -- IPs if use service type LoadBalancer"
+    externalIPs: []
+    loadBalancerIP: ""
+    # -- Cluster IP for Zabbix Web
     clusterIP:
     # -- Port to expose service
     port: 80
     # -- NodePort port to allocate (only if service.type = NodePort)
     #nodePort: 31080
-    # -- Annotations for the zabbix-web service
+    # -- Annotations for the Zabbix Web
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
     #- name: ZBX_SSO_SETTINGS
     #  value: '{"baseurl": "https://zabbix.example.com"}'
@@ -345,15 +374,15 @@ zabbixweb:
   deploymentAnnotations: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
-  # -- additional volumeMounts to the zabbix web container
+  # -- additional volumeMounts to the Zabbix Web container
   extraVolumeMounts: []
-  # -- additional containers to start within the zabbix web pod
+  # -- additional containers to start within the Zabbix Web pod
   extraContainers: []
-  # -- additional init containers to start within the zabbix web pod
+  # -- additional init containers to start within the Zabbix Web pod
   extraInitContainers: []
-  # -- additional volumes to make available to the zabbix web pod
+  # -- additional volumes to make available to the Zabbix Web pod
   extraVolumes: []
-  # -- additional specifications to the zabbix web pod
+  # -- additional specifications to the Zabbix Web pod
   extraPodSpecs: {}
   livenessProbe:
     # -- Path of health check of application
@@ -383,51 +412,51 @@ zabbixweb:
     successThreshold: 1
 
 # **Zabbix Web Service** configurations
-zabbixwebservice:
+zabbixWebService:
   # -- Enables use of **Zabbix Web Service**
   enabled: true
-  # -- Number of replicas of ``zabbixwebservice`` module
+  # -- Number of replicas of ``zabbixWebService`` module
   replicaCount: 1
   # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
-  pod_anti_affinity: true
+  podAntiAffinity: true
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
-    # -- Zabbix webservice Docker image name
+    # -- Zabbix Webservice Docker image name
     repository: zabbix/zabbix-web-service
-    # -- Zabbix webservice Docker image tag, if you want to override zabbix_image_tag
+    # -- Zabbix Webservice Docker image tag, if you want to override zabbixImageTag
     tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- set the IgnoreURLCertErrors configuration setting of Zabbix web service
-  #ignore_url_cert_errors=1
+  # -- set the IgnoreURLCertErrors configuration setting of Zabbix Web Service
+  #ignoreURLCertErrors=1
   service:
-    # -- Type of service for Zabbix web
+    # -- Type of service for Zabbix Web
     type: ClusterIP
-    # -- Cluster IP for Zabbix web
+    # -- Cluster IP for Zabbix Web
     clusterIP:
     # -- Port to expose service
     port: 10053
-    # -- Annotations for the zabbix-web service
+    # -- Annotations for the Zabbix Web Service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
-  # -- additional volumeMounts to the zabbix webservice container
+  # -- additional volumeMounts to the Zabbix Web Service container
   extraVolumeMounts: []
-  # -- additional containers to start within the zabbix webservice pod
+  # -- additional containers to start within the Zabbix Web Service pod
   extraContainers: []
-  # -- additional init containers to start within the zabbix webservice pod
+  # -- additional init containers to start within the Zabbix Web Service pod
   extraInitContainers: []
-  # -- additional volumes to make available to the zabbix webservice pod
+  # -- additional volumes to make available to the Zabbix Web Service pod
   extraVolumes: []
-  # -- additional specifications to the zabbix webservice pod
+  # -- additional specifications to the Zabbix Web Service pod
   extraPodSpecs: {}
 
 # Ingress configurations
@@ -456,7 +485,7 @@ ingress:
   pathType: Prefix
 
 # Ingress CRD object for the Traefik Ingresscontroller
-ingressroute:
+ingressRoute:
   # -- Enables Traefik IngressRoute
   enabled: false
   # -- IngressRoute annotations
@@ -484,14 +513,17 @@ route:
   # -- Openshift Route extra annotations
   annotations: {}
 
-# -- nodeSelector configurations
+# -- nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 nodeSelector: {}
 
-# -- Tolerations configurations
+# -- Tolerations configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
 
-# -- Affinity configurations
+# -- Affinity configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 affinity: {}
+
+# -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+securityContext: {}
 
 karpenter:
   # -- Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2.

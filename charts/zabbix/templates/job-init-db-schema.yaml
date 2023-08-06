@@ -1,4 +1,4 @@
-{{- if and .Values.zabbixserver.enabled (gt (.Values.zabbixserver.replicaCount | int) 1) }}
+{{- if and .Values.zabbixServer.enabled (gt (.Values.zabbixServer.replicaCount | int) 1) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -15,14 +15,14 @@ spec:
     spec:
       containers:
       - name: init-db-schema
-        {{- if .Values.zabbixserver.image.tag }}
-        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbixserver.image.tag }}"
+        {{- if .Values.zabbixServer.image.tag }}
+        image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}"
         {{- else }}
-        image: "{{ .Values.zabbixserver.image.repository }}:{{ .Values.zabbix_image_tag }}"
+        image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixImageTag }}"
         {{- end }}
         env:
-          {{- include "zabbix.db_access.env_vars" (list $ . "zabbix") | nindent 10 }}
-          {{- range $item := .Values.zabbixserver.extraEnv }}
+          {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
+          {{- range $item := .Values.zabbixServer.extraEnv }}
           - name: {{ $item.name }}
             value: {{ $item.value | quote }}
           {{- end }}
@@ -36,5 +36,9 @@ spec:
           - "/bin/sh"
           - "-c"
           - 'export V=$(zabbix_server -V | head -n 1 | sed "s/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\)/\1/"); if [ "$V" = "`echo -e "$V\n6.2.6" | sort -V | head -n1`" ]; then sed -e "s/^exec \"\$@\"$/prepare_server/" -e "/^ *update_zbx_config$/d" /usr/bin/docker-entrypoint.sh >~/docker-entrypoint.sh && bash ~/docker-entrypoint.sh; else /usr/bin/docker-entrypoint.sh init_db_only; fi'
+      imagePullSecrets:
+      {{- range .Values.zabbixServer.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
       restartPolicy: Never
 {{- end }}
