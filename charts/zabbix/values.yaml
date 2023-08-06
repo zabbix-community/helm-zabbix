@@ -292,10 +292,6 @@ zabbixAgent:
   ZBX_DEBUGLEVEL: 3
   # -- The variable is used to specify timeout for processing checks. By default, value is 4.
   ZBX_TIMEOUT: 4
-  # -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
-  ZBX_JAVAGATEWAY_ENABLE: false
-  # -- Cache size
-  ZBX_VMWARECACHESIZE: 128M
   service:
     # -- Type of service for Zabbix Agent
     type: ClusterIP

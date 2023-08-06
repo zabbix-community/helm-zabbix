@@ -344,12 +344,10 @@ The following tables lists the configurable parameters of the chart and their de
 | tolerations | list | `[]` | Tolerations configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
 | zabbixAgent.ZBX_ACTIVE_ALLOW | bool | `false` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixAgent.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
-| zabbixAgent.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixAgent.ZBX_PASSIVE_ALLOW | bool | `true` | This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true |
 | zabbixAgent.ZBX_SERVER_HOST | string | `"0.0.0.0/0"` | Zabbix Server host |
 | zabbixAgent.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixAgent.ZBX_TIMEOUT | int | `4` | The variable is used to specify timeout for processing checks. By default, value is 4. |
-| zabbixAgent.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixAgent.containerAnnotations | object | `{}` | annotations to add to the containers |
 | zabbixAgent.daemonSetAnnotations | object | `{}` | annotations to add to the daemonSet |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
