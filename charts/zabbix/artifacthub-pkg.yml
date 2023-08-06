@@ -1,0 +1,75 @@
+# Artifact Hub package metadata file
+# Reference: https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
+#
+install: | 
+  # Installation
+  
+  > **Attention!!! Read the [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart).**
+  
+  Access the Kubernetes cluster.
+  
+  Add Helm repository:
+  
+  ```bash
+  helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
+  ```
+  
+  Update the list helm charts available for installation. This is recommend prior to installation/upgrade:
+  
+  ```bash
+  helm repo update
+  ```
+  
+  Get all versions of helm chart:
+  
+  ```bash
+  helm search repo zabbix-community/zabbix -l
+  ```
+  
+  Set the helm chart version you want to use. Example:
+  
+  ```bash
+  export ZABBIX_CHART_VERSION='4.0.1'
+  ```
+  
+  Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
+  
+  ```bash
+  helm show values zabbix-community/zabbix --version $ZABBIX_CHART_VERSION > $HOME/zabbix_values.yaml
+  ```
+  
+  Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file.
+  
+  Install/upgrade Zabbix with the command:
+  
+  ```bash
+  helm upgrade --install zabbix zabbix-community/zabbix \
+   --dependency-update \
+   --create-namespace \
+   --version $ZABBIX_CHART_VERSION \
+   -f $HOME/zabbix_values.yaml -n monitoring --debug
+  ```
+  
+  # How to access Zabbix
+  
+  Create port-forward for Zabbix:
+  
+  ```bash
+  kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
+  ```
+  
+  Login to Zabbix:
+  
+  * URL: http://localhost:8888
+  * Login: **Admin**
+  * Password: **zabbix**
+  
+  # Uninstallation
+  
+  To uninstall/delete the ``zabbix`` deployment:
+  
+  ```bash
+  helm uninstall zabbix -n monitoring
+  ```
+provider:
+  name: zabbix-community

@@ -8,8 +8,7 @@
 # Contributing
 
 * Configure authentication on your Github account to use the SSH protocol instead of HTTP. Watch this tutorial to learn how to set up: https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account
-* Have the ``make`` and ``docker`` commands installed on your system. With this, you don't need the below mentioned ``helm`` and ``helm-docs`` and use containers for the needed steps instead.
-* [OPTIONAL] Install the follow packages: ``git``, ``kubectl``, ``helm``, ``helm-docs``. See this [tutorial](docs/requirements.md).
+* Have the ``make`` and ``docker`` commands installed on your system. With this, you don't need the below mentioned ``helm`` and ``helm-docs`` and use containers for the needed steps instead. See this [tutorial](charts/zabbix/docs/requirements.md).
 
 * Create a fork this repository.
 * Clone the forked repository to your local system:
@@ -109,7 +108,10 @@ git push --delete origin BRANCH_NAME
 
 ```bash
 git pull upstream master
+git pull upstream master --tags
+
 git push origin master
+git push origin master --tags
 ```
 
 Reference:

@@ -131,7 +131,4 @@ spec:
       {{- range .Values.postgresql.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
-      {{- range .Values.postgresql.image.pullSecrets }}
-        - name: {{ . | quote }}
-      {{- end }}
 {{- end }}
