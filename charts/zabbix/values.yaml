@@ -8,7 +8,7 @@
 #See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 #When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version
 #here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbixImageTag: ubuntu-6.0.17
+zabbixImageTag: ubuntu-6.0.20
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
@@ -144,8 +144,8 @@ postgresql:
   image:
     # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
     repository: postgres
-    # -- Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb
-    # (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements)
+    # -- Tag of Docker image of Postgresql server, choice "15" for postgres "2.11.1-pg15" for timescaledb
+    # (Zabbix supports TimescaleDB 2.0.1-2.11.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements)
     # Added support for PostgreSQL versions 15.x since Zabbix 6.0.10
     tag: 15
     # -- Pull policy of Docker image

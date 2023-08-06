@@ -9,120 +9,56 @@
 
 # About
 
-This page presents an example to use the [Zabbix Helm Chart](https://github.com/zabbix-community/helm-zabbix). For more informations, see the [README.md](/README.md) file.
+An example to use the [Zabbix Helm Chart](https://github.com/zabbix-community/helm-zabbix) in [kind](https://kind.sigs.k8s.io) cluster.
 
 # Installation
 
-Create or access your Kubernetes cluster and configure the ``kubectl``.
+Install the [requirements](../requirements.md).
 
-Install Helm 3 (Visit the [requirements.md](../requirements.md) file.).
+Access the Kubernetes cluster.
 
 Clone this repository:
 
 ```bash
-mkdir ~/mygit
-cd ~/mygit
+mkdir $HOME/mygit
+cd $HOME/mygit
 git clone https://github.com/zabbix-community/helm-zabbix
-cd ~/mygit/helm-zabbix
+cd $HOME/mygit/helm-zabbix
 ```
 
-Edit ``~/mygit/helm-zabbix/charts/zabbix/docs/example/kind/values.yaml`` file.
+Edit ``$HOME/mygit/helm-zabbix/charts/zabbix/docs/example/kind/values.yaml`` file. The items of section [Configuration](../../README.md#configuration) can be set via ``--set`` flag in installation command or change the values according to the need of the environment in ``$HOME/mygit/helm-zabbix/charts/zabbix/docs/example/kind/values.yaml`` file.
 
-Test the installation/upgrade with command (update the YAML files paths if necessary):
+Test the installation/upgrade with the command:
 
 ```bash
 helm upgrade --install zabbix \
  --dependency-update \
  --create-namespace \
- -f ~/mygit/helm-zabbix/charts/zabbix/docs/example/kind/values.yaml \
- zabbix-community/zabbix -n monitoring --debug --dry-run
+ -f $HOME/mygit/helm-zabbix/charts/zabbix/docs/example/kind/values.yaml \
+ $HOME/mygit/helm-zabbix/charts/zabbix -n monitoring --debug --dry-run
 ```
 
-Install/upgrade Zabbix in the Kubernetes cluster (update the YAML files paths if necessary).
+Install/upgrade Zabbix with the command:
 
 ```bash
 helm upgrade --install zabbix \
  --dependency-update \
  --create-namespace \
- -f ~/mygit/helm-zabbix/charts/zabbix/docs/example/kind/values.yaml \
- zabbix-community/zabbix -n monitoring --debug
-```
-
-View the pods.
-
-```bash
-kubectl get pods -n monitoring
+ -f $HOME/mygit/helm-zabbix/charts/zabbix/docs/example/kind/values.yaml \
+ $HOME/mygit/helm-zabbix/charts/zabbix -n monitoring --debug
 ```
 
 # How to access Zabbix
 
-After deploying the chart in your cluster, you can use the following command to access the zabbix frontend service:
-
-View informations of ``zabbix`` services.
-
-```bash
-kubectl describe services zabbix-web -n monitoring
-```
-
-Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
-
-```bash
-kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
-```
-
-Access Zabbix:
-
-* URL: http://localhost:8888
-* Login: **Admin**
-* Password: **zabbix**
+See [README.md](../../README.md#how-to-access-zabbix).
 
 # Troubleshooting
 
-View the pods.
-
-```bash
-kubectl get pods -n monitoring
-```
-
-View informations of pods.
-
-```bash
-kubectl describe pods/POD_NAME -n monitoring
-```
-
-View all containers of pod.
-
-```bash
-kubectl get pods POD_NAME -n monitoring -o jsonpath='{.spec.containers[*].name}*'
-```
-
-View the logs container of pods.
-
-```bash
-kubectl logs -f pods/POD_NAME -c CONTAINER_NAME -n monitoring
-```
-
-Access prompt of container.
-
-```bash
-kubectl exec -it pods/POD_NAME -c CONTAINER_NAME -n monitoring -- sh
-```
-
-View informations of service Zabbix.
-
-```bash
-kubectl get svc -n monitoring
-kubectl get pods --output=wide -n monitoring
-kubectl describe services zabbix -n monitoring
-```
+See [README.md](../../README.md#troubleshooting).
 
 # Uninstallation
 
-To uninstall the zabbix.
-
-```bash
-helm uninstall zabbix -n monitoring
-```
+See [README.md](../../README.md#uninstallation).
 
 # Install nginx-ingress for services internal Kubernetes cluster
 

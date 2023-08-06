@@ -4,30 +4,144 @@
 
 {{ template "chart.description" . }}
 
-# TL;DR - just show me how to install
-
-If you have already carefully read all the below and just want to get reminded on how to install, please jump directly to the [Installation](#installation) section.
-
-# Introduction
-
 This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
-## Important notes
+# Prerequisites
 
-> **About the new home of helm chart**
-* The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
-It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
-* In this [issue](https://github.com/cetic/helm-zabbix/issues/68) it was agreed with [Sebastien Dupont](https://github.com/banzothat) that the repository would get a new home.
-* We are grateful to [Cetic](https://www.cetic.be/) for making the infrastructure available on CircleCI to host the helm chart from the start. Now, the new versions will be hosted on Github.
-* We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) and [Amen Ayadi](https://github.com/AyadiAmen), who were the first developers of the helm chart and who worked at Cetic. Your dedication and effort made it possible to install Zabbix on a Kubernetes cluster.
+- Kubernetes cluster 1.10+
+- Helm 3.0+
+- Kubectl
+- PV provisioner support in the underlying infrastructure (optional).
 
-> **About the Zabbix version supported**
-* This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. 
-* But by default this helm chart will install the latest LTS version (example: 6.0.x). 
-See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-* When you want use a non-LTS version (example: 6.4.x), you have to set this in values.yaml yourself.
+Install the ``kubectl`` and ``helm`` requirements following the instructions in this [tutorial](docs/requirements.md).
 
-> **Break change 4.0.0**
+# Installation
+
+> **Attention!!! Read the [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart).**
+
+Access the Kubernetes cluster.
+
+Add Helm repository:
+
+```bash
+helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
+```
+
+Update the list helm charts available for installation. This is recommend prior to installation/upgrade:
+
+```bash
+helm repo update
+```
+
+Get all versions of helm chart:
+
+```bash
+helm search repo zabbix-community/zabbix -l
+```
+
+Set the helm chart version you want to use. Example:
+
+```bash
+export ZABBIX_CHART_VERSION='4.0.0'
+```
+
+Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
+
+```bash
+helm show values zabbix-community/zabbix --version $ZABBIX_CHART_VERSION > $HOME/zabbix_values.yaml
+```
+
+Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of section [Configuration](#configuration) can be set via ``--set`` flag in 
+installation command or change the values according to the need of the environment in ``$HOME/zabbix_values.yaml`` file.
+
+Test the installation/upgrade with the command:
+
+```bash
+helm upgrade --install zabbix zabbix-community/zabbix \
+ --dependency-update \
+ --create-namespace \
+ --version $ZABBIX_CHART_VERSION \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
+```
+
+Install/upgrade Zabbix with the command:
+
+```bash
+helm upgrade --install zabbix zabbix-community/zabbix \
+ --dependency-update \
+ --create-namespace \
+ --version $ZABBIX_CHART_VERSION \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug
+```
+
+See the installation example in [kind](https://kind.sigs.k8s.io) cluster in this [tutorial](docs/example/README.md).
+
+# How to access Zabbix
+
+Create port-forward for Zabbix:
+
+```bash
+kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
+```
+
+Login to Zabbix:
+
+* URL: http://localhost:8888
+* Login: **Admin**
+* Password: **zabbix**
+
+# Troubleshooting
+
+See the pods:
+
+```bash
+kubectl get pods -n monitoring
+```
+
+See details for each pod:
+
+```bash
+kubectl describe pods/POD_NAME -n monitoring
+```
+
+See all containers in the pod:
+
+```bash
+kubectl get pods POD_NAME -n monitoring -o jsonpath='{.spec.containers[*].name}*'
+```
+
+See the logs for each container in the pod:
+
+```bash
+kubectl logs -f pods/POD_NAME -c CONTAINER_NAME -n monitoring
+```
+
+Access the container prompt.
+
+```bash
+kubectl exec -it pods/POD_NAME -c CONTAINER_NAME -n monitoring -- sh
+```
+
+See details of Zabbix services.
+
+```bash
+kubectl get svc -n monitoring
+kubectl get pods --output=wide -n monitoring
+kubectl describe services zabbix -n monitoring
+```
+
+# Uninstallation
+
+To uninstall/delete the ``zabbix`` deployment:
+
+```bash
+helm uninstall zabbix -n monitoring
+```
+
+# Breaking changes of this helm chart
+
+## Version 4.0.0
+
 * Will be used Postgresql 15.x and Zabbix 6.x.
 * Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
 * This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
@@ -60,7 +174,8 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
   * ``zabbixwebservice.pod_anti_affinity`` -> ``zabbixWebService.podAntiAffinity``
   * ``zabbixwebservice.ignore_url_cert_errors`` -> ``zabbixWebService.ignoreURLCertErrors``
 
-> **Break change 3.0.0**
+## Version 3.0.0
+
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version removes the possibility to specify database username/password per
   subsection in favor of specifying all of them centrally at one place.
@@ -71,7 +186,8 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
   Server pods at the same time.
 * More info: https://github.com/cetic/helm-zabbix/pull/54
 
-> **Break change 2.0.0**
+## Version 2.0.0
+
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version implements a central way of managing database access credentials 
 using a secret, which then will be respected by all the components
@@ -88,23 +204,20 @@ to use "out-of-the-box" installation with as little customizations as
 possible is possible, while still obtaining a good level of security.
 * More info: https://github.com/cetic/helm-zabbix/pull/53
 
-> **Break change 1.0.0**
+## Version 1.0.0
+
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * The installation of any component of chart is optional for easy integration with the official
  chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
 * More info: https://github.com/cetic/helm-zabbix/issues/42
 
-# Prerequisites
-
-- Kubernetes cluster 1.10+
-- Helm 3.0+
-- Kubectl
-- PV provisioner support in the underlying infrastructure (optional).
-
-Install requirement ``kubectl`` and ``helm`` following the instructions this 
-[tutorial](docs/requirements.md).
-
 # Zabbix components
+
+> **About the Zabbix version supported**
+* This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. 
+* But by default this helm chart will install the latest LTS version (example: 6.0.x). 
+See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
+* When you want use a non-LTS version (example: 6.4.x), you have to set this in ``values.yaml`` yourself.
 
 ## Zabbix Server
 
@@ -157,17 +270,29 @@ proxy belongs to
 
 ## PostgreSQL
 
-A database is required for zabbix to work, in this helm chart we're using Postgresql 14.x.
+A database is required for zabbix to work, in this helm chart we're using Postgresql.
 
 > We use plain postgresql database by default WITHOUT persistence. If you want persistence or 
 would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
 
+# Thanks
 
-# Configure the chart
+> **About the new home of helm chart**
+* The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
+It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
+* In this [issue](https://github.com/cetic/helm-zabbix/issues/68) it was agreed with [Sebastien Dupont](https://github.com/banzothat) that the repository would get a new home.
+* We are grateful to [Cetic](https://www.cetic.be/) for making the infrastructure available on CircleCI to host the helm chart from the start. Now, the new versions will be hosted on Github.
+* We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) and [Amen Ayadi](https://github.com/AyadiAmen), who were the first developers of the helm chart and who worked at Cetic. Your dedication and effort made it possible to install Zabbix on a Kubernetes cluster.
 
-The items of section [Configuration](#configuration) can be set via ``--set`` flag during 
-installation or change the values according to the need of the environment in 
-``helm-zabbix/charts/zabbix/values.yaml`` file.
+# License
+
+[Apache License 2.0](/LICENSE)
+
+# Configuration
+
+The following tables lists the configurable parameters of the chart and their default values.
+
+{{ template "chart.valuesTable" . }}
 
 ## Configure central database access related settings
 
@@ -234,7 +359,7 @@ postgresql:
     config.file: /path/to/your/config.file
 ```
 
-## Configure the way how to expose Zabbix service:
+## Configure the way how to expose Zabbix service
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
 - **IngressRoute**: The custom resource definition if you use the 
@@ -242,139 +367,7 @@ postgresql:
 - **Route**: The ingress controller used by Red Hat Openshift, based on HAProxy
 - **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the 
 service only reachable from within the cluster.
-- **NodePort**: Exposes the service on each Node’s IP at a static port (the NodePort). 
-You’ll be able to contact the NodePort service, from outside the cluster, by requesting 
+- **NodePort**: Exposes the service on each Node's IP at a static port (the NodePort). 
+You'll be able to contact the NodePort service, from outside the cluster, by requesting 
 ``NodeIP:NodePort``.
-- **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.
-
-# Installation
-
-Access a Kubernetes cluster.
-
-Add Helm repo:
-
-```bash
-helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
-```
-
-Update the list helm chart available for installation (like ``apt-get update``). This is recommend 
-before install/upgrade a helm chart:
-
-```bash
-helm repo update
-```
-
-Export default values of chart ``zabbix`` to file ``$HOME/zabbix_values.yaml``:
-
-```bash
-helm show values zabbix-community/zabbix > $HOME/zabbix_values.yaml
-```
-
-Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
-
-See the example of installation in kind in this [tutorial](docs/example/README.md).
-
-Test the installation/upgrade with command:
-
-```bash
-helm upgrade --install zabbix zabbix-community/zabbix \
- --dependency-update \
- --create-namespace \
- -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
-```
-
-Install/upgrade the Zabbix with command:
-
-```bash
-helm upgrade --install zabbix zabbix-community/zabbix \
- --dependency-update \
- --create-namespace \
- -f $HOME/zabbix_values.yaml -n monitoring --debug
-```
-
-View the pods.
-
-```bash
-kubectl get pods -n monitoring
-```
-
-# How to access Zabbix
-
-After deploying the chart in your cluster, you can use the following command to access the zabbix 
-frontend service: 
-
-View informations of ``zabbix`` services.
-
-```bash
-kubectl describe services zabbix-web -n monitoring
-```
-
-Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
-
-```bash
-kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
-```
-
-Access Zabbix:
-
-* URL: http://localhost:8888
-* Login: **Admin**
-* Password: **zabbix**
-
-# Troubleshooting
-
-View the pods.
-
-```bash
-kubectl get pods -n monitoring
-```
-
-View informations of pods.
-
-```bash
-kubectl describe pods/POD_NAME -n monitoring
-```
-
-View all containers of pod.
-
-```bash
-kubectl get pods POD_NAME -n monitoring -o jsonpath='{.spec.containers[*].name}*'
-```
-
-View the logs container of pods.
-
-```bash
-kubectl logs -f pods/POD_NAME -c CONTAINER_NAME -n monitoring
-```
-
-Access prompt of container.
-
-```bash
-kubectl exec -it pods/POD_NAME -c CONTAINER_NAME -n monitoring -- sh
-```
-
-View informations of service Zabbix.
-
-```bash
-kubectl get svc -n monitoring
-kubectl get pods --output=wide -n monitoring
-kubectl describe services zabbix -n monitoring
-```
-
-# Uninstallation
-
-To uninstall/delete the ``zabbix`` deployment:
-
-```bash
-helm uninstall zabbix -n monitoring
-```
-
-# License
-
-[Apache License 2.0](/LICENSE)
-
-# Configuration
-
-The following tables lists the configurable parameters of the chart and their default values.
-
-{{ template "chart.valuesTable" . }}
+- **LoadBalancer**: Exposes the service externally using a cloud provider's load balancer.

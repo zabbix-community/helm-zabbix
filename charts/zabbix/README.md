@@ -4,30 +4,144 @@
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
-# TL;DR - just show me how to install
-
-If you have already carefully read all the below and just want to get reminded on how to install, please jump directly to the [Installation](#installation) section.
-
-# Introduction
-
 This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
 
-## Important notes
+# Prerequisites
 
-> **About the new home of helm chart**
-* The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
-It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
-* In this [issue](https://github.com/cetic/helm-zabbix/issues/68) it was agreed with [Sebastien Dupont](https://github.com/banzothat) that the repository would get a new home.
-* We are grateful to [Cetic](https://www.cetic.be/) for making the infrastructure available on CircleCI to host the helm chart from the start. Now, the new versions will be hosted on Github.
-* We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) and [Amen Ayadi](https://github.com/AyadiAmen), who were the first developers of the helm chart and who worked at Cetic. Your dedication and effort made it possible to install Zabbix on a Kubernetes cluster.
+- Kubernetes cluster 1.10+
+- Helm 3.0+
+- Kubectl
+- PV provisioner support in the underlying infrastructure (optional).
 
-> **About the Zabbix version supported**
-* This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
-* But by default this helm chart will install the latest LTS version (example: 6.0.x).
-See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-* When you want use a non-LTS version (example: 6.4.x), you have to set this in values.yaml yourself.
+Install the ``kubectl`` and ``helm`` requirements following the instructions in this [tutorial](docs/requirements.md).
 
-> **Break change 4.0.0**
+# Installation
+
+> **Attention!!! Read the [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart).**
+
+Access the Kubernetes cluster.
+
+Add Helm repository:
+
+```bash
+helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
+```
+
+Update the list helm charts available for installation. This is recommend prior to installation/upgrade:
+
+```bash
+helm repo update
+```
+
+Get all versions of helm chart:
+
+```bash
+helm search repo zabbix-community/zabbix -l
+```
+
+Set the helm chart version you want to use. Example:
+
+```bash
+export ZABBIX_CHART_VERSION='4.0.0'
+```
+
+Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
+
+```bash
+helm show values zabbix-community/zabbix --version $ZABBIX_CHART_VERSION > $HOME/zabbix_values.yaml
+```
+
+Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of section [Configuration](#configuration) can be set via ``--set`` flag in
+installation command or change the values according to the need of the environment in ``$HOME/zabbix_values.yaml`` file.
+
+Test the installation/upgrade with the command:
+
+```bash
+helm upgrade --install zabbix zabbix-community/zabbix \
+ --dependency-update \
+ --create-namespace \
+ --version $ZABBIX_CHART_VERSION \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
+```
+
+Install/upgrade Zabbix with the command:
+
+```bash
+helm upgrade --install zabbix zabbix-community/zabbix \
+ --dependency-update \
+ --create-namespace \
+ --version $ZABBIX_CHART_VERSION \
+ -f $HOME/zabbix_values.yaml -n monitoring --debug
+```
+
+See the installation example in [kind](https://kind.sigs.k8s.io) cluster in this [tutorial](docs/example/README.md).
+
+# How to access Zabbix
+
+Create port-forward for Zabbix:
+
+```bash
+kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
+```
+
+Login to Zabbix:
+
+* URL: http://localhost:8888
+* Login: **Admin**
+* Password: **zabbix**
+
+# Troubleshooting
+
+See the pods:
+
+```bash
+kubectl get pods -n monitoring
+```
+
+See details for each pod:
+
+```bash
+kubectl describe pods/POD_NAME -n monitoring
+```
+
+See all containers in the pod:
+
+```bash
+kubectl get pods POD_NAME -n monitoring -o jsonpath='{.spec.containers[*].name}*'
+```
+
+See the logs for each container in the pod:
+
+```bash
+kubectl logs -f pods/POD_NAME -c CONTAINER_NAME -n monitoring
+```
+
+Access the container prompt.
+
+```bash
+kubectl exec -it pods/POD_NAME -c CONTAINER_NAME -n monitoring -- sh
+```
+
+See details of Zabbix services.
+
+```bash
+kubectl get svc -n monitoring
+kubectl get pods --output=wide -n monitoring
+kubectl describe services zabbix -n monitoring
+```
+
+# Uninstallation
+
+To uninstall/delete the ``zabbix`` deployment:
+
+```bash
+helm uninstall zabbix -n monitoring
+```
+
+# Breaking changes of this helm chart
+
+## Version 4.0.0
+
 * Will be used Postgresql 15.x and Zabbix 6.x.
 * Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
 * This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
@@ -60,7 +174,8 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
   * ``zabbixwebservice.pod_anti_affinity`` -> ``zabbixWebService.podAntiAffinity``
   * ``zabbixwebservice.ignore_url_cert_errors`` -> ``zabbixWebService.ignoreURLCertErrors``
 
-> **Break change 3.0.0**
+## Version 3.0.0
+
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version removes the possibility to specify database username/password per
   subsection in favor of specifying all of them centrally at one place.
@@ -71,7 +186,8 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
   Server pods at the same time.
 * More info: https://github.com/cetic/helm-zabbix/pull/54
 
-> **Break change 2.0.0**
+## Version 2.0.0
+
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * This version implements a central way of managing database access credentials
 using a secret, which then will be respected by all the components
@@ -88,23 +204,20 @@ to use "out-of-the-box" installation with as little customizations as
 possible is possible, while still obtaining a good level of security.
 * More info: https://github.com/cetic/helm-zabbix/pull/53
 
-> **Break change 1.0.0**
+## Version 1.0.0
+
 * Will be used Postgresql 14.x and Zabbix 6.x.
 * The installation of any component of chart is optional for easy integration with the official
  chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
 * More info: https://github.com/cetic/helm-zabbix/issues/42
 
-# Prerequisites
-
-- Kubernetes cluster 1.10+
-- Helm 3.0+
-- Kubectl
-- PV provisioner support in the underlying infrastructure (optional).
-
-Install requirement ``kubectl`` and ``helm`` following the instructions this
-[tutorial](docs/requirements.md).
-
 # Zabbix components
+
+> **About the Zabbix version supported**
+* This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
+* But by default this helm chart will install the latest LTS version (example: 6.0.x).
+See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
+* When you want use a non-LTS version (example: 6.4.x), you have to set this in ``values.yaml`` yourself.
 
 ## Zabbix Server
 
@@ -155,216 +268,19 @@ proxy belongs to
 
 ## PostgreSQL
 
-A database is required for zabbix to work, in this helm chart we're using Postgresql 14.x.
+A database is required for zabbix to work, in this helm chart we're using Postgresql.
 
 > We use plain postgresql database by default WITHOUT persistence. If you want persistence or
 would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
 
-# Configure the chart
+# Thanks
 
-The items of section [Configuration](#configuration) can be set via ``--set`` flag during
-installation or change the values according to the need of the environment in
-``helm-zabbix/charts/zabbix/values.yaml`` file.
-
-## Configure central database access related settings
-
-All settings referring to how the different components that this Chart installs access the
-Zabbix PostgreSQL Database (either an external, already existing database or one deployed within
-this Helm chart) are being configured centrally under the ``postgresAccess`` section of the
-``values.yaml`` file.
-
-By default, this Chart will deploy it's own very simple PostgreSQL database. All settings
-relevant to how to access this database will be held in one central unified secret with the
-name configured with the ``postgresAccess.unifiedSecretName`` setting.
-
-Instead of letting the Chart automatically generate such a secret with a random password
-(which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself.
-Use ``postgresAccess.unifiedSecretAutoCreate=false`` in such a case and read the comments
-in ``values.yaml`` for how the values inside the secret should be set.
-
-If you want to connect your Zabbix installation to a Postgres database deployed using the
-[CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/),
-you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it,
-by just referring to its name with the ``postgresAccess.unifiedSecretName`` setting to it.
-
-There is also the possibility to set all DB relevant settings directly inside the ``postgresAccess``
-section of the ``values.yaml`` file by using the settings noted there
-(``postgres_host``, ``postgres_user``, etc). If doing so, you still can use one single secret
-to told just and only the database password. If you want to do so, supply the
-``postgresAccess.passwordSecret`` and ``postgresAccess.passwordSecretKey``
-settings, accordingly.
-
-## Configure Postgresql database to match with your performance expectations
-
-While the default database configuration shipped with this Chart is fine for most (very small,
-for testing only) Zabbix installations, you will want to set some specific settings to better
-match your setup. First of all, you should consider enabling Postgresql database persistence
-(``postgresql.persistence.enabled``), as otherwise all your changes and historical data will
-be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune
-Postgresql by supplying extra postgresql runtime parameters using the
-``postgresql.extraRuntimeParameters`` dictionary:
-
-```yaml
-postgresql:
-  enabled: true
-  persistence:
-    enabled: true
-    storageSize: 50Gi
-  extraRuntimeParameters:
-    max_connections: 250
-    dynamic_shared_memory_type: posix
-    shared_buffers: 4GB
-    temp_buffers: 16MB
-    work_mem: 128MB
-    maintenance_work_mem: 256MB
-    effective_cache_size: 6GB
-    min_wal_size: 80MB
-```
-
-Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and
-the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring
-to this config file with the ``postgresql.extraRuntimeParameters`` set to:
-
-```yaml
-postgresql:
-  extraRuntimeParameters:
-    config.file: /path/to/your/config.file
-```
-
-## Configure the way how to expose Zabbix service:
-
-- **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
-- **IngressRoute**: The custom resource definition if you use the
-[Traefik](https://traefik.io/traefik/) ingress controller.
-- **Route**: The ingress controller used by Red Hat Openshift, based on HAProxy
-- **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the
-service only reachable from within the cluster.
-- **NodePort**: Exposes the service on each Node’s IP at a static port (the NodePort).
-You’ll be able to contact the NodePort service, from outside the cluster, by requesting
-``NodeIP:NodePort``.
-- **LoadBalancer**: Exposes the service externally using a cloud provider’s load balancer.
-
-# Installation
-
-Access a Kubernetes cluster.
-
-Add Helm repo:
-
-```bash
-helm repo add zabbix-community https://zabbix-community.github.io/helm-zabbix
-```
-
-Update the list helm chart available for installation (like ``apt-get update``). This is recommend
-before install/upgrade a helm chart:
-
-```bash
-helm repo update
-```
-
-Export default values of chart ``zabbix`` to file ``$HOME/zabbix_values.yaml``:
-
-```bash
-helm show values zabbix-community/zabbix > $HOME/zabbix_values.yaml
-```
-
-Change the values according to the environment in the file ``$HOME/zabbix_values.yaml``.
-
-See the example of installation in kind in this [tutorial](docs/example/README.md).
-
-Test the installation/upgrade with command:
-
-```bash
-helm upgrade --install zabbix zabbix-community/zabbix \
- --dependency-update \
- --create-namespace \
- -f $HOME/zabbix_values.yaml -n monitoring --debug --dry-run
-```
-
-Install/upgrade the Zabbix with command:
-
-```bash
-helm upgrade --install zabbix zabbix-community/zabbix \
- --dependency-update \
- --create-namespace \
- -f $HOME/zabbix_values.yaml -n monitoring --debug
-```
-
-View the pods.
-
-```bash
-kubectl get pods -n monitoring
-```
-
-# How to access Zabbix
-
-After deploying the chart in your cluster, you can use the following command to access the zabbix
-frontend service:
-
-View informations of ``zabbix`` services.
-
-```bash
-kubectl describe services zabbix-web -n monitoring
-```
-
-Listen on port 8888 locally, forwarding to 80 in the service ``APPLICATION_NAME-zabbix-web``. Example:
-
-```bash
-kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
-```
-
-Access Zabbix:
-
-* URL: http://localhost:8888
-* Login: **Admin**
-* Password: **zabbix**
-
-# Troubleshooting
-
-View the pods.
-
-```bash
-kubectl get pods -n monitoring
-```
-
-View informations of pods.
-
-```bash
-kubectl describe pods/POD_NAME -n monitoring
-```
-
-View all containers of pod.
-
-```bash
-kubectl get pods POD_NAME -n monitoring -o jsonpath='{.spec.containers[*].name}*'
-```
-
-View the logs container of pods.
-
-```bash
-kubectl logs -f pods/POD_NAME -c CONTAINER_NAME -n monitoring
-```
-
-Access prompt of container.
-
-```bash
-kubectl exec -it pods/POD_NAME -c CONTAINER_NAME -n monitoring -- sh
-```
-
-View informations of service Zabbix.
-
-```bash
-kubectl get svc -n monitoring
-kubectl get pods --output=wide -n monitoring
-kubectl describe services zabbix -n monitoring
-```
-
-# Uninstallation
-
-To uninstall/delete the ``zabbix`` deployment:
-
-```bash
-helm uninstall zabbix -n monitoring
-```
+> **About the new home of helm chart**
+* The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
+It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
+* In this [issue](https://github.com/cetic/helm-zabbix/issues/68) it was agreed with [Sebastien Dupont](https://github.com/banzothat) that the repository would get a new home.
+* We are grateful to [Cetic](https://www.cetic.be/) for making the infrastructure available on CircleCI to host the helm chart from the start. Now, the new versions will be hosted on Github.
+* We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) and [Amen Ayadi](https://github.com/AyadiAmen), who were the first developers of the helm chart and who worked at Cetic. Your dedication and effort made it possible to install Zabbix on a Kubernetes cluster.
 
 # License
 
@@ -411,7 +327,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | postgresql.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
-| postgresql.image.tag | int | `15` | Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements) Added support for PostgreSQL versions 15.x since Zabbix 6.0.10 |
+| postgresql.image.tag | int | `15` | Tag of Docker image of Postgresql server, choice "15" for postgres "2.11.1-pg15" for timescaledb (Zabbix supports TimescaleDB 2.0.1-2.11.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements) Added support for PostgreSQL versions 15.x since Zabbix 6.0.10 |
 | postgresql.persistence.enabled | bool | `false` | whether to enable persistent storage for the postgres container or not |
 | postgresql.persistence.existingClaimName | bool | `false` | existing persistent volume claim name to be used to store posgres data |
 | postgresql.persistence.storageSize | string | `"5Gi"` | size of the PVC to be automatically generated |
@@ -456,7 +372,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.service.listenOnAllInterfaces | bool | `true` | externalTrafficPolicy for Zabbix Agent service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
 | zabbixAgent.service.port | int | `10050` | Port to expose service |
 | zabbixAgent.service.type | string | `"ClusterIP"` | Type of service for Zabbix Agent |
-| zabbixImageTag | string | `"ubuntu-6.0.17"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixImageTag | string | `"ubuntu-6.0.20"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname Case sensitive hostname |
 | zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixProxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix Proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1. |
@@ -572,3 +488,81 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.service.clusterIP | string | `nil` | Cluster IP for Zabbix Web |
 | zabbixWebService.service.port | int | `10053` | Port to expose service |
 | zabbixWebService.service.type | string | `"ClusterIP"` | Type of service for Zabbix Web |
+
+## Configure central database access related settings
+
+All settings referring to how the different components that this Chart installs access the
+Zabbix PostgreSQL Database (either an external, already existing database or one deployed within
+this Helm chart) are being configured centrally under the ``postgresAccess`` section of the
+``values.yaml`` file.
+
+By default, this Chart will deploy it's own very simple PostgreSQL database. All settings
+relevant to how to access this database will be held in one central unified secret with the
+name configured with the ``postgresAccess.unifiedSecretName`` setting.
+
+Instead of letting the Chart automatically generate such a secret with a random password
+(which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself.
+Use ``postgresAccess.unifiedSecretAutoCreate=false`` in such a case and read the comments
+in ``values.yaml`` for how the values inside the secret should be set.
+
+If you want to connect your Zabbix installation to a Postgres database deployed using the
+[CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/),
+you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it,
+by just referring to its name with the ``postgresAccess.unifiedSecretName`` setting to it.
+
+There is also the possibility to set all DB relevant settings directly inside the ``postgresAccess``
+section of the ``values.yaml`` file by using the settings noted there
+(``postgres_host``, ``postgres_user``, etc). If doing so, you still can use one single secret
+to told just and only the database password. If you want to do so, supply the
+``postgresAccess.passwordSecret`` and ``postgresAccess.passwordSecretKey``
+settings, accordingly.
+
+## Configure Postgresql database to match with your performance expectations
+
+While the default database configuration shipped with this Chart is fine for most (very small,
+for testing only) Zabbix installations, you will want to set some specific settings to better
+match your setup. First of all, you should consider enabling Postgresql database persistence
+(``postgresql.persistence.enabled``), as otherwise all your changes and historical data will
+be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune
+Postgresql by supplying extra postgresql runtime parameters using the
+``postgresql.extraRuntimeParameters`` dictionary:
+
+```yaml
+postgresql:
+  enabled: true
+  persistence:
+    enabled: true
+    storageSize: 50Gi
+  extraRuntimeParameters:
+    max_connections: 250
+    dynamic_shared_memory_type: posix
+    shared_buffers: 4GB
+    temp_buffers: 16MB
+    work_mem: 128MB
+    maintenance_work_mem: 256MB
+    effective_cache_size: 6GB
+    min_wal_size: 80MB
+```
+
+Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and
+the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring
+to this config file with the ``postgresql.extraRuntimeParameters`` set to:
+
+```yaml
+postgresql:
+  extraRuntimeParameters:
+    config.file: /path/to/your/config.file
+```
+
+## Configure the way how to expose Zabbix service
+
+- **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
+- **IngressRoute**: The custom resource definition if you use the
+[Traefik](https://traefik.io/traefik/) ingress controller.
+- **Route**: The ingress controller used by Red Hat Openshift, based on HAProxy
+- **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the
+service only reachable from within the cluster.
+- **NodePort**: Exposes the service on each Node's IP at a static port (the NodePort).
+You'll be able to contact the NodePort service, from outside the cluster, by requesting
+``NodeIP:NodePort``.
+- **LoadBalancer**: Exposes the service externally using a cloud provider's load balancer.
