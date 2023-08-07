@@ -1,9 +1,9 @@
 ---
-apiVersion: v2
+apiVersion: v2 # Don't change this
 name: zabbix
-version: 4.0.1
+version: 4.0.2 # helm chart version
 # LTS Zabbix version by default due to stability. See: https://www.zabbix.com/life_cycle_and_release_policy
-appVersion: 6.0.20
+appVersion: 6.0.20 # zabbix version
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 keywords:
   - zabbix
@@ -17,7 +17,7 @@ sources:
   - https://github.com/zabbix-community/helm-zabbix
 maintainers:
   - name: Aecio Pires
-    email: https://blog.aeciopires.com/contato
+    email: aeciopires@yahoo.com.br
     url: https://github.com/aeciopires
   - name: Christian Anton
     email: christian.anton@secadm.de

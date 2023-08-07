@@ -38,6 +38,8 @@ git branch
 ```
 
 * Make your changes and tests to the new branch.
+* Keep the ``charts/zabbix/values.yaml`` file updated with working default values ​​in case any variables are referenced in the helm chart template files.
+* Change the ``version`` and ``appVersion`` parameters (helm chart and Zabbix version respectively) in ``charts/zabbix/Chart.yaml`` and ``charts/zabbix/artifacthub-pkg.yml`` files.
 * Verify your changed do not introduce syntactical/semantic errors:
 
 Method using make and docker:
