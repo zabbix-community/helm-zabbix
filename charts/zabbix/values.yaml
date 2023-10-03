@@ -26,7 +26,7 @@ postgresAccess:
   #   * port
   #   * user
   #   * password
-  #   * database
+  #   * dbname
   # -- Whether to use the unified PostgreSQL access secret
   useUnifiedSecret: true
   # -- Name of one secret for unified configuration of PostgreSQL access
