@@ -3,7 +3,7 @@
 - [About](#about)
 - [Prerequisites to develop and test this helm chart](#prerequisites-to-develop-and-test-this-helm-chart)
 - [Example to install Zabbix in Kubernetes](#example-to-install-zabbix-in-kubernetes)
-- [More informations](#more-informations)
+- [More information](#more-information)
 
 <!-- TOC -->
 
@@ -19,6 +19,6 @@ Install the [requirements](requirements.md).
 
 See the installation example in [kind](https://kind.sigs.k8s.io) cluster in this [tutorial](example/README.md).
 
-# More informations
+# More information
 
 See [README.md](../README.md).

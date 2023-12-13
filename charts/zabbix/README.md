@@ -234,7 +234,7 @@ enabled by this Helm chart when setting the Zabbix Server component to run more 
 In this HA mode, all Zabbix Server instances periodically send a heartbeat to the Database server
 (just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case
 the active node does not send a heartbeat within a certain time, any of the remaining ones
-automatically take over. It is everytime possible to join new nodes to the HA cluster by just
+automatically take over. It is every time possible to join new nodes to the HA cluster by just
 raising the amount of replicas of the Zabbix Server.
 
 ## Zabbix Agent
@@ -374,7 +374,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.ZBX_DEBUGLEVEL | int | `4` |  |
 | zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname Case sensitive hostname |
 | zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
-| zabbixProxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix Proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1. |
+| zabbixProxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix Proxy mode. By default, value is 0 - active proxy. Allowed values are 0 and 1. |
 | zabbixProxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix Server host |
 | zabbixProxy.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixProxy.ZBX_TIMEOUT | int | `4` |  |
