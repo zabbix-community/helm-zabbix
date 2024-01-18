@@ -88,6 +88,7 @@ zabbixServer:
       pullPolicy: IfNotPresent
       pullSecrets: []
     schedule: "0 1 * * *"
+    concurrencyPolicy: "Replace"
     deleteOlderThanSeconds: 3600
     # -- Extra environment variables. A list of additional environment variables.
     extraEnv: []
