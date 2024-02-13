@@ -209,7 +209,7 @@ zabbixProxy:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- The variable allows to switch Zabbix Proxy mode. Bu default, value is 0 - active proxy. Allowed values are 0 and 1.
+  # -- The variable allows to switch Zabbix Proxy mode. By default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
   # -- Zabbix Proxy hostname
   # Case sensitive hostname

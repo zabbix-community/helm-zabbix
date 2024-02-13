@@ -234,7 +234,7 @@ enabled by this Helm chart when setting the Zabbix Server component to run more 
 In this HA mode, all Zabbix Server instances periodically send a heartbeat to the Database server 
 (just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case 
 the active node does not send a heartbeat within a certain time, any of the remaining ones 
-automatically take over. It is everytime possible to join new nodes to the HA cluster by just 
+automatically take over. It is every time possible to join new nodes to the HA cluster by just
 raising the amount of replicas of the Zabbix Server.
 
 

@@ -64,7 +64,7 @@ See [README.md](../../README.md#uninstallation).
 
 In the **production** environment to allow external access to Zabbix installed on Kubernetes, you can configure ``nginx-ingress``, but there are other similar approaches that can be used. This was just a suggestion for users new to Kubernetes.
 
-More informations about ``nginx-ingress`` can be found in the following tutorials.
+More information about ``nginx-ingress`` can be found in the following tutorials.
 
 * https://github.com/helm/charts/tree/master/stable/nginx-ingress
 * https://github.com/kubernetes/ingress-nginx
