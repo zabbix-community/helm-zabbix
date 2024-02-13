@@ -92,6 +92,7 @@ spec:
           {{- else }}
           image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixImageTag }}"
           {{- end }}
+          imagePullPolicy: {{ .Values.zabbixServer.image.pullPolicy }}
           ports:
             - containerPort: 10051
               name: zabbix-server
