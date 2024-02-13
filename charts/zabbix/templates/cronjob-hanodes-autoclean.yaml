@@ -15,6 +15,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}-nodesclean
 spec:
   schedule: {{ .Values.zabbixServer.haNodesAutoClean.schedule|quote }}
+  concurrencyPolicy: {{ .Values.zabbixServer.haNodesAutoClean.concurrencyPolicy }}
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 86400
