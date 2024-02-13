@@ -80,7 +80,12 @@ spec:
       name: zabbix-agent
   selector:
     {{- if .Values.zabbixAgent.runAsSidecar }}
+    {{- if .Values.zabbixServer.enabled }}
     app: {{ template "zabbix.fullname" . }}-zabbix-server
+    {{- end }}
+    {{- if .Values.zabbixProxy.enabled }}
+    app: {{ template "zabbix.fullname" . }}-zabbix-proxy
+    {{- end }}
     {{- end }}
     {{- if .Values.zabbixAgent.runAsDaemonSet }}
     app: {{ template "zabbix.fullname" . }}-zabbix-agent
