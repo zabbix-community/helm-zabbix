@@ -25,6 +25,6 @@ For fast feedback, please @-mention maintainers that are listed in the Chart.yam
 
 #### Checklist
 [Place an '[x]' (no spaces) in all applicable fields. Please remove unrelated fields.]
-- [ ] [DCO](https://github.com/helm/charts/blob/master/CONTRIBUTING.md#sign-your-work) signed
+- [ ] [DCO](https://github.com/zabbix-community/helm-zabbix/blob/master/CONTRIBUTING.md) signed
 - [ ] Chart Version bumped
 - [ ] Variables are documented in the README.md
