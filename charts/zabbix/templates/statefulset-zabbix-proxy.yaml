@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
   annotations:
     {{- range $key,$value := .Values.zabbixProxy.statefulSetAnnotations }}
-    {{ $key }}: {{ $value|quote }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   replicas: {{ .Values.zabbixProxy.replicaCount }}
@@ -24,7 +24,7 @@ spec:
     metadata:
       annotations:
         {{- range $key,$value := .Values.zabbixProxy.containerAnnotations }}
-        {{ $key }}: {{ $value|quote }}
+        {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-zabbix-proxy
@@ -41,9 +41,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.karpenter.enabled }}
+      {{- with .Values.karpenter.labels }}
       nodeSelector:
-        karpenter: "true"
-        app: zabbix
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- else }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -62,9 +63,9 @@ spec:
         {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
         - name: zabbix-agent
           resources:
-{{- toYaml .Values.zabbixAgent.resources | nindent 12 }}
+            {{- toYaml .Values.zabbixAgent.resources | nindent 12 }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.zabbixAgent.securityContext | nindent 12 }}
           {{- if .Values.zabbixAgent.image.tag }}
           image: "{{ .Values.zabbixAgent.image.repository }}:{{ .Values.zabbixAgent.image.tag }}"
           {{- else }}
@@ -109,9 +110,9 @@ spec:
         {{- end }}
         - name: zabbix-proxy
           resources:
-{{- toYaml .Values.zabbixProxy.resources | nindent 12 }}
+            {{- toYaml .Values.zabbixProxy.resources | nindent 12 }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.zabbixProxy.securityContext | nindent 12 }}
           {{- if .Values.zabbixProxy.image.tag }}
           image: "{{ .Values.zabbixProxy.image.repository }}:{{ .Values.zabbixProxy.image.tag }}"
           {{- else }}
@@ -161,7 +162,7 @@ spec:
       {{- end }}
       {{- with .Values.zabbixProxy.extraVolumes }}
       volumes:
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
   {{- with .Values.zabbixProxy.extraVolumeClaimTemplate }}
   volumeClaimTemplates:

@@ -90,6 +90,8 @@ zabbixServer:
     schedule: "0 1 * * *"
     concurrencyPolicy: "Replace"
     deleteOlderThanSeconds: 3600
+    # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
+    resources: {}
     # -- Extra environment variables. A list of additional environment variables.
     extraEnv: []
     # -- additional volumeMounts to the cronjob hanodes autoclean
@@ -102,6 +104,21 @@ zabbixServer:
     extraVolumes: []
     # -- additional specifications to the cronjob hanodes autoclean
     extraPodSpecs: {}
+    # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+    securityContext: {}
+  jobDBSchema:
+    # -- additional init containers to start within the Zabbix Server Job DB Schema pod
+    extraInitContainers: []
+    # -- additional containers to start within the Zabbix Server Job DB Schema pod
+    extraContainers: []
+    # -- additional specifications to the Zabbix Server Job DB Schema pod
+    extraPodSpecs: {}
+    # -- additional volumeMounts to the Zabbix Server Job DB Schema pod
+    extraVolumeMounts: []
+    # -- additional volumes to make available to the  Zabbix Server Job DB Schema pod
+    extraVolumes: []
+    # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+    securityContext: {}
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP
@@ -137,6 +154,8 @@ zabbixServer:
   extraVolumes: []
   # -- additional specifications to the Zabbix Server pod
   extraPodSpecs: {}
+  # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
 
 # **PostgreSQL** configurations
 postgresql:
@@ -153,6 +172,8 @@ postgresql:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
+  # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
+  resources: {}
   persistence:
     # -- whether to enable persistent storage for the postgres container or not
     enabled: false
@@ -160,6 +181,8 @@ postgresql:
     existingClaimName: false
     # -- size of the PVC to be automatically generated
     storageSize: 5Gi
+    # -- kubernetes uses volume access modes to match PersistentVolumeClaims and PersistentVolumes. See: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+    #claim_access_mode: "ReadWriteOnce"
     # -- storage PVC storageclass to use
     #storageClass: my-storage-class
   service:
@@ -191,6 +214,8 @@ postgresql:
   extraVolumes: []
   # -- additional specifications to the postgresql pod
   extraPodSpecs: {}
+  # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
 
 # **Zabbix Proxy** configurations
 zabbixProxy:
@@ -253,6 +278,8 @@ zabbixProxy:
   extraVolumes: []
   # -- additional specifications to the Zabbix Proxy pod
   extraPodSpecs: {}
+  # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
   # -- extra volumeClaimTemplate for zabbixProxy statefulset
   extraVolumeClaimTemplate: []
 
@@ -326,6 +353,8 @@ zabbixAgent:
   extraVolumes: []
   # -- additional specifications to the Zabbix Agent pod
   extraPodSpecs: {}
+  # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
 
 # **Zabbix Web** configurations
 zabbixWeb:
@@ -385,6 +414,8 @@ zabbixWeb:
   extraVolumes: []
   # -- additional specifications to the Zabbix Web pod
   extraPodSpecs: {}
+  # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
   livenessProbe:
     # -- Path of health check of application
     path: /
@@ -459,6 +490,8 @@ zabbixWebService:
   extraVolumes: []
   # -- additional specifications to the Zabbix Web Service pod
   extraPodSpecs: {}
+  # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
 
 # Ingress configurations
 ingress:
@@ -527,14 +560,96 @@ affinity: {}
 securityContext: {}
 
 karpenter:
-  # -- Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2.
+  # -- Enables support provisioner of Karpenter. Reference: https://karpenter.sh/.
+  # Tested only using EKS cluster 1.28 in AWS with Karpenter 0.33.0.
   enabled: false
   # -- Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter.
+  # Example: testing-my-cluster
   clusterName: "CHANGE_HERE"
-  # -- Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag.
-  tag: "karpenter.sh/discovery/CHANGE_HERE: CHANGE_HERE"
-  # -- Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded.
+  # -- Tag of discovery with name of cluster used by Karpenter.
+  # Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter.
+  # The cluster name, security group and subnets must have this tag.
+  tag: "karpenter.sh/discovery"
+  # -- Karpenter adds tags to all resources it creates, including EC2 Instances, EBS volumes, and Launch Templates.
+  # See details: https://karpenter.sh/v0.33/concepts/nodeclasses/#spectags
+  resourceTags:
+    Environment: testing
+    Scost: zabbix
+    product: zabbix
+  # -- Name of instanceProfile EKS cluster. Conflicts with karpenter.role. Must specify one of "role" or "instanceProfile" for Karpenter to launch nodes
+  # Example: Karpenter-testing-my-cluster-2023120112554517810000001e
+  instanceProfile:
+    use: false
+    name: "CHANGE_HERE"
+  # -- Name of role EKS cluster. The Karpenter spec.instanceProfile field has been removed from the EC2NodeClass in favor
+  # of the spec.role field. Karpenter is also removing support for the defaultInstanceProfile specified globally
+  # in the karpenter-global-settings, making the spec.role field required for all EC2NodeClasses.
+  # Karpenter will now auto-generate the instance profile in your EC2NodeClass, given the role that you specify.
+  # If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role 
+  # provisioned by that process (which is limited to 64 characters).
+  # Example: karpenter-irsa-testing-my-cluster-2023120421433226760000001e
+  role:
+    use: true
+    name: "CHANGE_HERE"
+  # -- AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned 
+  # through this EC2NodeClass but also selecting a group of recommended, latest AMIs by default.
+  # Currently, Karpenter supports amiFamily values AL2, Bottlerocket, Ubuntu, Windows2019, Windows2022 and Custom.
+  # GPUs are only supported by default with AL2 and Bottlerocket.
+  # The AL2 amiFamily does not support ARM64 GPU instance type
+  amiFamily: Bottlerocket
+  # -- Resource limits constrain the total size of the cluster.
+  # Limits prevent Karpenter from creating new instances once the limit is exceeded.
   limits:
-    resources:
-      cpu: "1000"
-      memory: 1000Gi
+    cpu: "2"
+    memory: "8Gi"
+  # -- Labels are arbitrary key-values that are applied to all nodes
+  labels:
+    karpenter: "true"
+    app: "zabbix"
+  # -- Priority given to the NodePool when the scheduler considers which NodePool to select.
+  # Higher weights indicate higher priority when comparing NodePools.
+  # Specifying no weight is equivalent to specifying a weight of 0.
+  weight: 10
+  # -- Disruption section which describes the ways in which Karpenter can disrupt and replace Nodes.
+  # Configuration in this section constrains how aggressive Karpenter can be with performing operations
+  # like rolling Nodes due to them hitting their maximum lifetime (expiry) or scaling down nodes to reduce cluster cost
+  disruption:
+    # -- Describes which types of Nodes Karpenter should consider for consolidation.
+    # If using 'WhenUnderutilized', Karpenter will consider all nodes for consolidation and attempt to remove or replace Nodes when it discovers that the Node is underutilized and could be changed to reduce cost
+    # If using `WhenEmpty`, Karpenter will only consider nodes for consolidation that contain no workload pods
+    consolidationPolicy: "WhenEmpty"
+    # -- The amount of time Karpenter should wait after discovering a consolidation decision
+    # This value can currently only be set when the consolidationPolicy is 'WhenEmpty'
+    # You can choose to disable consolidation entirely by setting the string value 'Never' here
+    consolidateAfter: "30s"
+    # -- The amount of time a Node can live on the cluster before being removed
+    # Avoiding long-running Nodes helps to reduce security vulnerabilities as well as to reduce the chance of issues that can plague Nodes with long uptimes such as file fragmentation or memory leaks from system processes
+    # You can choose to disable expiration entirely by setting the string value 'Never' here
+    expireAfter: "720h"
+  # -- Requirements that constrain the parameters of provisioned nodes.
+  # These requirements are combined with pod.spec.topologySpreadConstraints, pod.spec.affinity.nodeAffinity, pod.spec.affinity.podAffinity, and pod.spec.nodeSelector rules.
+  # Operators { In, NotIn, Exists, DoesNotExist, Gt, and Lt } are supported.
+  # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators
+  requirements:
+    - key: "karpenter.k8s.aws/instance-category"
+      operator: In
+      values: ["c", "m", "r"]
+    - key: "karpenter.k8s.aws/instance-cpu"
+      operator: In
+      values: ["2", "4", "8", "16", "32"]
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: kubernetes.io/os
+      operator: In
+      values: ["linux"]
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["spot", "on-demand"]
+  # -- Optional, configures IMDS for the instance
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 2
+    httpTokens: required
+

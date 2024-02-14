@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 4.0.3](https://img.shields.io/badge/Version-4.0.3-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 4.1.0](https://img.shields.io/badge/Version-4.1.0-informational?style=flat-square)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -42,7 +42,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='4.0.0'
+export ZABBIX_CHART_VERSION='4.1.0'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -302,10 +302,22 @@ The following tables lists the configurable parameters of the chart and their de
 | ingressRoute.enabled | bool | `false` | Enables Traefik IngressRoute |
 | ingressRoute.entryPoints | list | `["websecure"]` | Ingressroute entrypoints |
 | ingressRoute.hostName | string | `"chart-example.local"` | Ingressroute host name |
-| karpenter.clusterName | string | `"CHANGE_HERE"` | Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. |
-| karpenter.enabled | bool | `false` | Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2. |
-| karpenter.limits | object | `{"resources":{"cpu":"1000","memory":"1000Gi"}}` | Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded. |
-| karpenter.tag | string | `"karpenter.sh/discovery/CHANGE_HERE: CHANGE_HERE"` | Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag. |
+| karpenter.amiFamily | string | `"Bottlerocket"` | AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned  through this EC2NodeClass but also selecting a group of recommended, latest AMIs by default. Currently, Karpenter supports amiFamily values AL2, Bottlerocket, Ubuntu, Windows2019, Windows2022 and Custom. GPUs are only supported by default with AL2 and Bottlerocket. The AL2 amiFamily does not support ARM64 GPU instance type |
+| karpenter.clusterName | string | `"CHANGE_HERE"` | Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. Example: testing-my-cluster |
+| karpenter.disruption | object | `{"consolidateAfter":"30s","consolidationPolicy":"WhenEmpty","expireAfter":"720h"}` | Disruption section which describes the ways in which Karpenter can disrupt and replace Nodes. Configuration in this section constrains how aggressive Karpenter can be with performing operations like rolling Nodes due to them hitting their maximum lifetime (expiry) or scaling down nodes to reduce cluster cost |
+| karpenter.disruption.consolidateAfter | string | `"30s"` | The amount of time Karpenter should wait after discovering a consolidation decision This value can currently only be set when the consolidationPolicy is 'WhenEmpty' You can choose to disable consolidation entirely by setting the string value 'Never' here |
+| karpenter.disruption.consolidationPolicy | string | `"WhenEmpty"` | Describes which types of Nodes Karpenter should consider for consolidation. If using 'WhenUnderutilized', Karpenter will consider all nodes for consolidation and attempt to remove or replace Nodes when it discovers that the Node is underutilized and could be changed to reduce cost If using `WhenEmpty`, Karpenter will only consider nodes for consolidation that contain no workload pods |
+| karpenter.disruption.expireAfter | string | `"720h"` | The amount of time a Node can live on the cluster before being removed Avoiding long-running Nodes helps to reduce security vulnerabilities as well as to reduce the chance of issues that can plague Nodes with long uptimes such as file fragmentation or memory leaks from system processes You can choose to disable expiration entirely by setting the string value 'Never' here |
+| karpenter.enabled | bool | `false` | Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.28 in AWS with Karpenter 0.33.0. |
+| karpenter.instanceProfile | object | `{"name":"CHANGE_HERE","use":false}` | Name of instanceProfile EKS cluster. Conflicts with karpenter.role. Must specify one of "role" or "instanceProfile" for Karpenter to launch nodes Example: Karpenter-testing-my-cluster-2023120112554517810000001e |
+| karpenter.labels | object | `{"app":"zabbix","karpenter":"true"}` | Labels are arbitrary key-values that are applied to all nodes |
+| karpenter.limits | object | `{"cpu":"2","memory":"8Gi"}` | Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded. |
+| karpenter.metadataOptions | object | `{"httpEndpoint":"enabled","httpProtocolIPv6":"disabled","httpPutResponseHopLimit":2,"httpTokens":"required"}` | Optional, configures IMDS for the instance |
+| karpenter.requirements | list | `[{"key":"karpenter.k8s.aws/instance-category","operator":"In","values":["c","m","r"]},{"key":"karpenter.k8s.aws/instance-cpu","operator":"In","values":["2","4","8","16","32"]},{"key":"kubernetes.io/arch","operator":"In","values":["amd64"]},{"key":"kubernetes.io/os","operator":"In","values":["linux"]},{"key":"karpenter.sh/capacity-type","operator":"In","values":["spot","on-demand"]}]` | Requirements that constrain the parameters of provisioned nodes. These requirements are combined with pod.spec.topologySpreadConstraints, pod.spec.affinity.nodeAffinity, pod.spec.affinity.podAffinity, and pod.spec.nodeSelector rules. Operators { In, NotIn, Exists, DoesNotExist, Gt, and Lt } are supported. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators |
+| karpenter.resourceTags | object | `{"Environment":"testing","Scost":"zabbix","product":"zabbix"}` | Karpenter adds tags to all resources it creates, including EC2 Instances, EBS volumes, and Launch Templates. See details: https://karpenter.sh/v0.33/concepts/nodeclasses/#spectags |
+| karpenter.role | object | `{"name":"CHANGE_HERE","use":true}` | Name of role EKS cluster. The Karpenter spec.instanceProfile field has been removed from the EC2NodeClass in favor of the spec.role field. Karpenter is also removing support for the defaultInstanceProfile specified globally in the karpenter-global-settings, making the spec.role field required for all EC2NodeClasses. Karpenter will now auto-generate the instance profile in your EC2NodeClass, given the role that you specify. If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role  provisioned by that process (which is limited to 64 characters). Example: karpenter-irsa-testing-my-cluster-2023120421433226760000001e |
+| karpenter.tag | string | `"karpenter.sh/discovery"` | Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag. |
+| karpenter.weight | int | `10` | Priority given to the NodePool when the scheduler considers which NodePool to select. Higher weights indicate higher priority when comparing NodePools. Specifying no weight is equivalent to specifying a weight of 0. |
 | nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | postgresAccess.database | string | `"zabbix"` | Name of database |
 | postgresAccess.host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
@@ -331,6 +343,8 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.persistence.enabled | bool | `false` | whether to enable persistent storage for the postgres container or not |
 | postgresql.persistence.existingClaimName | bool | `false` | existing persistent volume claim name to be used to store posgres data |
 | postgresql.persistence.storageSize | string | `"5Gi"` | size of the PVC to be automatically generated |
+| postgresql.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| postgresql.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | postgresql.service.annotations | object | `{}` | Annotations for the zabbix-server service |
 | postgresql.service.clusterIP | string | `nil` | Cluster IP for Zabbix Server |
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
@@ -365,6 +379,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixAgent.runAsDaemonSet | bool | `false` | Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false. |
 | zabbixAgent.runAsSidecar | bool | `true` | Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet |
+| zabbixAgent.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixAgent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
 | zabbixAgent.service.clusterIP | string | `nil` | Cluster IP for Zabbix Agent |
 | zabbixAgent.service.listenOnAllInterfaces | bool | `true` | externalTrafficPolicy for Zabbix Agent service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
@@ -394,6 +409,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.image.tag | string | `nil` | Zabbix Proxy Docker image tag, if you want to override zabbixImageTag |
 | zabbixProxy.replicaCount | int | `1` | Number of replicas of ``zabbixProxy`` module |
 | zabbixProxy.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixProxy.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixProxy.service.annotations | object | `{}` | Annotations for the zabbix-proxy service |
 | zabbixProxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix Proxy |
 | zabbixProxy.service.port | int | `10051` | Port to expose service |
@@ -408,7 +424,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server pod |
 | zabbixServer.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server container |
 | zabbixServer.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Server pod |
-| zabbixServer.haNodesAutoClean | object | `{"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"schedule":"0 1 * * *"}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | automatically clean orphaned ha nodes from ha_nodes db table |
 | zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |
@@ -417,15 +433,24 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.haNodesAutoClean.extraVolumes | list | `[]` | additional volumes to make available to the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
 | zabbixServer.haNodesAutoClean.image.tag | int | `15` | Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements) Added support for PostgreSQL versions 15.x since Zabbix 6.0.10 |
+| zabbixServer.haNodesAutoClean.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixServer.haNodesAutoClean.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
 | zabbixServer.hostPort | bool | `false` | optional set true open a port direct on node where Zabbix Server runs |
 | zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixServer.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix Server Docker image name |
 | zabbixServer.image.tag | string | `nil` | Zabbix Server Docker image tag, if you want to override zabbixImageTag |
+| zabbixServer.jobDBSchema.extraContainers | list | `[]` | additional containers to start within the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraVolumes | list | `[]` | additional volumes to make available to the  Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
 | zabbixServer.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixServer.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.service.annotations | object | `{}` | Annotations for the zabbix-server service |
 | zabbixServer.service.clusterIP | string | `nil` |  |
 | zabbixServer.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
@@ -461,6 +486,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.readinessProbe.timeoutSeconds | int | `5` | Number of seconds after which the probe times out |
 | zabbixWeb.replicaCount | int | `1` | Number of replicas of ``zabbixWeb`` module |
 | zabbixWeb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixWeb.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixWeb.service | object | `{"annotations":{},"clusterIP":null,"externalIPs":[],"loadBalancerIP":"","port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration samlCertsSecretName: zabbix-web-samlcerts |
 | zabbixWeb.service.annotations | object | `{}` | Annotations for the Zabbix Web |
 | zabbixWeb.service.clusterIP | string | `nil` | Cluster IP for Zabbix Web |
@@ -483,6 +509,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixWebService.replicaCount | int | `1` | Number of replicas of ``zabbixWebService`` module |
 | zabbixWebService.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixWebService.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixWebService.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | set the IgnoreURLCertErrors configuration setting of Zabbix Web Service ignoreURLCertErrors=1 |
 | zabbixWebService.service.annotations | object | `{}` | Annotations for the Zabbix Web Service |
 | zabbixWebService.service.clusterIP | string | `nil` | Cluster IP for Zabbix Web |

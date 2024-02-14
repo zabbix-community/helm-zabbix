@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
   annotations:
     {{- range $key,$value := .Values.zabbixAgent.daemonSetAnnotations }}
-    {{ $key }}: {{ $value|quote }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   selector:
@@ -21,7 +21,7 @@ spec:
     metadata:
       annotations:
         {{- range $key,$value := .Values.zabbixAgent.containerAnnotations }}
-        {{ $key }}: {{ $value|quote }}
+        {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-zabbix-agent
@@ -34,9 +34,10 @@ spec:
       {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- if .Values.karpenter.enabled }}
+      {{- with .Values.karpenter.labels }}
       nodeSelector:
-        karpenter: "true"
-        app: zabbix
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- else }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -83,7 +84,7 @@ spec:
             periodSeconds: 10
             successThreshold: 1
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.zabbixAgent.securityContext | nindent 12 }}
           env:
             - name: ZBX_HOSTNAME
               valueFrom:
@@ -150,7 +151,7 @@ spec:
           hostPath:
             path: /
         {{- end }}
-        {{- with .Values.zabbixAgent.extraVolumes }}
+      {{- with .Values.zabbixAgent.extraVolumes }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
+      {{- end }}
 {{- end }}

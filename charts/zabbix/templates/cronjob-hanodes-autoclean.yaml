@@ -14,7 +14,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-nodesclean
     app.kubernetes.io/managed-by: {{ .Release.Service }}-nodesclean
 spec:
-  schedule: {{ .Values.zabbixServer.haNodesAutoClean.schedule|quote }}
+  schedule: {{ .Values.zabbixServer.haNodesAutoClean.schedule | quote }}
   concurrencyPolicy: {{ .Values.zabbixServer.haNodesAutoClean.concurrencyPolicy }}
   jobTemplate:
     spec:
@@ -24,6 +24,17 @@ spec:
           {{- with .Values.zabbixServer.haNodesAutoClean.extraPodSpecs }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
+          {{- if .Values.karpenter.enabled }}
+          {{- with .Values.karpenter.labels }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- else }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
           {{- with .Values.zabbixServer.haNodesAutoClean.extraInitContainers }}
           initContainers:
             {{- toYaml . | nindent 12 }}
@@ -32,6 +43,10 @@ spec:
           - name: hanodes-autoclean
             image: "{{ .Values.zabbixServer.haNodesAutoClean.image.repository }}:{{ .Values.zabbixServer.haNodesAutoClean.image.tag }}"
             imagePullPolicy: {{ .Values.zabbixServer.haNodesAutoClean.image.pullPolicy }}
+            resources:
+              {{- toYaml .Values.zabbixServer.haNodesAutoClean.resources | nindent 14 }}
+            securityContext:
+              {{- toYaml .Values.zabbixServer.haNodesAutoClean.securityContext | nindent 14 }}
             command:
             - /bin/bash
             - -c
