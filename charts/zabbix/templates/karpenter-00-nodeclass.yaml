@@ -1,0 +1,38 @@
+# References:
+# https://karpenter.sh/v0.33/getting-started/getting-started-with-karpenter/
+# https://github.com/aws/karpenter/blob/v0.33.0/charts/karpenter/values.yaml
+# https://karpenter.sh/v0.33/upgrading/upgrade-guide/
+# https://karpenter.sh/v0.33/upgrading/compatibility/
+# https://karpenter.sh/v0.33/concepts/nodepools/
+# https://karpenter.sh/v0.33/concepts/nodeclasses/
+# https://karpenter.sh/docs/upgrading/v1beta1-migration/#instanceprofile
+# https://karpenter.sh/docs/upgrading/v1beta1-migration/#helm-values
+# https://karpenter.sh/docs/troubleshooting/
+{{- if .Values.karpenter.enabled }}
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: karpenter-00-nodeclass-{{ include "zabbix.fullname" . }}
+spec:
+  amiFamily: {{ .Values.karpenter.amiFamily }}
+  subnetSelectorTerms:
+    - tags: 
+        {{ .Values.karpenter.tag }}: {{ .Values.karpenter.clusterName }}
+  securityGroupSelectorTerms:
+    - tags:
+        {{ .Values.karpenter.tag }}: {{ .Values.karpenter.clusterName }}
+  {{- if and .Values.karpenter.role.use ( not .Values.karpenter.instanceProfile.use ) }}
+  role: {{ .Values.karpenter.role.name }}
+  {{- end }}
+  {{- if and .Values.karpenter.instanceProfile.use ( not .Values.karpenter.role.use ) }}
+  instanceProfile: {{ .Values.karpenter.instanceProfile.name }}
+  {{- end }}
+  {{- with .Values.karpenter.resourceTags }}
+  tags:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.karpenter.metadataOptions }}
+  metadataOptions:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

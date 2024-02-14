@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
   annotations:
     {{- range $key,$value := .Values.postgresql.statefulSetAnnotations }}
-    {{ $key }}: {{ $value|quote }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   {{- if .Values.postgresql.persistence.enabled }}
@@ -44,7 +44,7 @@ spec:
     metadata:
       annotations:
         {{- range $key,$value := .Values.postgresql.containerAnnotations }}
-        {{ $key }}: {{ $value|quote }}
+        {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-postgresql
@@ -81,9 +81,9 @@ spec:
       containers:
         - name: postgresql
           resources:
-{{- toYaml .Values.postgresql.resources | nindent 12 }}
+            {{- toYaml .Values.postgresql.resources | nindent 12 }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.postgresql.securityContext | nindent 12 }}
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
           {{- with .Values.postgresql.extraRuntimeParameters }}

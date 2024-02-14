@@ -57,12 +57,12 @@ Simple shell function for Kubectl installation in Linux 64 bits. Copy and paste 
 ```bash
 sudo su
 
-VERSION=v1.27.4
+VERSION=v1.29.1
 KUBECTL_BIN=kubectl
 
 function install_kubectl {
 if [ -z $(which $KUBECTL_BIN) ]; then
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/$KUBECTL_BIN
+    curl -LO "https://dl.k8s.io/$VERSION/bin/linux/amd64/$KUBECTL_BIN"
     chmod +x ${KUBECTL_BIN}
     sudo mv ${KUBECTL_BIN} /usr/local/bin/${KUBECTL_BIN}
     sudo ln -sf /usr/local/bin/${KUBECTL_BIN} /usr/bin/${KUBECTL_BIN}
@@ -75,7 +75,7 @@ install_kubectl
 
 which kubectl
 
-kubectl version --client
+kubectl version --client=true
 
 exit
 ```
@@ -85,7 +85,7 @@ Kubectl documentation:
 * https://www.downloadkubernetes.com/
 * https://kubernetes.io/docs/reference/kubectl/overview/
 
-**Credits:** Juan Pablo Perez - https://www.linkedin.com/in/juanpabloperezpeelmicro/ 
+**Credits:** Juan Pablo Perez - https://www.linkedin.com/in/juanpabloperezpeelmicro/
 
 https://github.com/peelmicro/learn-devops-the-complete-kubernetes-course
 
@@ -94,8 +94,8 @@ https://github.com/peelmicro/learn-devops-the-complete-kubernetes-course
 Run the following commands to install ``helm-docs``.
 
 ```bash
-HELM_DOCS_VERSION=1.11.0
-HELM_DOCS_PACKAGE=helm-docs_``$HELM_DOCS_VERSION``_linux_x86_64.tar.gz
+HELM_DOCS_VERSION=1.12.0
+HELM_DOCS_PACKAGE=helm-docs_``$HELM_DOCS_VERSION``_Linux_x86_64.tar.gz
 
 cd /tmp
 
@@ -121,7 +121,7 @@ Execute these commands to install helm.
 ```bash
 sudo su
 
-HELM_TAR_FILE=helm-v3.12.2-linux-amd64.tar.gz
+HELM_TAR_FILE=helm-v3.14.0-linux-amd64.tar.gz
 HELM_URL=https://get.helm.sh
 HELM_BIN=helm3
 

@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
   annotations:
     {{- range $key,$value := .Values.zabbixServer.deploymentAnnotations }}
-    {{ $key }}: {{ $value|quote }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   replicas: {{ .Values.zabbixServer.replicaCount }}
@@ -23,7 +23,7 @@ spec:
     metadata:
       annotations:
         {{- range $key,$value := .Values.zabbixServer.containerAnnotations }}
-        {{ $key }}: {{ $value|quote }}
+        {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-zabbix-server
@@ -73,6 +73,10 @@ spec:
           {{- end }}
           env:
             {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.zabbixServer.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.zabbixServer.resources | nindent 12 }}
           command:
             - "/bin/bash"
             - "/script/wait_db_schema.sh"
@@ -86,7 +90,9 @@ spec:
       containers:
         - name: zabbix-server
           resources:
-{{- toYaml .Values.zabbixServer.resources | nindent 12 }}
+            {{- toYaml .Values.zabbixServer.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.zabbixServer.securityContext | nindent 12 }}
           {{- if .Values.zabbixServer.image.tag }}
           image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}"
           {{- else }}
@@ -126,7 +132,7 @@ spec:
             - name: ZBX_WEBSERVICEURL
               value: "http://{{ template "zabbix.fullname" . }}-zabbix-webservice:{{ .Values.zabbixWebService.service.port }}/report"
             - name: ZBX_STARTREPORTWRITERS
-              value: {{ .Values.zabbixWebService.replicaCount|quote }}
+              value: {{ .Values.zabbixWebService.replicaCount | quote }}
             {{- end }}
           {{- with .Values.zabbixServer.extraVolumeMounts }}
           volumeMounts:
@@ -135,9 +141,9 @@ spec:
         {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
         - name: zabbix-agent
           resources:
-{{- toYaml .Values.zabbixAgent.resources | nindent 12 }}
+            {{- toYaml .Values.zabbixAgent.resources | nindent 12 }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.zabbixAgent.securityContext | nindent 12 }}
           {{- if .Values.zabbixAgent.image.tag }}
           image: "{{ .Values.zabbixAgent.image.repository }}:{{ .Values.zabbixAgent.image.tag }}"
           {{- else }}

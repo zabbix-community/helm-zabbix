@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
   annotations:
     {{- range $key,$value := .Values.zabbixWeb.deploymentAnnotations }}
-    {{ $key }}: {{ $value|quote }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   replicas: {{ .Values.zabbixWeb.replicaCount }}
@@ -22,7 +22,7 @@ spec:
     metadata:
       annotations:
         {{- range $key,$value := .Values.zabbixWeb.containerAnnotations }}
-        {{ $key }}: {{ $value|quote }}
+        {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         app: {{ template "zabbix.fullname" . }}-zabbix-web
@@ -71,7 +71,7 @@ spec:
         resources:
           {{- toYaml .Values.zabbixWeb.resources | nindent 10 }}
         securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.zabbixWeb.securityContext | nindent 10 }}
         {{- if .Values.zabbixWeb.image.tag }}
         image: "{{ .Values.zabbixWeb.image.repository }}:{{ .Values.zabbixWeb.image.tag }}"
         {{- else }}
