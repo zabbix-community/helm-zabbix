@@ -106,6 +106,19 @@ zabbixServer:
     extraPodSpecs: {}
     # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
     securityContext: {}
+  jobDBSchema:
+    # -- additional init containers to start within the Zabbix Server Job DB Schema pod
+    extraInitContainers: []
+    # -- additional containers to start within the Zabbix Server Job DB Schema pod
+    extraContainers: []
+    # -- additional specifications to the Zabbix Server Job DB Schema pod
+    extraPodSpecs: {}
+    # -- additional volumeMounts to the Zabbix Server Job DB Schema pod
+    extraVolumeMounts: []
+    # -- additional volumes to make available to the  Zabbix Server Job DB Schema pod
+    extraVolumes: []
+    # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+    securityContext: {}
   service:
     # -- Type of service in Kubernetes cluster
     type: ClusterIP

@@ -35,9 +35,10 @@ spec:
       {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- if .Values.karpenter.enabled }}
+      {{- with .Values.karpenter.labels }}
       nodeSelector:
-        karpenter: "true"
-        app: zabbix
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- else }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -64,7 +65,7 @@ spec:
       {{- end }}
       {{- with .Values.zabbixWebService.extraInitContainers }}
       initContainers:
-      {{- toYaml . | nindent 6 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
       - name: zabbix-webservice

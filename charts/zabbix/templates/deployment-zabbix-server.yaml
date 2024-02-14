@@ -36,9 +36,10 @@ spec:
       {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- if .Values.karpenter.enabled }}
+      {{- with .Values.karpenter.labels }}
       nodeSelector:
-        karpenter: "true"
-        app: zabbix
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- else }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -136,7 +137,7 @@ spec:
             {{- end }}
           {{- with .Values.zabbixServer.extraVolumeMounts }}
           volumeMounts:
-          {{- toYaml . | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
         - name: zabbix-agent
@@ -201,6 +202,6 @@ spec:
             name: {{ template "zabbix.fullname" . }}-waitdbschema-script
       {{- end }}
       {{- with .Values.zabbixServer.extraVolumes }}
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}

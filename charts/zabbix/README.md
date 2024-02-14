@@ -42,7 +42,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='4.0.0'
+export ZABBIX_CHART_VERSION='4.1.0'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -441,6 +441,12 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix Server Docker image name |
 | zabbixServer.image.tag | string | `nil` | Zabbix Server Docker image tag, if you want to override zabbixImageTag |
+| zabbixServer.jobDBSchema.extraContainers | list | `[]` | additional containers to start within the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraVolumes | list | `[]` | additional volumes to make available to the  Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
 | zabbixServer.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |

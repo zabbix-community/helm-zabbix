@@ -36,12 +36,13 @@ spec:
       {{- end }}
       {{- with .Values.zabbixWeb.extraInitContainers }}
       initContainers:
-      {{- toYaml . | nindent 6 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.karpenter.enabled }}
+      {{- with .Values.karpenter.labels }}
       nodeSelector:
-        karpenter: "true"
-        app: zabbix
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- else }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -82,7 +83,7 @@ spec:
           {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
           {{- range $item := .Values.zabbixWeb.extraEnv }}
           - name: {{ $item.name }}
-            value: {{ $item.value | quote  }}
+            value: {{ $item.value | quote }}
           {{- end }}
         ports:
           - name: zabbix-web
@@ -128,6 +129,6 @@ spec:
             secretName: {{ .Values.zabbixWeb.samlCertsSecretName }}
       {{- end }}
       {{- with .Values.zabbixWeb.extraVolumes }}
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
