@@ -10,6 +10,9 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
     app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+    {{- if .Values.postgresql.statefulSetLabels }}
+    {{- toYaml .Values.postgresql.statefulSetLabels | nindent 4 }}
+    {{- end }}
   annotations:
     {{- range $key,$value := .Values.postgresql.statefulSetAnnotations }}
     {{ $key }}: {{ $value | quote }}
@@ -52,6 +55,9 @@ spec:
         helm.sh/chart: {{ include "zabbix.chart" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
         app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+        {{- if .Values.postgresql.containerLabels }}
+        {{- toYaml .Values.postgresql.containerLabels | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.postgresql.extraPodSpecs }}

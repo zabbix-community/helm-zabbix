@@ -13,6 +13,9 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-nodesclean
     app.kubernetes.io/managed-by: {{ .Release.Service }}-nodesclean
+    {{- if .Values.zabbixServer.haNodesAutoClean.cronjobLabels }}
+    {{- toYaml .Values.zabbixServer.haNodesAutoClean.cronjobLabels | nindent 4 }}
+    {{- end }}
 spec:
   schedule: {{ .Values.zabbixServer.haNodesAutoClean.schedule | quote }}
   concurrencyPolicy: {{ .Values.zabbixServer.haNodesAutoClean.concurrencyPolicy }}

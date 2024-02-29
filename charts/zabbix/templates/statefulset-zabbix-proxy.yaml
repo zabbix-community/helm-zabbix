@@ -10,6 +10,9 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+    {{- if .Values.zabbixProxy.statefulSetLabels }}
+    {{- toYaml .Values.zabbixProxy.statefulSetLabels | nindent 4 }}
+    {{- end }}
   annotations:
     {{- range $key,$value := .Values.zabbixProxy.statefulSetAnnotations }}
     {{ $key }}: {{ $value | quote }}
@@ -32,6 +35,9 @@ spec:
         helm.sh/chart: {{ include "zabbix.chart" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+        {{- if .Values.zabbixProxy.containerLabels }}
+        {{- toYaml .Values.zabbixProxy.containerLabels | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixProxy.extraPodSpecs }}

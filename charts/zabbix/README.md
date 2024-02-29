@@ -293,8 +293,8 @@ The following tables lists the configurable parameters of the chart and their de
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
-| global.commonLabels | object | `{}` |  |
-| global.imagePullSecrets | list | `[]` |  |
+| global.commonLabels | object | `{}` | Labels to apply to all resources. |
+| global.imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images.  For example:  imagePullSecrets:    - name: "image-pull-secret" |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
@@ -330,6 +330,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresAccess.useUnifiedSecret | bool | `true` | Whether to use the unified PostgreSQL access secret |
 | postgresAccess.user | string | `"zabbix"` | User of database |
 | postgresql.containerAnnotations | object | `{}` | annotations to add to the containers |
+| postgresql.containerLabels | object | `{}` | labels to add to the containers |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
@@ -355,6 +356,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | postgresql.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | postgresql.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
+| postgresql.statefulSetLabels | object | `{}` | labels to add to the statefulset |
 | route.annotations | object | `{}` | Openshift Route extra annotations |
 | route.enabled | bool | `false` | Enables Route object for Openshift |
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
@@ -373,7 +375,10 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixAgent.ZBX_TIMEOUT | int | `4` | The variable is used to specify timeout for processing checks. By default, value is 4. |
 | zabbixAgent.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixAgent.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixAgent.daemonSetAnnotations | object | `{}` | annotations to add to the daemonSet |
+| zabbixAgent.daemonSetLabels | object | `{}` | labels to add to the daemonSet |
+| zabbixAgent.deploymentLabels | object | `{}` | labels to add to the deployment |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
 | zabbixAgent.extraContainers | list | `[]` | additional containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -408,6 +413,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.ZBX_TIMEOUT | int | `4` |  |
 | zabbixProxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixProxy.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixProxy.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixProxy.extraContainers | list | `[]` | additional containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -431,8 +437,11 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix Proxy |
 | zabbixProxy.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixProxy.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
+| zabbixProxy.statefulSetLabels | object | `{}` | labels to add to the statefulset |
 | zabbixServer.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixServer.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixServer.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
+| zabbixServer.deploymentLabels | object | `{}` | labels to add to the deployment |
 | zabbixServer.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixServer.extraContainers | list | `[]` | additional containers to start within the Zabbix Server pod |
 | zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -440,7 +449,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server pod |
 | zabbixServer.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server container |
 | zabbixServer.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Server pod |
-| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","cronjobLabels":{},"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean.cronjobLabels | object | `{}` | Labels to add to the cronjob for ha nodes autoclean |
 | zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |
@@ -478,7 +488,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixServer.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixWeb.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixWeb.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixWeb.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
+| zabbixWeb.deploymentLabels | object | `{}` | labels to add to the deployment |
 | zabbixWeb.enabled | bool | `true` | Enables use of **Zabbix Web** |
 | zabbixWeb.extraContainers | list | `[]` | additional containers to start within the Zabbix Web pod |
 | zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -513,7 +525,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.service.port | int | `80` | Port to expose service |
 | zabbixWeb.service.type | string | `"ClusterIP"` | Type of service for Zabbix Web |
 | zabbixWebService.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixWebService.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixWebService.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
+| zabbixWebService.deploymentLabels | object | `{}` | labels to add to the deployment |
 | zabbixWebService.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixWebService.extraContainers | list | `[]` | additional containers to start within the Zabbix Web Service pod |
 | zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |

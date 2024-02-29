@@ -4,14 +4,14 @@
 
 # Global configurations
 global:
-  # Reference to one or more secrets to be used when pulling images.
+  # -- Reference to one or more secrets to be used when pulling images.
   #
   # For example:
   #  imagePullSecrets:
   #    - name: "image-pull-secret"
   imagePullSecrets: []
 
-  # Labels to apply to all resources.
+  # -- Labels to apply to all resources.
   commonLabels: {}
 
 # -- Zabbix components (server, agent, web frontend, ...) image tag to use.
@@ -118,6 +118,8 @@ zabbixServer:
     extraPodSpecs: {}
     # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
     securityContext: {}
+    # -- Labels to add to the cronjob for ha nodes autoclean
+    cronjobLabels: {}
   jobDBSchema:
     # -- additional init containers to start within the Zabbix Server Job DB Schema pod
     extraInitContainers: []
@@ -154,8 +156,12 @@ zabbixServer:
   #  value: "true"
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
+  # -- labels to add to the deployment
+  deploymentLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional volumeMounts to the Zabbix Server container
   extraVolumeMounts: []
   # -- additional containers to start within the Zabbix Server pod
@@ -220,8 +226,12 @@ postgresql:
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
+  # -- labels to add to the statefulset
+  statefulSetLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional volumeMounts to the postgresql container
   extraVolumeMounts: []
   # -- additional containers to start within the postgresql pod
@@ -290,8 +300,12 @@ zabbixProxy:
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
+  # -- labels to add to the statefulset
+  statefulSetLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional volumeMounts to the Zabbix Proxy container
   extraVolumeMounts: []
   # -- additional containers to start within the Zabbix Proxy pod
@@ -373,8 +387,14 @@ zabbixAgent:
   extraVolumeMounts: []
   # -- annotations to add to the daemonSet
   daemonSetAnnotations: {}
+  # -- labels to add to the daemonSet
+  daemonSetLabels: {}
+  # -- labels to add to the deployment
+  deploymentLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional containers to start within the Zabbix Agent pod
   extraContainers: []
   # -- additional init containers to start within the Zabbix Agent pod
@@ -438,8 +458,12 @@ zabbixWeb:
   #  value: Demo Zabbix
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
+  # -- labels to add to the deployment
+  deploymentLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional volumeMounts to the Zabbix Web container
   extraVolumeMounts: []
   # -- additional containers to start within the Zabbix Web pod
@@ -514,8 +538,12 @@ zabbixWebService:
   extraEnv: []
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
+  # -- labels to add to the deployment
+  deploymentLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional volumeMounts to the Zabbix Web Service container
   extraVolumeMounts: []
   # -- additional containers to start within the Zabbix Web Service pod
