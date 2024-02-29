@@ -10,6 +10,9 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+    {{- if .Values.zabbixServer.deploymentLabels }}
+    {{- toYaml .Values.zabbixServer.deploymentLabels | nindent 4 }}
+    {{- end }}
   annotations:
     {{- range $key,$value := .Values.zabbixServer.deploymentAnnotations }}
     {{ $key }}: {{ $value | quote }}
@@ -31,6 +34,9 @@ spec:
         helm.sh/chart: {{ include "zabbix.chart" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+        {{- if .Values.zabbixServer.containerLabels }}
+        {{- toYaml .Values.zabbixServer.containerLabels | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.zabbixServer.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
