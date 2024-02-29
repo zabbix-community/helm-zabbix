@@ -120,6 +120,18 @@ spec:
             - name: db
               containerPort: 5432
               protocol: TCP
+          {{- with .Values.postgresql.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.postgresql.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.postgresql.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       {{- with .Values.postgresql.extraContainers }}
       {{- toYaml . | nindent 8 }}
       {{- end }}
