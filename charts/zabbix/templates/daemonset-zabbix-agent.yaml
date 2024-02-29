@@ -36,6 +36,7 @@ spec:
         {{- toYaml .Values.zabbixAgent.containerLabels | nindent 8 }}
         {{- end }}
     spec:
+      serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixAgent.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}

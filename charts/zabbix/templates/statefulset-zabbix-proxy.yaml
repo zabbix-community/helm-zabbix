@@ -39,6 +39,7 @@ spec:
         {{- toYaml .Values.zabbixProxy.containerLabels | nindent 8 }}
         {{- end }}
     spec:
+      serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixProxy.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}

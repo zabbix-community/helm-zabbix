@@ -724,18 +724,17 @@ karpenter:
     httpTokens: required
 
 serviceAccount:
-  # Specifies whether a service account should be created.
+  # -- Specifies whether a service account should be created.
   create: true
 
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template.
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template.
   name: ""
 
-  # Optional additional annotations to add to the Service Account.
+  # -- Optional additional annotations to add to the Service Account.
   annotations: {}
 
-  # Optional additional labels to add to the Service Account.
+  # -- Optional additional labels to add to the Service Account.
   labels: {}
 
-  # Automount API credentials for a Service Account.
+  # -- Automount API credentials for a Service Account.
   automountServiceAccountToken: true

@@ -24,6 +24,7 @@ spec:
       ttlSecondsAfterFinished: 86400
       template:
         spec:
+          serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
           {{- with .Values.zabbixServer.haNodesAutoClean.extraPodSpecs }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
@@ -44,6 +45,7 @@ spec:
           {{- end }}
           containers:
           - name: hanodes-autoclean
+            serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
             image: "{{ .Values.zabbixServer.haNodesAutoClean.image.repository }}:{{ .Values.zabbixServer.haNodesAutoClean.image.tag }}"
             imagePullPolicy: {{ .Values.zabbixServer.haNodesAutoClean.image.pullPolicy }}
             resources:

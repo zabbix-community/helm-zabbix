@@ -362,11 +362,11 @@ The following tables lists the configurable parameters of the chart and their de
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
 | route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| serviceAccount.annotations | object | `{}` |  |
-| serviceAccount.automountServiceAccountToken | bool | `true` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.labels | object | `{}` |  |
-| serviceAccount.name | string | `""` |  |
+| serviceAccount.annotations | object | `{}` | Optional additional annotations to add to the Service Account. |
+| serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for a Service Account. |
+| serviceAccount.create | bool | `true` | Specifies whether a service account should be created. |
+| serviceAccount.labels | object | `{}` | Optional additional labels to add to the Service Account. |
+| serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template. |
 | tolerations | list | `[]` | Tolerations configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
 | zabbixAgent.ZBX_ACTIVE_ALLOW | bool | `false` | This variable is boolean (true or false) and enables or disables feature of active checks |
 | zabbixAgent.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
