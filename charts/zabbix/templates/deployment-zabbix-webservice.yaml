@@ -98,6 +98,18 @@ spec:
         volumeMounts:
           {{ toYaml . | nindent 10 }}
         {{- end }}
+        {{- with .Values.zabbixWebService.livenessProbe }}
+        livenessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.zabbixWebService.readinessProbe }}
+        readinessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.zabbixWebService.startupProbe }}
+        startupProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- with .Values.zabbixWebService.extraContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
