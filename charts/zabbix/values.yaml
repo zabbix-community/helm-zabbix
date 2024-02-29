@@ -4,14 +4,14 @@
 
 # Global configurations
 global:
-  # Reference to one or more secrets to be used when pulling images.
+  # -- Reference to one or more secrets to be used when pulling images.
   #
   # For example:
   #  imagePullSecrets:
   #    - name: "image-pull-secret"
   imagePullSecrets: []
 
-  # Labels to apply to all resources.
+  # -- Labels to apply to all resources.
   commonLabels: {}
 
 # -- Zabbix components (server, agent, web frontend, ...) image tag to use.
@@ -533,10 +533,10 @@ ingress:
   # kubernetes.io/tls-acme: "true"
   # -- Ingress hosts
   hosts:
-  - host: chart-example.local
-    paths:
-    - path: /
-      pathType: ImplementationSpecific
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
@@ -556,7 +556,7 @@ ingressRoute:
   annotations: {}
   # -- Ingressroute entrypoints
   entryPoints:
-  - websecure
+    - websecure
   # -- Ingressroute host name
   hostName: chart-example.local
   # -- IngressRoute TLS configuration
@@ -661,21 +661,21 @@ karpenter:
   # Operators { In, NotIn, Exists, DoesNotExist, Gt, and Lt } are supported.
   # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators
   requirements:
-  - key: "karpenter.k8s.aws/instance-category"
-    operator: In
-    values: ["c", "m", "r"]
-  - key: "karpenter.k8s.aws/instance-cpu"
-    operator: In
-    values: ["2", "4", "8", "16", "32"]
-  - key: "kubernetes.io/arch"
-    operator: In
-    values: ["amd64"]
-  - key: kubernetes.io/os
-    operator: In
-    values: ["linux"]
-  - key: "karpenter.sh/capacity-type"
-    operator: In
-    values: ["spot", "on-demand"]
+    - key: "karpenter.k8s.aws/instance-category"
+      operator: In
+      values: ["c", "m", "r"]
+    - key: "karpenter.k8s.aws/instance-cpu"
+      operator: In
+      values: ["2", "4", "8", "16", "32"]
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: kubernetes.io/os
+      operator: In
+      values: ["linux"]
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["spot", "on-demand"]
   # -- Optional, configures IMDS for the instance
   metadataOptions:
     httpEndpoint: enabled

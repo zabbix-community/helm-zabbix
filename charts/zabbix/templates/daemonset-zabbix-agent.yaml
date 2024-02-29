@@ -9,8 +9,8 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-agent
     app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
-    {{- if .Values.zabbixAgent.deploymentLabels }}
-    {{- toYaml .Values.zabbixWeb.deploymentLabels | nindent 4 }}
+    {{- if .Values.zabbixAgent.daemonSetLabels }}
+    {{- toYaml .Values.zabbixAgent.daemonSetLabels | nindent 4 }}
     {{- end }}
   annotations:
     {{- range $key,$value := .Values.zabbixAgent.daemonSetAnnotations }}
