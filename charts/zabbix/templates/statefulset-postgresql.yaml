@@ -53,6 +53,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
         app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
     spec:
+      serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.postgresql.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
