@@ -515,10 +515,10 @@ ingress:
   # kubernetes.io/tls-acme: "true"
   # -- Ingress hosts
   hosts:
-  - host: chart-example.local
-    paths:
-    - path: /
-      pathType: ImplementationSpecific
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
@@ -538,7 +538,7 @@ ingressRoute:
   annotations: {}
   # -- Ingressroute entrypoints
   entryPoints:
-  - websecure
+    - websecure
   # -- Ingressroute host name
   hostName: chart-example.local
   # -- IngressRoute TLS configuration
@@ -597,13 +597,13 @@ karpenter:
   # of the spec.role field. Karpenter is also removing support for the defaultInstanceProfile specified globally
   # in the karpenter-global-settings, making the spec.role field required for all EC2NodeClasses.
   # Karpenter will now auto-generate the instance profile in your EC2NodeClass, given the role that you specify.
-  # If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role 
+  # If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role
   # provisioned by that process (which is limited to 64 characters).
   # Example: karpenter-irsa-testing-my-cluster-2023120421433226760000001e
   role:
     use: true
     name: "CHANGE_HERE"
-  # -- AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned 
+  # -- AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned
   # through this EC2NodeClass but also selecting a group of recommended, latest AMIs by default.
   # Currently, Karpenter supports amiFamily values AL2, Bottlerocket, Ubuntu, Windows2019, Windows2022 and Custom.
   # GPUs are only supported by default with AL2 and Bottlerocket.
@@ -643,21 +643,21 @@ karpenter:
   # Operators { In, NotIn, Exists, DoesNotExist, Gt, and Lt } are supported.
   # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators
   requirements:
-  - key: "karpenter.k8s.aws/instance-category"
-    operator: In
-    values: ["c", "m", "r"]
-  - key: "karpenter.k8s.aws/instance-cpu"
-    operator: In
-    values: ["2", "4", "8", "16", "32"]
-  - key: "kubernetes.io/arch"
-    operator: In
-    values: ["amd64"]
-  - key: kubernetes.io/os
-    operator: In
-    values: ["linux"]
-  - key: "karpenter.sh/capacity-type"
-    operator: In
-    values: ["spot", "on-demand"]
+    - key: "karpenter.k8s.aws/instance-category"
+      operator: In
+      values: ["c", "m", "r"]
+    - key: "karpenter.k8s.aws/instance-cpu"
+      operator: In
+      values: ["2", "4", "8", "16", "32"]
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: kubernetes.io/os
+      operator: In
+      values: ["linux"]
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["spot", "on-demand"]
   # -- Optional, configures IMDS for the instance
   metadataOptions:
     httpEndpoint: enabled
@@ -666,18 +666,17 @@ karpenter:
     httpTokens: required
 
 serviceAccount:
-  # Specifies whether a service account should be created.
+  # -- Specifies whether a service account should be created.
   create: true
 
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template.
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template.
   name: ""
 
-  # Optional additional annotations to add to the Service Account.
+  # -- Optional additional annotations to add to the Service Account.
   annotations: {}
 
-  # Optional additional labels to add to the Service Account.
+  # -- Optional additional labels to add to the Service Account.
   labels: {}
 
-  # Automount API credentials for a Service Account.
+  # -- Automount API credentials for a Service Account.
   automountServiceAccountToken: true
