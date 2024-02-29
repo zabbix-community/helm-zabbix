@@ -435,7 +435,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server pod |
 | zabbixServer.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server container |
 | zabbixServer.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Server pod |
-| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","cronjobLabels":{},"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean.cronjobLabels | object | `{}` | Labels to add to the cronjob for ha nodes autoclean |
 | zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |

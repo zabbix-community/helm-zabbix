@@ -118,6 +118,8 @@ zabbixServer:
     extraPodSpecs: {}
     # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
     securityContext: {}
+    # -- Labels to add to the cronjob for ha nodes autoclean
+    cronjobLabels: {}
   jobDBSchema:
     # -- additional init containers to start within the Zabbix Server Job DB Schema pod
     extraInitContainers: []
