@@ -2,6 +2,18 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Global configurations
+global:
+  # Reference to one or more secrets to be used when pulling images.
+  #
+  # For example:
+  #  imagePullSecrets:
+  #    - name: "image-pull-secret"
+  imagePullSecrets: []
+
+  # Labels to apply to all resources.
+  commonLabels: {}
+
 # -- Zabbix components (server, agent, web frontend, ...) image tag to use.
 #This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
 #But by default this helm chart will install the latest LTS version (example: 6.0.x).
@@ -138,8 +150,8 @@ zabbixServer:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-    #- name: ENABLE_TIMESCALEDB
-    #  value: "true"
+  #- name: ENABLE_TIMESCALEDB
+  #  value: "true"
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
   # -- annotations to add to the containers
@@ -420,10 +432,10 @@ zabbixWeb:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-    #- name: ZBX_SSO_SETTINGS
-    #  value: '{"baseurl": "https://zabbix.example.com"}'
-    #- name: ZBX_SERVER_NAME
-    #  value: Demo Zabbix
+  #- name: ZBX_SSO_SETTINGS
+  #  value: '{"baseurl": "https://zabbix.example.com"}'
+  #- name: ZBX_SERVER_NAME
+  #  value: Demo Zabbix
   # -- annotations to add to the deployment
   deploymentAnnotations: {}
   # -- annotations to add to the containers
@@ -529,8 +541,8 @@ ingress:
   enabled: false
   # -- Ingress annotations
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
   # -- Ingress hosts
   hosts:
     - host: chart-example.local
@@ -615,13 +627,13 @@ karpenter:
   # of the spec.role field. Karpenter is also removing support for the defaultInstanceProfile specified globally
   # in the karpenter-global-settings, making the spec.role field required for all EC2NodeClasses.
   # Karpenter will now auto-generate the instance profile in your EC2NodeClass, given the role that you specify.
-  # If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role 
+  # If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role
   # provisioned by that process (which is limited to 64 characters).
   # Example: karpenter-irsa-testing-my-cluster-2023120421433226760000001e
   role:
     use: true
     name: "CHANGE_HERE"
-  # -- AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned 
+  # -- AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned
   # through this EC2NodeClass but also selecting a group of recommended, latest AMIs by default.
   # Currently, Karpenter supports amiFamily values AL2, Bottlerocket, Ubuntu, Windows2019, Windows2022 and Custom.
   # GPUs are only supported by default with AL2 and Bottlerocket.
@@ -683,3 +695,18 @@ karpenter:
     httpPutResponseHopLimit: 2
     httpTokens: required
 
+serviceAccount:
+  # -- Specifies whether a service account should be created.
+  create: true
+
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+  # -- Optional additional annotations to add to the Service Account.
+  annotations: {}
+
+  # -- Optional additional labels to add to the Service Account.
+  labels: {}
+
+  # -- Automount API credentials for a Service Account.
+  automountServiceAccountToken: true

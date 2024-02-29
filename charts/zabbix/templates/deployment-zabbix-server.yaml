@@ -32,6 +32,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
     spec:
+      serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixServer.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
