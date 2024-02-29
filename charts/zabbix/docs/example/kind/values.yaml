@@ -9,7 +9,7 @@ postgresAccess:
 
 zabbixServer:
   enabled: true
-  replicaCount: 1
+  replicaCount: 2
   haNodesAutoClean:
     enabled: true
     image:
@@ -32,6 +32,19 @@ zabbixServer:
       value: "false"
     - name: "ZBX_EXAMPLE_MY_ENV_3"
       value: "100"
+# Example of readinessProbe when zabbix-server has two or more replicas in HA mode
+#  readinessProbe:
+#    exec:
+#      command:
+#      - /bin/sh
+#      - -c
+#      - |-
+#       test $(zabbix_server -R ha_status | awk /$ZBX_NODEADDRESS:10051/'{print $5}') = active
+#    initialDelaySeconds: 60
+#    periodSeconds: 10
+#    timeoutSeconds: 5
+#    successThreshold: 1
+#    failureThreshold: 6
 
 postgresql:
   enabled: true
