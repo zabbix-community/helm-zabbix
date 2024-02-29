@@ -220,8 +220,12 @@ postgresql:
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
+  # -- labels to add to the statefulset
+  statefulSetLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional volumeMounts to the postgresql container
   extraVolumeMounts: []
   # -- additional containers to start within the postgresql pod
@@ -284,8 +288,12 @@ zabbixProxy:
   extraEnv: []
   # -- annotations to add to the statefulset
   statefulSetAnnotations: {}
+  # -- labels to add to the statefulset
+  statefulSetLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
   # -- additional volumeMounts to the Zabbix Proxy container
   extraVolumeMounts: []
   # -- additional containers to start within the Zabbix Proxy pod
@@ -363,6 +371,8 @@ zabbixAgent:
   daemonSetAnnotations: {}
   # -- labels to add to the daemonSet
   daemonSetLabels: {}
+  # -- labels to add to the deployment
+  deploymentLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
   # -- labels to add to the containers

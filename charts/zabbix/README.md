@@ -330,6 +330,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresAccess.useUnifiedSecret | bool | `true` | Whether to use the unified PostgreSQL access secret |
 | postgresAccess.user | string | `"zabbix"` | User of database |
 | postgresql.containerAnnotations | object | `{}` | annotations to add to the containers |
+| postgresql.containerLabels | object | `{}` | labels to add to the containers |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
 | postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
@@ -352,6 +353,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
 | postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | postgresql.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
+| postgresql.statefulSetLabels | object | `{}` | labels to add to the statefulset |
 | route.annotations | object | `{}` | Openshift Route extra annotations |
 | route.enabled | bool | `false` | Enables Route object for Openshift |
 | route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
@@ -373,6 +375,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixAgent.daemonSetAnnotations | object | `{}` | annotations to add to the daemonSet |
 | zabbixAgent.daemonSetLabels | object | `{}` | labels to add to the daemonSet |
+| zabbixAgent.deploymentLabels | object | `{}` | labels to add to the deployment |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
 | zabbixAgent.extraContainers | list | `[]` | additional containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -404,6 +407,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.ZBX_TIMEOUT | int | `4` |  |
 | zabbixProxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixProxy.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixProxy.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixProxy.extraContainers | list | `[]` | additional containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
@@ -424,6 +428,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.service.port | int | `10051` | Port to expose service |
 | zabbixProxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix Proxy |
 | zabbixProxy.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
+| zabbixProxy.statefulSetLabels | object | `{}` | labels to add to the statefulset |
 | zabbixServer.containerAnnotations | object | `{}` | annotations to add to the containers |
 | zabbixServer.containerLabels | object | `{}` | labels to add to the containers |
 | zabbixServer.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
