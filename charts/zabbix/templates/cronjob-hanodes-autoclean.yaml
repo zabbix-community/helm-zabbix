@@ -45,7 +45,6 @@ spec:
           {{- end }}
           containers:
           - name: hanodes-autoclean
-            serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
             image: "{{ .Values.zabbixServer.haNodesAutoClean.image.repository }}:{{ .Values.zabbixServer.haNodesAutoClean.image.tag }}"
             imagePullPolicy: {{ .Values.zabbixServer.haNodesAutoClean.image.pullPolicy }}
             resources:
