@@ -234,3 +234,38 @@ spec:
   selector:
     app: {{ template "zabbix.fullname" . }}-postgresql
 {{- end }}
+
+{{- if .Values.zabbixJavaGatway.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGatway.ZBX_JAVAGATEWAY }}
+  labels:
+    app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGatway.ZBX_JAVAGATEWAY }}
+    app.kubernetes.io/name: {{ .Values.zabbixJavaGatway.ZBX_JAVAGATEWAY }}
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixJavaGatway.ZBX_JAVAGATEWAY }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-{{ .Values.zabbixJavaGatway.ZBX_JAVAGATEWAY }}
+  {{- if .Values.zabbixJavaGatway.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixJavaGatway.service.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.zabbixJavaGatway.service.type }}
+  {{- if .Values.zabbixJavaGatway.service.clusterIP }}
+  clusterIP: {{ .Values.zabbixJavaGatway.service.clusterIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.zabbixJavaGatway.service.port }}
+      targetPort: 10052
+      {{- if ( and (eq .Values.zabbixJavaGatway.service.type "NodePort" ) (not (empty .Values.zabbixJavaGatway.service.nodePort)) ) }}
+      nodePort: {{ .Values.zabbixJavaGatway.service.nodePort }}
+      {{- end }}
+      protocol: TCP
+      name: zabbix-java-gw
+  selector:
+    app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGatway.ZBX_JAVAGATEWAY }}
+{{- end }}

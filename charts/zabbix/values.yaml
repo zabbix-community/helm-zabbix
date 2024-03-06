@@ -563,6 +563,82 @@ zabbixWebService:
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   startupProbe: {}
 
+# **Zabbix Java Gatway** configurations
+zabbixJavaGatway:
+  # -- Enables use of **Zabbix Java Gatway**
+  enabled: false
+  # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
+  resources: {}
+  image:
+    # -- Zabbix Java Gatway Docker image name. Can use zabbix/zabbix-java-gateway
+    repository: zabbix/zabbix-java-gateway
+    # -- Zabbix Java Gatway Docker image tag, if you want to override zabbixImageTag
+    tag: null
+    # -- Pull policy of Docker image
+    pullPolicy: IfNotPresent
+    # -- List of dockerconfig secrets names to use when pulling images
+    pullSecrets: []
+  # -- This variable is specified amount of pollers. By default, value is 5
+  ZBX_START_POLLERS: 5
+  # -- Name of properties file. Can be used to set additional properties using a key-value format in such a way that they are not visible on a command line or to overwrite existing ones.
+  # ZBX_PROPERTIES_FILE: 
+  # -- The variable is used to specify debug level, from 0 to 5
+  ZBX_DEBUGLEVEL: 3
+  # -- This variable is used to specify timeout for outgoing connections. By default, value is 3.
+  ZBX_TIMEOUT: 3
+  # -- Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features.
+  # ZABBIX_OPTIONS: 
+  # Java Gatway Service Name
+  ZBX_JAVAGATEWAY: zabbix-java-gateway
+  # Java Gatway Service Port
+  service:
+    # -- Type of service for Zabbix Java Gatway
+    type: ClusterIP
+    # -- Cluster IP for Zabbix Java Gatway
+    clusterIP:
+    # -- Port to expose service
+    port: 10052
+    # -- externalTrafficPolicy for Zabbix Java Gatway service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    #externalTrafficPolicy: Local
+    listenOnAllInterfaces: true
+    # -- NodePort port to allocate (only if service.type = NodePort)
+    #nodePort: 31050
+    # -- Annotations for the zabbix-agent service
+    annotations: {}
+    # metallb.universe.tf/address-pool: production-public-ips
+  # -- If true, agent pods mounts host / at /host/root
+  hostRootFsMount: true
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  extraEnv: []
+  # -- additional volumeMounts to the Zabbix Java Gatway container
+  extraVolumeMounts: []
+  # -- annotations to add to the daemonSet
+  daemonSetAnnotations: {}
+  # -- labels to add to the daemonSet
+  daemonSetLabels: {}
+  # -- labels to add to the deployment
+  deploymentLabels: {}
+  # -- annotations to add to the containers
+  containerAnnotations: {}
+  # -- labels to add to the containers
+  containerLabels: {}
+  # -- additional containers to start within the Zabbix Java Gatway pod
+  extraContainers: []
+  # -- additional init containers to start within the Zabbix Java Gatway pod
+  extraInitContainers: []
+  # -- additional volumes to make available to the Zabbix Java Gatway pod
+  extraVolumes: []
+  # -- additional specifications to the Zabbix Java Gatway pod
+  extraPodSpecs: {}
+  # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
+  # -- The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  livenessProbe: {}
+  # -- The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  readinessProbe: {}
+  # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  startupProbe: {}
+
 # Ingress configurations
 ingress:
   # -- Enables Ingress
