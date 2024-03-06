@@ -612,10 +612,6 @@ zabbixJavaGatway:
   extraEnv: []
   # -- additional volumeMounts to the Zabbix Java Gatway container
   extraVolumeMounts: []
-  # -- annotations to add to the daemonSet
-  daemonSetAnnotations: {}
-  # -- labels to add to the daemonSet
-  daemonSetLabels: {}
   # -- labels to add to the deployment
   deploymentLabels: {}
   # -- annotations to add to the containers

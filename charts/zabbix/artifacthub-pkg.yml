@@ -5,9 +5,9 @@
 # https://github.com/kedacore/external-scalers/blob/main/artifacthub/azure-cosmos-db/0.1.0/artifacthub-pkg.yml
 # https://artifacthub.io/packages/keda-scaler/keda-official-external-scalers/external-scaler-azure-cosmos-db?modal=install
 
-version: 4.1.0 # helm chart version
+version: 4.1.1 # helm chart version
 # LTS Zabbix version by default due to stability. See: https://www.zabbix.com/life_cycle_and_release_policy
-appVersion: 6.0.26 # zabbix version
+appVersion: 6.0.27 # zabbix version
 name: zabbix
 category: monitoring, networking, metrics
 displayName: Zabbix - The Enterprise-Class Open Source Network Monitoring Solution
