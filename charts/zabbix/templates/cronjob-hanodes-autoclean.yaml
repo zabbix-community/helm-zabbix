@@ -39,6 +39,10 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}          
           {{- with .Values.zabbixServer.haNodesAutoClean.extraInitContainers }}
           initContainers:
             {{- toYaml . | nindent 12 }}
