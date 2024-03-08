@@ -30,6 +30,10 @@ spec:
       {{- with .Values.zabbixServer.jobDBSchema.extraInitContainers }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}      
       containers:
         {{- with .Values.zabbixServer.jobDBSchema.extraContainers }}
         {{- toYaml . | nindent 8 }}
