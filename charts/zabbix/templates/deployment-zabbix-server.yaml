@@ -151,6 +151,14 @@ spec:
               value: "http://{{ template "zabbix.fullname" . }}-zabbix-webservice:{{ .Values.zabbixWebService.service.port }}/report"
             - name: ZBX_STARTREPORTWRITERS
               value: {{ .Values.zabbixWebService.replicaCount | quote }}
+            - name: ZBX_JAVAGATEWAY_ENABLE
+              value: {{ .Values.zabbixJavaGatway.enabled | quote }}
+            - name: ZBX_JAVAGATEWAY
+              value: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGatway.ZBX_JAVAGATEWAY }}
+            - name: ZBX_JAVAGATEWAYPORT
+              value: {{ .Values.zabbixJavaGatway.service.port | quote }}
+            - name: ZBX_STARTJAVAPOLLERS
+              value: {{ .Values.zabbixJavaGatway.ZBX_STARTJAVAPOLLERS | quote }}
             {{- end }}
           {{- with .Values.zabbixServer.extraVolumeMounts }}
           volumeMounts:
