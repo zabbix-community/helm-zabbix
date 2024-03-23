@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 4.2.1](https://img.shields.io/badge/Version-4.2.1-informational?style=flat-square)  [![Download All Releases](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total.svg)]()
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 4.2.2](https://img.shields.io/badge/Version-4.2.2-informational?style=flat-square)  [![Download All Releases](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total.svg)]()
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -404,6 +404,35 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.service.type | string | `"ClusterIP"` | Type of service for Zabbix Agent |
 | zabbixAgent.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixImageTag | string | `"ubuntu-6.0.20"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixJavaGatway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
+| zabbixJavaGatway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. ZABBIX_OPTIONS:  Java Gatway Service Name |
+| zabbixJavaGatway.ZBX_START_POLLERS | int | `5` | This variable is specified amount of pollers. By default, value is 5 |
+| zabbixJavaGatway.ZBX_TIMEOUT | int | `3` | This variable is used to specify timeout for outgoing connections. By default, value is 3. |
+| zabbixJavaGatway.containerAnnotations | object | `{}` | annotations to add to the containers |
+| zabbixJavaGatway.containerLabels | object | `{}` | labels to add to the containers |
+| zabbixJavaGatway.deploymentLabels | object | `{}` | labels to add to the deployment |
+| zabbixJavaGatway.enabled | bool | `false` | Enables use of **Zabbix Java Gatway** |
+| zabbixJavaGatway.extraContainers | list | `[]` | additional containers to start within the Zabbix Java Gatway pod |
+| zabbixJavaGatway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixJavaGatway.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Java Gatway pod |
+| zabbixJavaGatway.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Java Gatway pod |
+| zabbixJavaGatway.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Java Gatway container |
+| zabbixJavaGatway.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Java Gatway pod |
+| zabbixJavaGatway.hostRootFsMount | bool | `true` | If true, agent pods mounts host / at /host/root |
+| zabbixJavaGatway.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixJavaGatway.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixJavaGatway.image.repository | string | `"zabbix/zabbix-java-gateway"` | Zabbix Java Gatway Docker image name. Can use zabbix/zabbix-java-gateway |
+| zabbixJavaGatway.image.tag | string | `nil` | Zabbix Java Gatway Docker image tag, if you want to override zabbixImageTag |
+| zabbixJavaGatway.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| zabbixJavaGatway.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| zabbixJavaGatway.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixJavaGatway.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
+| zabbixJavaGatway.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
+| zabbixJavaGatway.service.clusterIP | string | `nil` | Cluster IP for Zabbix Java Gatway |
+| zabbixJavaGatway.service.listenOnAllInterfaces | bool | `true` | externalTrafficPolicy for Zabbix Java Gatway service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
+| zabbixJavaGatway.service.port | int | `10052` | Port to expose service |
+| zabbixJavaGatway.service.type | string | `"ClusterIP"` | Type of service for Zabbix Java Gatway |
+| zabbixJavaGatway.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixProxy.ZBX_DEBUGLEVEL | int | `4` |  |
 | zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname Case sensitive hostname |
 | zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
