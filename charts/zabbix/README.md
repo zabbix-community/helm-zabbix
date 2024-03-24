@@ -330,24 +330,24 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresAccess.unifiedSecretName | string | `"zabbixdb-pguser-zabbix"` | Name of one secret for unified configuration of PostgreSQL access |
 | postgresAccess.useUnifiedSecret | bool | `true` | Whether to use the unified PostgreSQL access secret |
 | postgresAccess.user | string | `"zabbix"` | User of database |
-| postgresql.containerAnnotations | object | `{}` | annotations to add to the containers |
-| postgresql.containerLabels | object | `{}` | labels to add to the containers |
+| postgresql.containerAnnotations | object | `{}` | Annotations to add to the containers |
+| postgresql.containerLabels | object | `{}` | Labels to add to the containers |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
-| postgresql.extraContainers | list | `[]` | additional containers to start within the postgresql pod |
+| postgresql.extraContainers | list | `[]` | Additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
-| postgresql.extraInitContainers | list | `[]` | additional init containers to start within the postgresql pod |
-| postgresql.extraPodSpecs | object | `{}` | additional specifications to the postgresql pod |
+| postgresql.extraInitContainers | list | `[]` | Additional init containers to start within the postgresql pod |
+| postgresql.extraPodSpecs | object | `{}` | Additional specifications to the postgresql pod |
 | postgresql.extraRuntimeParameters | object | `{"max_connections":50}` | Extra Postgresql runtime parameters ("-c" options) |
-| postgresql.extraVolumeMounts | list | `[]` | additional volumeMounts to the postgresql container |
-| postgresql.extraVolumes | list | `[]` | additional volumes to make available to the postgresql pod |
+| postgresql.extraVolumeMounts | list | `[]` | Additional volumeMounts to the postgresql container |
+| postgresql.extraVolumes | list | `[]` | Additional volumes to make available to the postgresql pod |
 | postgresql.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | postgresql.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
 | postgresql.image.tag | int | `15` | Tag of Docker image of Postgresql server, choice "15" for postgres "2.11.1-pg15" for timescaledb (Zabbix supports TimescaleDB 2.0.1-2.11.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements) Added support for PostgreSQL versions 15.x since Zabbix 6.0.10 |
 | postgresql.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| postgresql.persistence.enabled | bool | `false` | whether to enable persistent storage for the postgres container or not |
-| postgresql.persistence.existingClaimName | bool | `false` | existing persistent volume claim name to be used to store posgres data |
-| postgresql.persistence.storageSize | string | `"5Gi"` | size of the PVC to be automatically generated |
+| postgresql.persistence.enabled | bool | `false` | Whether to enable persistent storage for the postgres container or not |
+| postgresql.persistence.existingClaimName | bool | `false` | Existing persistent volume claim name to be used to store posgres data |
+| postgresql.persistence.storageSize | string | `"5Gi"` | Size of the PVC to be automatically generated |
 | postgresql.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | postgresql.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | postgresql.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
@@ -356,8 +356,8 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
 | postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | postgresql.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| postgresql.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
-| postgresql.statefulSetLabels | object | `{}` | labels to add to the statefulset |
+| postgresql.statefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
+| postgresql.statefulSetLabels | object | `{}` | Labels to add to the statefulset |
 | rbac.additionalRulesForClusterRole | list | `[]` |  |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
 | route.annotations | object | `{}` | Openshift Route extra annotations |
@@ -377,18 +377,18 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.ZBX_SERVER_HOST | string | `"0.0.0.0/0"` | Zabbix Server host |
 | zabbixAgent.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixAgent.ZBX_TIMEOUT | int | `4` | The variable is used to specify timeout for processing checks. By default, value is 4. |
-| zabbixAgent.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixAgent.containerLabels | object | `{}` | labels to add to the containers |
-| zabbixAgent.daemonSetAnnotations | object | `{}` | annotations to add to the daemonSet |
-| zabbixAgent.daemonSetLabels | object | `{}` | labels to add to the daemonSet |
-| zabbixAgent.deploymentLabels | object | `{}` | labels to add to the deployment |
+| zabbixAgent.containerAnnotations | object | `{}` | Annotations to add to the containers |
+| zabbixAgent.containerLabels | object | `{}` | Labels to add to the containers |
+| zabbixAgent.daemonSetAnnotations | object | `{}` | Annotations to add to the daemonSet |
+| zabbixAgent.daemonSetLabels | object | `{}` | Labels to add to the daemonSet |
+| zabbixAgent.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
-| zabbixAgent.extraContainers | list | `[]` | additional containers to start within the Zabbix Agent pod |
+| zabbixAgent.extraContainers | list | `[]` | Additional containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixAgent.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Agent pod |
-| zabbixAgent.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Agent pod |
-| zabbixAgent.extraVolumeMounts | list | `[]` | additional volumeMounts to the zabbix Agent container |
-| zabbixAgent.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Agent pod |
+| zabbixAgent.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Agent pod |
+| zabbixAgent.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Agent pod |
+| zabbixAgent.extraVolumeMounts | list | `[]` | Additional volumeMounts to the zabbix Agent container |
+| zabbixAgent.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Agent pod |
 | zabbixAgent.hostRootFsMount | bool | `true` | If true, agent pods mounts host / at /host/root |
 | zabbixAgent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixAgent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
@@ -413,17 +413,17 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. ZABBIX_OPTIONS:  Java Gateway Service Name |
 | zabbixJavaGateway.ZBX_START_POLLERS | int | `5` | This variable is specified amount of pollers. By default, value is 5 |
 | zabbixJavaGateway.ZBX_TIMEOUT | int | `3` | This variable is used to specify timeout for outgoing connections. By default, value is 3. |
-| zabbixJavaGateway.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixJavaGateway.containerLabels | object | `{}` | labels to add to the containers |
-| zabbixJavaGateway.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
-| zabbixJavaGateway.deploymentLabels | object | `{}` | labels to add to the deployment |
+| zabbixJavaGateway.containerAnnotations | object | `{}` | Annotations to add to the containers |
+| zabbixJavaGateway.containerLabels | object | `{}` | Labels to add to the containers |
+| zabbixJavaGateway.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixJavaGateway.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixJavaGateway.enabled | bool | `false` | Enables use of **Zabbix Java Gateway** |
-| zabbixJavaGateway.extraContainers | list | `[]` | additional containers to start within the Zabbix Java Gateway pod |
+| zabbixJavaGateway.extraContainers | list | `[]` | Additional containers to start within the Zabbix Java Gateway pod |
 | zabbixJavaGateway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixJavaGateway.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Java Gateway pod |
-| zabbixJavaGateway.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Java Gateway pod |
-| zabbixJavaGateway.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Java Gateway container |
-| zabbixJavaGateway.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Java Gateway pod |
+| zabbixJavaGateway.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Java Gateway pod |
+| zabbixJavaGateway.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Java Gateway pod |
+| zabbixJavaGateway.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Java Gateway container |
+| zabbixJavaGateway.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Java Gateway pod |
 | zabbixJavaGateway.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixJavaGateway.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixJavaGateway.image.repository | string | `"zabbix/zabbix-java-gateway"` | Zabbix Java Gateway Docker image name. |
@@ -449,16 +449,16 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixProxy.ZBX_TIMEOUT | int | `4` |  |
 | zabbixProxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
-| zabbixProxy.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixProxy.containerLabels | object | `{}` | labels to add to the containers |
+| zabbixProxy.containerAnnotations | object | `{}` | Annotations to add to the containers |
+| zabbixProxy.containerLabels | object | `{}` | Labels to add to the containers |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
-| zabbixProxy.extraContainers | list | `[]` | additional containers to start within the Zabbix Proxy pod |
+| zabbixProxy.extraContainers | list | `[]` | Additional containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixProxy.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Proxy pod |
-| zabbixProxy.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Proxy pod |
-| zabbixProxy.extraVolumeClaimTemplate | list | `[]` | extra volumeClaimTemplate for zabbixProxy statefulset |
-| zabbixProxy.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Proxy container |
-| zabbixProxy.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Proxy pod |
+| zabbixProxy.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Proxy pod |
+| zabbixProxy.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Proxy pod |
+| zabbixProxy.extraVolumeClaimTemplate | list | `[]` | Extra volumeClaimTemplate for zabbixProxy statefulset |
+| zabbixProxy.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Proxy container |
+| zabbixProxy.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Proxy pod |
 | zabbixProxy.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixProxy.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixProxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix Proxy Docker image name |
@@ -473,47 +473,47 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.service.port | int | `10051` | Port to expose service |
 | zabbixProxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix Proxy |
 | zabbixProxy.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixProxy.statefulSetAnnotations | object | `{}` | annotations to add to the statefulset |
-| zabbixProxy.statefulSetLabels | object | `{}` | labels to add to the statefulset |
-| zabbixServer.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixServer.containerLabels | object | `{}` | labels to add to the containers |
-| zabbixServer.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
-| zabbixServer.deploymentLabels | object | `{}` | labels to add to the deployment |
+| zabbixProxy.statefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
+| zabbixProxy.statefulSetLabels | object | `{}` | Labels to add to the statefulset |
+| zabbixServer.containerAnnotations | object | `{}` | Annotations to add to the containers |
+| zabbixServer.containerLabels | object | `{}` | Labels to add to the containers |
+| zabbixServer.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixServer.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixServer.enabled | bool | `true` | Enables use of **Zabbix Server** |
-| zabbixServer.extraContainers | list | `[]` | additional containers to start within the Zabbix Server pod |
+| zabbixServer.extraContainers | list | `[]` | Additional containers to start within the Zabbix Server pod |
 | zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixServer.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Server pod |
-| zabbixServer.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server pod |
-| zabbixServer.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server container |
-| zabbixServer.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Server pod |
-| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","cronjobLabels":{},"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Server pod |
+| zabbixServer.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Server pod |
+| zabbixServer.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Server container |
+| zabbixServer.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Server pod |
+| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","cronjobLabels":{},"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | Automatically clean orphaned ha nodes from ha_nodes db table |
 | zabbixServer.haNodesAutoClean.cronjobLabels | object | `{}` | Labels to add to the cronjob for ha nodes autoclean |
-| zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | additional containers to start within the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | Additional containers to start within the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
-| zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | additional init containers to start within the cronjob hanodes autoclean |
-| zabbixServer.haNodesAutoClean.extraPodSpecs | object | `{}` | additional specifications to the cronjob hanodes autoclean |
-| zabbixServer.haNodesAutoClean.extraVolumeMounts | list | `[]` | additional volumeMounts to the cronjob hanodes autoclean |
-| zabbixServer.haNodesAutoClean.extraVolumes | list | `[]` | additional volumes to make available to the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | Additional init containers to start within the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraPodSpecs | object | `{}` | Additional specifications to the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraVolumeMounts | list | `[]` | Additional volumeMounts to the cronjob hanodes autoclean |
+| zabbixServer.haNodesAutoClean.extraVolumes | list | `[]` | Additional volumes to make available to the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
 | zabbixServer.haNodesAutoClean.image.tag | int | `15` | Tag of Docker image of Postgresql server, choice "15" for postgres "2.10.3-pg15" for timescaledb (Zabbix supports TimescaleDB 2.0.1-2.10.x. More info: https://www.zabbix.com/documentation/6.0/en/manual/installation/requirements) Added support for PostgreSQL versions 15.x since Zabbix 6.0.10 |
 | zabbixServer.haNodesAutoClean.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixServer.haNodesAutoClean.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixServer.hostIP | string | `"0.0.0.0"` | optional set hostIP different from 0.0.0.0 to open port only on this IP |
-| zabbixServer.hostPort | bool | `false` | optional set true open a port direct on node where Zabbix Server runs |
+| zabbixServer.hostIP | string | `"0.0.0.0"` | Optional set hostIP different from 0.0.0.0 to open port only on this IP |
+| zabbixServer.hostPort | bool | `false` | Optional set true open a port direct on node where Zabbix Server runs |
 | zabbixServer.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixServer.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix Server Docker image name |
 | zabbixServer.image.tag | string | `nil` | Zabbix Server Docker image tag, if you want to override zabbixImageTag |
-| zabbixServer.jobDBSchema.extraContainers | list | `[]` | additional containers to start within the Zabbix Server Job DB Schema pod |
-| zabbixServer.jobDBSchema.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Server Job DB Schema pod |
-| zabbixServer.jobDBSchema.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Server Job DB Schema pod |
-| zabbixServer.jobDBSchema.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Server Job DB Schema pod |
-| zabbixServer.jobDBSchema.extraVolumes | list | `[]` | additional volumes to make available to the  Zabbix Server Job DB Schema pod |
-| zabbixServer.jobDBSchema.jobAnnotations | object | `{}` | annotations to add to the jobs |
-| zabbixServer.jobDBSchema.jobLabels | object | `{}` | labels to add to the jobs |
+| zabbixServer.jobDBSchema.extraContainers | list | `[]` | Additional containers to start within the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.extraVolumes | list | `[]` | Additional volumes to make available to the  Zabbix Server Job DB Schema pod |
+| zabbixServer.jobDBSchema.jobAnnotations | object | `{}` | Annotations to add to the jobs |
+| zabbixServer.jobDBSchema.jobLabels | object | `{}` | Labels to add to the jobs |
 | zabbixServer.jobDBSchema.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixServer.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
+| zabbixServer.podAntiAffinity | bool | `true` | Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixServer.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
 | zabbixServer.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
@@ -526,17 +526,17 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
 | zabbixServer.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixWeb.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixWeb.containerLabels | object | `{}` | labels to add to the containers |
-| zabbixWeb.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
-| zabbixWeb.deploymentLabels | object | `{}` | labels to add to the deployment |
+| zabbixWeb.containerAnnotations | object | `{}` | Annotations to add to the containers |
+| zabbixWeb.containerLabels | object | `{}` | Labels to add to the containers |
+| zabbixWeb.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixWeb.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWeb.enabled | bool | `true` | Enables use of **Zabbix Web** |
-| zabbixWeb.extraContainers | list | `[]` | additional containers to start within the Zabbix Web pod |
+| zabbixWeb.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web pod |
 | zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixWeb.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Web pod |
-| zabbixWeb.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Web pod |
-| zabbixWeb.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Web container |
-| zabbixWeb.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Web pod |
+| zabbixWeb.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web pod |
+| zabbixWeb.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Web pod |
+| zabbixWeb.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Web container |
+| zabbixWeb.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Web pod |
 | zabbixWeb.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixWeb.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixWeb.image.repository | string | `"zabbix/zabbix-web-nginx-pgsql"` | Zabbix Web Docker image name |
@@ -566,28 +566,28 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.service.port | int | `80` | Port to expose service |
 | zabbixWeb.service.type | string | `"ClusterIP"` | Type of service for Zabbix Web |
 | zabbixWeb.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixWebService.containerAnnotations | object | `{}` | annotations to add to the containers |
-| zabbixWebService.containerLabels | object | `{}` | labels to add to the containers |
-| zabbixWebService.deploymentAnnotations | object | `{}` | annotations to add to the deployment |
-| zabbixWebService.deploymentLabels | object | `{}` | labels to add to the deployment |
+| zabbixWebService.containerAnnotations | object | `{}` | Annotations to add to the containers |
+| zabbixWebService.containerLabels | object | `{}` | Labels to add to the containers |
+| zabbixWebService.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixWebService.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWebService.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
-| zabbixWebService.extraContainers | list | `[]` | additional containers to start within the Zabbix Web Service pod |
+| zabbixWebService.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web Service pod |
 | zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
-| zabbixWebService.extraInitContainers | list | `[]` | additional init containers to start within the Zabbix Web Service pod |
-| zabbixWebService.extraPodSpecs | object | `{}` | additional specifications to the Zabbix Web Service pod |
-| zabbixWebService.extraVolumeMounts | list | `[]` | additional volumeMounts to the Zabbix Web Service container |
-| zabbixWebService.extraVolumes | list | `[]` | additional volumes to make available to the Zabbix Web Service pod |
+| zabbixWebService.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web Service pod |
+| zabbixWebService.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Web Service pod |
+| zabbixWebService.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Web Service container |
+| zabbixWebService.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Web Service pod |
 | zabbixWebService.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixWebService.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixWebService.image.repository | string | `"zabbix/zabbix-web-service"` | Zabbix Webservice Docker image name |
 | zabbixWebService.image.tag | string | `nil` | Zabbix Webservice Docker image tag, if you want to override zabbixImageTag |
 | zabbixWebService.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixWebService.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
+| zabbixWebService.podAntiAffinity | bool | `true` | Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixWebService.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixWebService.replicaCount | int | `1` | Number of replicas of ``zabbixWebService`` module |
 | zabbixWebService.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixWebService.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixWebService.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | set the IgnoreURLCertErrors configuration setting of Zabbix Web Service ignoreURLCertErrors=1 |
+| zabbixWebService.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | Set the IgnoreURLCertErrors configuration setting of Zabbix Web Service ignoreURLCertErrors=1 |
 | zabbixWebService.service.annotations | object | `{}` | Annotations for the Zabbix Web Service |
 | zabbixWebService.service.clusterIP | string | `nil` | Cluster IP for Zabbix Web |
 | zabbixWebService.service.port | int | `10053` | Port to expose service |

@@ -70,11 +70,11 @@ zabbixServer:
   enabled: true
   # -- Number of replicas of ``zabbixServer`` module
   replicaCount: 1
-  # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
+  # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
   podAntiAffinity: true
-  # -- optional set true open a port direct on node where Zabbix Server runs
+  # -- Optional set true open a port direct on node where Zabbix Server runs
   hostPort: false
-  # -- optional set hostIP different from 0.0.0.0 to open port only on this IP
+  # -- Optional set hostIP different from 0.0.0.0 to open port only on this IP
   hostIP: 0.0.0.0
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
@@ -87,7 +87,7 @@ zabbixServer:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- automatically clean orphaned ha nodes from ha_nodes db table
+  # -- Automatically clean orphaned ha nodes from ha_nodes db table
   haNodesAutoClean:
     enabled: true
     image:
@@ -106,34 +106,34 @@ zabbixServer:
     resources: {}
     # -- Extra environment variables. A list of additional environment variables.
     extraEnv: []
-    # -- additional volumeMounts to the cronjob hanodes autoclean
+    # -- Additional volumeMounts to the cronjob hanodes autoclean
     extraVolumeMounts: []
-    # -- additional containers to start within the cronjob hanodes autoclean
+    # -- Additional containers to start within the cronjob hanodes autoclean
     extraContainers: []
-    # -- additional init containers to start within the cronjob hanodes autoclean
+    # -- Additional init containers to start within the cronjob hanodes autoclean
     extraInitContainers: []
-    # -- additional volumes to make available to the cronjob hanodes autoclean
+    # -- Additional volumes to make available to the cronjob hanodes autoclean
     extraVolumes: []
-    # -- additional specifications to the cronjob hanodes autoclean
+    # -- Additional specifications to the cronjob hanodes autoclean
     extraPodSpecs: {}
     # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
     securityContext: {}
     # -- Labels to add to the cronjob for ha nodes autoclean
     cronjobLabels: {}
   jobDBSchema:
-    # -- annotations to add to the jobs
+    # -- Annotations to add to the jobs
     jobAnnotations: {}
-    # -- labels to add to the jobs
+    # -- Labels to add to the jobs
     jobLabels: {}
-    # -- additional init containers to start within the Zabbix Server Job DB Schema pod
+    # -- Additional init containers to start within the Zabbix Server Job DB Schema pod
     extraInitContainers: []
-    # -- additional containers to start within the Zabbix Server Job DB Schema pod
+    # -- Additional containers to start within the Zabbix Server Job DB Schema pod
     extraContainers: []
-    # -- additional specifications to the Zabbix Server Job DB Schema pod
+    # -- Additional specifications to the Zabbix Server Job DB Schema pod
     extraPodSpecs: {}
-    # -- additional volumeMounts to the Zabbix Server Job DB Schema pod
+    # -- Additional volumeMounts to the Zabbix Server Job DB Schema pod
     extraVolumeMounts: []
-    # -- additional volumes to make available to the  Zabbix Server Job DB Schema pod
+    # -- Additional volumes to make available to the  Zabbix Server Job DB Schema pod
     extraVolumes: []
     # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
     securityContext: {}
@@ -158,23 +158,23 @@ zabbixServer:
   extraEnv: []
   #- name: ENABLE_TIMESCALEDB
   #  value: "true"
-  # -- annotations to add to the deployment
+  # -- Annotations to add to the deployment
   deploymentAnnotations: {}
-  # -- labels to add to the deployment
+  # -- Labels to add to the deployment
   deploymentLabels: {}
-  # -- annotations to add to the containers
+  # -- Annotations to add to the containers
   containerAnnotations: {}
-  # -- labels to add to the containers
+  # -- Labels to add to the containers
   containerLabels: {}
-  # -- additional volumeMounts to the Zabbix Server container
+  # -- Additional volumeMounts to the Zabbix Server container
   extraVolumeMounts: []
-  # -- additional containers to start within the Zabbix Server pod
+  # -- Additional containers to start within the Zabbix Server pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Server pod
+  # -- Additional init containers to start within the Zabbix Server pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Server pod
+  # -- Additional volumes to make available to the Zabbix Server pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Server pod
+  # -- Additional specifications to the Zabbix Server pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
@@ -203,15 +203,15 @@ postgresql:
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   persistence:
-    # -- whether to enable persistent storage for the postgres container or not
+    # -- Whether to enable persistent storage for the postgres container or not
     enabled: false
-    # -- existing persistent volume claim name to be used to store posgres data
+    # -- Existing persistent volume claim name to be used to store posgres data
     existingClaimName: false
-    # -- size of the PVC to be automatically generated
+    # -- Size of the PVC to be automatically generated
     storageSize: 5Gi
-    # -- kubernetes uses volume access modes to match PersistentVolumeClaims and PersistentVolumes. See: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+    # -- Kubernetes uses volume access modes to match PersistentVolumeClaims and PersistentVolumes. See: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
     #claim_access_mode: "ReadWriteOnce"
-    # -- storage PVC storageclass to use
+    # -- Storage PVC storageclass to use
     #storageClass: my-storage-class
   service:
     # -- Type of service in Kubernetes cluster
@@ -228,23 +228,23 @@ postgresql:
     max_connections: 50
   # -- Extra environment variables. A list of additional environment variables.
   extraEnv: []
-  # -- annotations to add to the statefulset
+  # -- Annotations to add to the statefulset
   statefulSetAnnotations: {}
-  # -- labels to add to the statefulset
+  # -- Labels to add to the statefulset
   statefulSetLabels: {}
-  # -- annotations to add to the containers
+  # -- Annotations to add to the containers
   containerAnnotations: {}
-  # -- labels to add to the containers
+  # -- Labels to add to the containers
   containerLabels: {}
-  # -- additional volumeMounts to the postgresql container
+  # -- Additional volumeMounts to the postgresql container
   extraVolumeMounts: []
-  # -- additional containers to start within the postgresql pod
+  # -- Additional containers to start within the postgresql pod
   extraContainers: []
-  # -- additional init containers to start within the postgresql pod
+  # -- Additional init containers to start within the postgresql pod
   extraInitContainers: []
-  # -- additional volumes to make available to the postgresql pod
+  # -- Additional volumes to make available to the postgresql pod
   extraVolumes: []
-  # -- additional specifications to the postgresql pod
+  # -- Additional specifications to the postgresql pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
@@ -302,27 +302,27 @@ zabbixProxy:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-  # -- annotations to add to the statefulset
+  # -- Annotations to add to the statefulset
   statefulSetAnnotations: {}
-  # -- labels to add to the statefulset
+  # -- Labels to add to the statefulset
   statefulSetLabels: {}
-  # -- annotations to add to the containers
+  # -- Annotations to add to the containers
   containerAnnotations: {}
-  # -- labels to add to the containers
+  # -- Labels to add to the containers
   containerLabels: {}
-  # -- additional volumeMounts to the Zabbix Proxy container
+  # -- Additional volumeMounts to the Zabbix Proxy container
   extraVolumeMounts: []
-  # -- additional containers to start within the Zabbix Proxy pod
+  # -- Additional containers to start within the Zabbix Proxy pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Proxy pod
+  # -- Additional init containers to start within the Zabbix Proxy pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Proxy pod
+  # -- Additional volumes to make available to the Zabbix Proxy pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Proxy pod
+  # -- Additional specifications to the Zabbix Proxy pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
-  # -- extra volumeClaimTemplate for zabbixProxy statefulset
+  # -- Extra volumeClaimTemplate for zabbixProxy statefulset
   extraVolumeClaimTemplate: []
   # -- The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe: {}
@@ -387,25 +387,25 @@ zabbixAgent:
   hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-  # -- additional volumeMounts to the zabbix Agent container
+  # -- Additional volumeMounts to the zabbix Agent container
   extraVolumeMounts: []
-  # -- annotations to add to the daemonSet
+  # -- Annotations to add to the daemonSet
   daemonSetAnnotations: {}
-  # -- labels to add to the daemonSet
+  # -- Labels to add to the daemonSet
   daemonSetLabels: {}
-  # -- labels to add to the deployment
+  # -- Labels to add to the deployment
   deploymentLabels: {}
-  # -- annotations to add to the containers
+  # -- Annotations to add to the containers
   containerAnnotations: {}
-  # -- labels to add to the containers
+  # -- Labels to add to the containers
   containerLabels: {}
-  # -- additional containers to start within the Zabbix Agent pod
+  # -- Additional containers to start within the Zabbix Agent pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Agent pod
+  # -- Additional init containers to start within the Zabbix Agent pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Agent pod
+  # -- Additional volumes to make available to the Zabbix Agent pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Agent pod
+  # -- Additional specifications to the Zabbix Agent pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
@@ -475,23 +475,23 @@ zabbixWeb:
   #  value: '{"baseurl": "https://zabbix.example.com"}'
   #- name: ZBX_SERVER_NAME
   #  value: Demo Zabbix
-  # -- annotations to add to the deployment
+  # -- Annotations to add to the deployment
   deploymentAnnotations: {}
-  # -- labels to add to the deployment
+  # -- Labels to add to the deployment
   deploymentLabels: {}
-  # -- annotations to add to the containers
+  # -- Annotations to add to the containers
   containerAnnotations: {}
-  # -- labels to add to the containers
+  # -- Labels to add to the containers
   containerLabels: {}
-  # -- additional volumeMounts to the Zabbix Web container
+  # -- Additional volumeMounts to the Zabbix Web container
   extraVolumeMounts: []
-  # -- additional containers to start within the Zabbix Web pod
+  # -- Additional containers to start within the Zabbix Web pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Web pod
+  # -- Additional init containers to start within the Zabbix Web pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Web pod
+  # -- Additional volumes to make available to the Zabbix Web pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Web pod
+  # -- Additional specifications to the Zabbix Web pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
@@ -526,7 +526,7 @@ zabbixWebService:
   enabled: true
   # -- Number of replicas of ``zabbixWebService`` module
   replicaCount: 1
-  # -- set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
+  # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
   podAntiAffinity: true
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
@@ -539,7 +539,7 @@ zabbixWebService:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- set the IgnoreURLCertErrors configuration setting of Zabbix Web Service
+  # -- Set the IgnoreURLCertErrors configuration setting of Zabbix Web Service
   #ignoreURLCertErrors=1
   service:
     # -- Type of service for Zabbix Web
@@ -553,23 +553,23 @@ zabbixWebService:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-  # -- annotations to add to the deployment
+  # -- Annotations to add to the deployment
   deploymentAnnotations: {}
-  # -- labels to add to the deployment
+  # -- Labels to add to the deployment
   deploymentLabels: {}
-  # -- annotations to add to the containers
+  # -- Annotations to add to the containers
   containerAnnotations: {}
-  # -- labels to add to the containers
+  # -- Labels to add to the containers
   containerLabels: {}
-  # -- additional volumeMounts to the Zabbix Web Service container
+  # -- Additional volumeMounts to the Zabbix Web Service container
   extraVolumeMounts: []
-  # -- additional containers to start within the Zabbix Web Service pod
+  # -- Additional containers to start within the Zabbix Web Service pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Web Service pod
+  # -- Additional init containers to start within the Zabbix Web Service pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Web Service pod
+  # -- Additional volumes to make available to the Zabbix Web Service pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Web Service pod
+  # -- Additional specifications to the Zabbix Web Service pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
@@ -627,23 +627,23 @@ zabbixJavaGateway:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-  # -- additional volumeMounts to the Zabbix Java Gateway container
+  # -- Additional volumeMounts to the Zabbix Java Gateway container
   extraVolumeMounts: []
-  # -- annotations to add to the deployment
+  # -- Annotations to add to the deployment
   deploymentAnnotations: {}
-  # -- labels to add to the deployment
+  # -- Labels to add to the deployment
   deploymentLabels: {}
-  # -- annotations to add to the containers
+  # -- Annotations to add to the containers
   containerAnnotations: {}
-  # -- labels to add to the containers
+  # -- Labels to add to the containers
   containerLabels: {}
-  # -- additional containers to start within the Zabbix Java Gateway pod
+  # -- Additional containers to start within the Zabbix Java Gateway pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Java Gateway pod
+  # -- Additional init containers to start within the Zabbix Java Gateway pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Java Gateway pod
+  # -- Additional volumes to make available to the Zabbix Java Gateway pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Java Gateway pod
+  # -- Additional specifications to the Zabbix Java Gateway pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
@@ -842,7 +842,7 @@ serviceAccount:
   automountServiceAccountToken: true
 
 rbac:
-  # --  Specifies whether the RBAC resources should be created
+  # -- Specifies whether the RBAC resources should be created
   create: true
   additionalRulesForClusterRole: []
   #  - apiGroups: [ "" ]
