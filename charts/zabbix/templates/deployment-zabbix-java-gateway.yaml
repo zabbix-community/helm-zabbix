@@ -1,0 +1,141 @@
+{{- if .Values.zabbixJavaGateway.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+  labels:
+    app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+    app.kubernetes.io/name: {{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+    {{- if .Values.zabbixJavaGateway.deploymentLabels }}
+    {{- toYaml .Values.zabbixJavaGateway.deploymentLabels | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixJavaGateway.deploymentAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.zabbixJavaGateway.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+  template:
+    metadata:
+      annotations:
+        {{- range $key,$value := .Values.zabbixJavaGateway.containerAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      labels:
+        app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+        app.kubernetes.io/name: {{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+        helm.sh/chart: {{ include "zabbix.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+        {{- if .Values.zabbixJavaGateway.containerLabels }}
+        {{- toYaml .Values.zabbixJavaGateway.containerLabels | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
+      {{- with .Values.zabbixJavaGateway.extraPodSpecs }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.karpenter.enabled }}
+      {{- with .Values.karpenter.labels }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- else }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- end }}
+      {{- if gt (len .Values.affinity) 0 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      {{- else if .Values.zabbixWebService.podAntiAffinity }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.zabbixJavaGateway.extraInitContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+          {{- if .Values.zabbixJavaGateway.resources }}
+          resources:
+            {{- toYaml .Values.zabbixJavaGateway.resources | nindent 12 }}
+          {{- end }}
+          {{- if .Values.zabbixJavaGateway.image.tag }}
+          image: "{{ .Values.zabbixJavaGateway.image.repository }}:{{ .Values.zabbixJavaGateway.image.tag }}"
+          {{- else }}
+          image: "{{ .Values.zabbixJavaGateway.image.repository }}:{{ .Values.zabbixImageTag }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.zabbixJavaGateway.image.pullPolicy }}
+          ports:
+            - name: zabbix-java-gw
+              containerPort: {{ .Values.zabbixJavaGateway.service.port }}
+              protocol: TCP
+          {{- with .Values.zabbixJavaGateway.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zabbixJavaGateway.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zabbixJavaGateway.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.zabbixJavaGateway.securityContext | nindent 12 }}
+          env:
+            - name: ZBX_START_POLLERS
+              value: {{ .Values.zabbixJavaGateway.ZBX_START_POLLERS | quote }}
+            - name: ZBX_DEBUGLEVEL
+              value: {{ .Values.zabbixJavaGateway.ZBX_DEBUGLEVEL | quote }}
+            - name: ZBX_TIMEOUT
+              value: {{ .Values.zabbixJavaGateway.ZBX_TIMEOUT | quote }}
+            - name: ZBX_PROPERTIES_FILE
+              value: {{ .Values.zabbixJavaGateway.ZBX_PROPERTIES_FILE | quote }}
+            - name: ZABBIX_OPTIONS
+              value: {{ .Values.zabbixJavaGateway.ZABBIX_OPTIONS | quote }}
+            {{- range $item := .Values.zabbixJavaGateway.extraEnv }}
+            - name: {{ $item.name }}
+              value: {{ $item.value | quote }}
+            {{- end }}
+          {{- with .Values.zabbixJavaGateway.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- with .Values.zabbixJavaGateway.extraContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+        {{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      imagePullSecrets:
+      {{- range .Values.zabbixJavaGateway.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      volumes:
+      {{- with .Values.zabbixJavaGateway.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -104,24 +104,18 @@ spec:
         {{- with .Values.zabbixWeb.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
         {{- end }}
+        {{- with .Values.zabbixWeb.livenessProbe }}
         livenessProbe:
-          httpGet:
-            path: {{ .Values.zabbixWeb.livenessProbe.path }}
-            port: zabbix-web
-          initialDelaySeconds: {{ .Values.zabbixWeb.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.zabbixWeb.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.zabbixWeb.livenessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.zabbixWeb.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.zabbixWeb.livenessProbe.failureThreshold }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.zabbixWeb.readinessProbe }}
         readinessProbe:
-          httpGet:
-            path: {{ .Values.zabbixWeb.readinessProbe.path }}
-            port: zabbix-web
-          initialDelaySeconds: {{ .Values.zabbixWeb.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.zabbixWeb.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.zabbixWeb.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.zabbixWeb.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.zabbixWeb.readinessProbe.failureThreshold }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.zabbixWeb.startupProbe }}
+        startupProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- with .Values.zabbixWeb.extraContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
