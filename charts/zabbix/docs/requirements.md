@@ -57,7 +57,7 @@ Simple shell function for Kubectl installation in Linux 64 bits. Copy and paste 
 ```bash
 sudo su
 
-VERSION=v1.29.1
+VERSION=v1.29.3
 KUBECTL_BIN=kubectl
 
 function install_kubectl {
@@ -94,7 +94,7 @@ https://github.com/peelmicro/learn-devops-the-complete-kubernetes-course
 Run the following commands to install ``helm-docs``.
 
 ```bash
-HELM_DOCS_VERSION=1.12.0
+HELM_DOCS_VERSION=1.13.1
 HELM_DOCS_PACKAGE=helm-docs_``$HELM_DOCS_VERSION``_Linux_x86_64.tar.gz
 
 cd /tmp
@@ -121,7 +121,7 @@ Execute these commands to install helm.
 ```bash
 sudo su
 
-HELM_TAR_FILE=helm-v3.14.0-linux-amd64.tar.gz
+HELM_TAR_FILE=helm-v3.14.3-linux-amd64.tar.gz
 HELM_URL=https://get.helm.sh
 HELM_BIN=helm3
 

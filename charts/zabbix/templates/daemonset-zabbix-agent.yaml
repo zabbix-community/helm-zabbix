@@ -75,21 +75,18 @@ spec:
             - name: zabbix-agent
               containerPort: 10050
               protocol: TCP
-          startupProbe:
-            tcpSocket:
-              port: zabbix-agent
-            initialDelaySeconds: 15
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 5
-            successThreshold: 1
+          {{- with .Values.zabbixAgent.livenessProbe }}
           livenessProbe:
-            tcpSocket:
-              port: zabbix-agent
-            timeoutSeconds: 3
-            failureThreshold: 3
-            periodSeconds: 10
-            successThreshold: 1
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zabbixAgent.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zabbixAgent.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           securityContext:
             {{- toYaml .Values.zabbixAgent.securityContext | nindent 12 }}
           env:

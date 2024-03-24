@@ -121,6 +121,10 @@ zabbixServer:
     # -- Labels to add to the cronjob for ha nodes autoclean
     cronjobLabels: {}
   jobDBSchema:
+    # -- annotations to add to the jobs
+    jobAnnotations: {}
+    # -- labels to add to the jobs
+    jobLabels: {}
     # -- additional init containers to start within the Zabbix Server Job DB Schema pod
     extraInitContainers: []
     # -- additional containers to start within the Zabbix Server Job DB Schema pod
@@ -406,11 +410,26 @@ zabbixAgent:
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
   # -- The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-  livenessProbe: {}
+  livenessProbe:
+    tcpSocket:
+      # -- Port number/alias name of the container
+      port: zabbix-agent
+    timeoutSeconds: 3
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
   # -- The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe: {}
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-  startupProbe: {}
+  startupProbe:
+    tcpSocket:
+      # -- Port number/alias name of the container
+      port: zabbix-agent
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 5
+    successThreshold: 1
 
 # **Zabbix Web** configurations
 zabbixWeb:
@@ -477,31 +496,29 @@ zabbixWeb:
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
   livenessProbe:
-    # -- Path of health check of application
-    path: /
-    # -- Number of seconds after the container has started before liveness
+    httpGet:
+      # -- Path of health check of application
+      path: /
+      # -- Port number/alias name of the container
+      port: zabbix-web
     initialDelaySeconds: 30
-    # -- Specifies that the kubelet should perform a liveness probe every N seconds
     periodSeconds: 10
-    # -- Number of seconds after which the probe times out
     timeoutSeconds: 5
-    # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
     failureThreshold: 6
-    # -- Minimum consecutive successes for the probe to be considered successful after having failed
     successThreshold: 1
   readinessProbe:
-    # -- Path of health check of application
-    path: /
-    # -- Number of seconds after the container has started before readiness
+    httpGet:
+      # -- Path of health check of application
+      path: /
+      # -- Port number/alias name of the container
+      port: zabbix-web
     initialDelaySeconds: 5
-    # -- Specifies that the kubelet should perform a readiness probe every N seconds
     periodSeconds: 10
-    # -- Number of seconds after which the probe times out
     timeoutSeconds: 5
-    # -- When a probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the container. In case of readiness probe the Pod will be marked Unready
     failureThreshold: 6
-    # -- Minimum consecutive successes for the probe to be considered successful after having failed
     successThreshold: 1
+  # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  startupProbe: {}
 
 # **Zabbix Web Service** configurations
 zabbixWebService:
@@ -563,16 +580,18 @@ zabbixWebService:
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   startupProbe: {}
 
-# **Zabbix Java Gatway** configurations
-zabbixJavaGatway:
-  # -- Enables use of **Zabbix Java Gatway**
+# **Zabbix Java Gateway** configurations
+zabbixJavaGateway:
+  # -- Enables use of **Zabbix Java Gateway**
   enabled: false
+  # -- Number of replicas of ``Zabbix Java Gateway`` module
+  replicaCount: 1
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
-    # -- Zabbix Java Gatway Docker image name. Can use zabbix/zabbix-java-gateway
+    # -- Zabbix Java Gateway Docker image name.
     repository: zabbix/zabbix-java-gateway
-    # -- Zabbix Java Gatway Docker image tag, if you want to override zabbixImageTag
+    # -- Zabbix Java Gateway Docker image tag, if you want to override zabbixImageTag
     tag: null
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
@@ -588,52 +607,67 @@ zabbixJavaGatway:
   ZBX_TIMEOUT: 3
   # -- Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features.
   # ZABBIX_OPTIONS: 
-  # Java Gatway Service Name
+  # Java Gateway Service Name
   ZBX_JAVAGATEWAY: zabbix-java-gateway
-  # Java Gatway Service Port
+  # Java Gateway Service Port
   service:
-    # -- Type of service for Zabbix Java Gatway
+    # -- Type of service for Zabbix Java Gateway
     type: ClusterIP
-    # -- Cluster IP for Zabbix Java Gatway
+    # -- Cluster IP for Zabbix Java Gateway
     clusterIP:
     # -- Port to expose service
     port: 10052
-    # -- externalTrafficPolicy for Zabbix Java Gatway service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    # -- externalTrafficPolicy for Zabbix Java Gateway service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
     #externalTrafficPolicy: Local
     listenOnAllInterfaces: true
     # -- NodePort port to allocate (only if service.type = NodePort)
-    #nodePort: 31050
-    # -- Annotations for the zabbix-agent service
+    #nodePort: 31052
+    # -- Annotations for the zabbix-java-gateway service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- If true, agent pods mounts host / at /host/root
-  hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
-  # -- additional volumeMounts to the Zabbix Java Gatway container
+  # -- additional volumeMounts to the Zabbix Java Gateway container
   extraVolumeMounts: []
+  # -- annotations to add to the deployment
+  deploymentAnnotations: {}
   # -- labels to add to the deployment
   deploymentLabels: {}
   # -- annotations to add to the containers
   containerAnnotations: {}
   # -- labels to add to the containers
   containerLabels: {}
-  # -- additional containers to start within the Zabbix Java Gatway pod
+  # -- additional containers to start within the Zabbix Java Gateway pod
   extraContainers: []
-  # -- additional init containers to start within the Zabbix Java Gatway pod
+  # -- additional init containers to start within the Zabbix Java Gateway pod
   extraInitContainers: []
-  # -- additional volumes to make available to the Zabbix Java Gatway pod
+  # -- additional volumes to make available to the Zabbix Java Gateway pod
   extraVolumes: []
-  # -- additional specifications to the Zabbix Java Gatway pod
+  # -- additional specifications to the Zabbix Java Gateway pod
   extraPodSpecs: {}
   # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext: {}
   # -- The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-  livenessProbe: {}
+  livenessProbe:
+    tcpSocket:
+      # -- Port number/alias name of the container
+      port: zabbix-java-gw
+    timeoutSeconds: 3
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
   # -- The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe: {}
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-  startupProbe: {}
+  startupProbe:
+    tcpSocket:
+      # -- Port number/alias name of the container
+      port: zabbix-java-gw
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 5
+    successThreshold: 1
 
 # Ingress configurations
 ingress:
@@ -798,15 +832,20 @@ karpenter:
 serviceAccount:
   # -- Specifies whether a service account should be created.
   create: true
-
   # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template.
   name: ""
-
   # -- Optional additional annotations to add to the Service Account.
   annotations: {}
-
   # -- Optional additional labels to add to the Service Account.
   labels: {}
-
   # -- Automount API credentials for a Service Account.
   automountServiceAccountToken: true
+
+rbac:
+  # --  Specifies whether the RBAC resources should be created
+  create: true
+  additionalRulesForClusterRole: []
+  #  - apiGroups: [ "" ]
+  #    resources:
+  #      - nodes/proxy
+  #    verbs: [ "get", "list", "watch" ]
