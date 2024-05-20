@@ -403,7 +403,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixAgent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
 | zabbixAgent.service.clusterIP | string | `nil` | Cluster IP for Zabbix Agent |
+| zabbixAgent.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
 | zabbixAgent.service.listenOnAllInterfaces | bool | `true` | externalTrafficPolicy for Zabbix Agent service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
+| zabbixAgent.service.loadBalancerIP | string | `""` |  |
 | zabbixAgent.service.port | int | `10050` | Port to expose service |
 | zabbixAgent.service.type | string | `"ClusterIP"` | Type of service for Zabbix Agent |
 | zabbixAgent.startupProbe | object | `{"failureThreshold":5,"initialDelaySeconds":15,"periodSeconds":5,"successThreshold":1,"tcpSocket":{"port":"zabbix-agent"},"timeoutSeconds":3}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
