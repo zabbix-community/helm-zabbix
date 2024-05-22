@@ -67,6 +67,15 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixAgent.service.type }}
+  {{- if .Values.zabbixAgent.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.zabbixAgent.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if .Values.zabbixAgent.service.externalIPs }}
+  externalIPs: {{ .Values.zabbixAgent.service.externalIPs | toYaml | nindent 6 }}
+  {{- end }}
+  {{- if .Values.zabbixAgent.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.zabbixAgent.service.loadBalancerIP }}
+  {{- end }}
   {{- if .Values.zabbixAgent.service.clusterIP }}
   clusterIP: {{ .Values.zabbixAgent.service.clusterIP }}
   {{- end }}

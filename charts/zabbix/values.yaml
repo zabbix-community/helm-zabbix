@@ -371,6 +371,11 @@ zabbixAgent:
   service:
     # -- Type of service for Zabbix Agent
     type: ClusterIP
+    # -- externalTrafficPolicy for Zabbix Agent. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings.
+    #externalTrafficPolicy: Local
+    # -- IPs if use service type LoadBalancer"
+    externalIPs: []
+    loadBalancerIP: ""
     # -- Cluster IP for Zabbix Agent
     clusterIP:
     # -- Port to expose service
