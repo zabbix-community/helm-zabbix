@@ -109,6 +109,10 @@ spec:
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
             {{- end }}
+          {{- with .Values.postgresql.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
           {{- if .Values.postgresql.persistence.enabled }}
             - name: postgresql-data

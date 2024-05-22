@@ -97,6 +97,10 @@ spec:
           {{- end }}
           - name: ZBX_ALLOWEDIP
             value: "::/0"
+        {{- with .Values.zabbixWebService.envFrom }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         ports:
           - name: webservice
             containerPort: 10053

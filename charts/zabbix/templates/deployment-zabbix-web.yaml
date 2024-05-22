@@ -92,6 +92,10 @@ spec:
           - name: {{ $item.name }}
             value: {{ $item.value | quote }}
           {{- end }}
+        {{- with .Values.zabbixWeb.envFrom }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         ports:
           - name: zabbix-web
             containerPort: 8080

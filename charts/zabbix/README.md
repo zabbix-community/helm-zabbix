@@ -333,6 +333,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.containerAnnotations | object | `{}` | Annotations to add to the containers |
 | postgresql.containerLabels | object | `{}` | Labels to add to the containers |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql |
+| postgresql.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | postgresql.extraContainers | list | `[]` | Additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | postgresql.extraInitContainers | list | `[]` | Additional init containers to start within the postgresql pod |
@@ -383,6 +384,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.daemonSetLabels | object | `{}` | Labels to add to the daemonSet |
 | zabbixAgent.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
+| zabbixAgent.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | zabbixAgent.extraContainers | list | `[]` | Additional containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixAgent.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Agent pod |
@@ -420,6 +422,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixJavaGateway.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixJavaGateway.enabled | bool | `false` | Enables use of **Zabbix Java Gateway** |
+| zabbixJavaGateway.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | zabbixJavaGateway.extraContainers | list | `[]` | Additional containers to start within the Zabbix Java Gateway pod |
 | zabbixJavaGateway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixJavaGateway.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Java Gateway pod |
@@ -454,6 +457,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.containerAnnotations | object | `{}` | Annotations to add to the containers |
 | zabbixProxy.containerLabels | object | `{}` | Labels to add to the containers |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
+| zabbixProxy.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | zabbixProxy.extraContainers | list | `[]` | Additional containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixProxy.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Proxy pod |
@@ -482,14 +486,16 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixServer.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixServer.enabled | bool | `true` | Enables use of **Zabbix Server** |
+| zabbixServer.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | zabbixServer.extraContainers | list | `[]` | Additional containers to start within the Zabbix Server pod |
 | zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixServer.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Server pod |
 | zabbixServer.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Server pod |
 | zabbixServer.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Server container |
 | zabbixServer.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Server pod |
-| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","cronjobLabels":{},"deleteOlderThanSeconds":3600,"enabled":true,"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | Automatically clean orphaned ha nodes from ha_nodes db table |
+| zabbixServer.haNodesAutoClean | object | `{"concurrencyPolicy":"Replace","cronjobLabels":{},"deleteOlderThanSeconds":3600,"enabled":true,"envFrom":[],"extraContainers":[],"extraEnv":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"postgres","tag":15},"resources":{},"schedule":"0 1 * * *","securityContext":{}}` | Automatically clean orphaned ha nodes from ha_nodes db table |
 | zabbixServer.haNodesAutoClean.cronjobLabels | object | `{}` | Labels to add to the cronjob for ha nodes autoclean |
+| zabbixServer.haNodesAutoClean.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | zabbixServer.haNodesAutoClean.extraContainers | list | `[]` | Additional containers to start within the cronjob hanodes autoclean |
 | zabbixServer.haNodesAutoClean.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | zabbixServer.haNodesAutoClean.extraInitContainers | list | `[]` | Additional init containers to start within the cronjob hanodes autoclean |
@@ -533,6 +539,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixWeb.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWeb.enabled | bool | `true` | Enables use of **Zabbix Web** |
+| zabbixWeb.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | zabbixWeb.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web pod |
 | zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWeb.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web pod |
@@ -573,6 +580,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixWebService.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWebService.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
+| zabbixWebService.envFrom | list | `[]` | Extra environment variables from secrets or configmaps |
 | zabbixWebService.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web Service pod |
 | zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWebService.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web Service pod |

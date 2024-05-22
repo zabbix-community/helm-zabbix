@@ -160,6 +160,10 @@ spec:
             - name: ZBX_STARTJAVAPOLLERS
               value: {{ .Values.zabbixJavaGateway.ZBX_STARTJAVAPOLLERS | quote }}
             {{- end }}
+          {{- with .Values.zabbixServer.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.zabbixServer.extraVolumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
@@ -213,6 +217,10 @@ spec:
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
             {{- end }}
+          {{- with .Values.zabbixAgent.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: zabbix-agent
               containerPort: 10050

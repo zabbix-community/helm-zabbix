@@ -119,6 +119,10 @@ spec:
             - name: {{ $item.name }}
               value: {{ $item.value | quote }}
             {{- end }}
+          {{- with .Values.zabbixJavaGateway.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.zabbixJavaGateway.extraVolumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

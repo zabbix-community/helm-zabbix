@@ -83,6 +83,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+        {{- with .Values.zabbixServer.envFrom }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         {{- with .Values.zabbixServer.jobDBSchema.extraVolumeMounts }}
         volumeMounts:
           {{- toYaml . | nindent 10 }}
