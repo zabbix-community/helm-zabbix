@@ -713,7 +713,6 @@ zabbixJavaGateway:
   # ZABBIX_OPTIONS: 
   # Java Gateway Service Name
   ZBX_JAVAGATEWAY: zabbix-java-gateway
-  # Java Gateway Service Port
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. 
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
