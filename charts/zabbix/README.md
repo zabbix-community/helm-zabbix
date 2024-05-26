@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 4.4.0](https://img.shields.io/badge/Version-4.4.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 4.4.1](https://img.shields.io/badge/Version-4.4.1-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -43,7 +43,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='4.4.0'
+export ZABBIX_CHART_VERSION='4.4.1'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -352,9 +352,9 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | postgresql.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | postgresql.service.annotations | object | `{}` | Annotations for the zabbix-server service |
-| postgresql.service.clusterIP | string | `nil` | Cluster IP for Zabbix Server |
+| postgresql.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,  is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
-| postgresql.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
+| postgresql.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | postgresql.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | postgresql.statefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
 | postgresql.statefulSetLabels | object | `{}` | Labels to add to the statefulset |
@@ -402,12 +402,15 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.runAsSidecar | bool | `true` | Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet |
 | zabbixAgent.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixAgent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
-| zabbixAgent.service.clusterIP | string | `nil` | Cluster IP for Zabbix Agent |
-| zabbixAgent.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
-| zabbixAgent.service.listenOnAllInterfaces | bool | `true` | externalTrafficPolicy for Zabbix Agent service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
-| zabbixAgent.service.loadBalancerIP | string | `""` |  |
-| zabbixAgent.service.port | int | `10050` | Port to expose service |
-| zabbixAgent.service.type | string | `"ClusterIP"` | Type of service for Zabbix Agent |
+| zabbixAgent.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly.  If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
+| zabbixAgent.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.  These IPs are not managed by Kubernetes. |
+| zabbixAgent.service.loadBalancerClass | string | `""` | loadBalancerClass is the class of the load balancer implementation this Service belongs to.  If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or  "example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.  If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,  but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services  with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.  This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.  This field will be wiped when a service is updated to a non 'LoadBalancer' type. |
+| zabbixAgent.service.loadBalancerIP | string | `""` | Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying  the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixAgent.service.loadBalancerSourceRanges | list | `[]` | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer  will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixAgent.service.nodePort | int | `31050` | NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer) |
+| zabbixAgent.service.port | int | `10050` | Port of service in Kubernetes cluster |
+| zabbixAgent.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.  Must be ClientIP or None. Defaults to None. More info:  https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
+| zabbixAgent.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.  More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixAgent.startupProbe | object | `{"failureThreshold":5,"initialDelaySeconds":15,"periodSeconds":5,"successThreshold":1,"tcpSocket":{"port":"zabbix-agent"},"timeoutSeconds":3}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixAgent.startupProbe.tcpSocket.port | string | `"zabbix-agent"` | Port number/alias name of the container |
 | zabbixImageTag | string | `"ubuntu-6.0.30"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 6.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
@@ -437,10 +440,15 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixJavaGateway.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixJavaGateway.service.annotations | object | `{}` | Annotations for the zabbix-java-gateway service |
-| zabbixJavaGateway.service.clusterIP | string | `nil` | Cluster IP for Zabbix Java Gateway |
-| zabbixJavaGateway.service.listenOnAllInterfaces | bool | `true` | externalTrafficPolicy for Zabbix Java Gateway service. "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, depending on your network settings. externalTrafficPolicy: Local |
-| zabbixJavaGateway.service.port | int | `10052` | Port to expose service |
-| zabbixJavaGateway.service.type | string | `"ClusterIP"` | Type of service for Zabbix Java Gateway |
+| zabbixJavaGateway.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly.  If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
+| zabbixJavaGateway.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.  These IPs are not managed by Kubernetes. |
+| zabbixJavaGateway.service.loadBalancerClass | string | `""` | loadBalancerClass is the class of the load balancer implementation this Service belongs to.  If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or  "example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.  If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,  but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services  with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.  This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.  This field will be wiped when a service is updated to a non 'LoadBalancer' type. |
+| zabbixJavaGateway.service.loadBalancerIP | string | `""` | Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying  the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixJavaGateway.service.loadBalancerSourceRanges | list | `[]` | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer  will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixJavaGateway.service.nodePort | int | `31052` | NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer) |
+| zabbixJavaGateway.service.port | int | `10052` | Port of service in Kubernetes cluster |
+| zabbixJavaGateway.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.  Must be ClientIP or None. Defaults to None. More info:  https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
+| zabbixJavaGateway.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.  More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixJavaGateway.startupProbe | object | `{"failureThreshold":5,"initialDelaySeconds":15,"periodSeconds":5,"successThreshold":1,"tcpSocket":{"port":"zabbix-java-gw"},"timeoutSeconds":3}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixJavaGateway.startupProbe.tcpSocket.port | string | `"zabbix-java-gw"` | Port number/alias name of the container |
 | zabbixProxy.ZBX_DEBUGLEVEL | int | `4` |  |
@@ -471,9 +479,15 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixProxy.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixProxy.service.annotations | object | `{}` | Annotations for the zabbix-proxy service |
-| zabbixProxy.service.clusterIP | string | `nil` | Cluster IP for Zabbix Proxy |
-| zabbixProxy.service.port | int | `10051` | Port to expose service |
-| zabbixProxy.service.type | string | `"ClusterIP"` | Type of service for Zabbix Proxy |
+| zabbixProxy.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly.  If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
+| zabbixProxy.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.  These IPs are not managed by Kubernetes. |
+| zabbixProxy.service.loadBalancerClass | string | `""` | loadBalancerClass is the class of the load balancer implementation this Service belongs to.  If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or  "example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.  If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,  but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services  with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.  This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.  This field will be wiped when a service is updated to a non 'LoadBalancer' type. |
+| zabbixProxy.service.loadBalancerIP | string | `""` | Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying  the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixProxy.service.loadBalancerSourceRanges | list | `[]` | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer  will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixProxy.service.nodePort | int | `31053` | NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer) |
+| zabbixProxy.service.port | int | `10051` | Port of service in Kubernetes cluster |
+| zabbixProxy.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.  Must be ClientIP or None. Defaults to None. More info:  https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
+| zabbixProxy.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.  More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixProxy.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixProxy.statefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
 | zabbixProxy.statefulSetLabels | object | `{}` | Labels to add to the statefulset |
@@ -521,12 +535,15 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixServer.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.service.annotations | object | `{}` | Annotations for the zabbix-server service |
-| zabbixServer.service.clusterIP | string | `nil` |  |
-| zabbixServer.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
-| zabbixServer.service.loadBalancerIP | string | `""` |  |
-| zabbixServer.service.nodePort | int | `31051` | NodePort of service on each node |
+| zabbixServer.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly.  If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
+| zabbixServer.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.  These IPs are not managed by Kubernetes. |
+| zabbixServer.service.loadBalancerClass | string | `""` | loadBalancerClass is the class of the load balancer implementation this Service belongs to.  If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or  "example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.  If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,  but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services  with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.  This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.  This field will be wiped when a service is updated to a non 'LoadBalancer' type. |
+| zabbixServer.service.loadBalancerIP | string | `""` | Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying  the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixServer.service.loadBalancerSourceRanges | list | `[]` | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer  will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixServer.service.nodePort | int | `31051` | NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer) |
 | zabbixServer.service.port | int | `10051` | Port of service in Kubernetes cluster |
-| zabbixServer.service.type | string | `"ClusterIP"` | Type of service in Kubernetes cluster |
+| zabbixServer.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.  Must be ClientIP or None. Defaults to None. More info:  https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
+| zabbixServer.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.  More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixServer.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixWeb.containerAnnotations | object | `{}` | Annotations to add to the containers |
 | zabbixWeb.containerLabels | object | `{}` | Labels to add to the containers |
@@ -561,12 +578,16 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.replicaCount | int | `1` | Number of replicas of ``zabbixWeb`` module |
 | zabbixWeb.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixWeb.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixWeb.service | object | `{"annotations":{},"clusterIP":null,"externalIPs":[],"loadBalancerIP":"","port":80,"type":"ClusterIP"}` | Certificate containing certificates for SAML configuration samlCertsSecretName: zabbix-web-samlcerts |
+| zabbixWeb.service | object | `{"annotations":{},"clusterIP":null,"externalIPs":[],"loadBalancerClass":"","loadBalancerIP":"","loadBalancerSourceRanges":[],"nodePort":31080,"port":80,"sessionAffinity":"None","type":"ClusterIP"}` | Certificate containing certificates for SAML configuration samlCertsSecretName: zabbix-web-samlcerts |
 | zabbixWeb.service.annotations | object | `{}` | Annotations for the Zabbix Web |
-| zabbixWeb.service.clusterIP | string | `nil` | Cluster IP for Zabbix Web |
-| zabbixWeb.service.externalIPs | list | `[]` | IPs if use service type LoadBalancer" |
-| zabbixWeb.service.port | int | `80` | Port to expose service |
-| zabbixWeb.service.type | string | `"ClusterIP"` | Type of service for Zabbix Web |
+| zabbixWeb.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly.  If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
+| zabbixWeb.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.  These IPs are not managed by Kubernetes. |
+| zabbixWeb.service.loadBalancerClass | string | `""` | loadBalancerClass is the class of the load balancer implementation this Service belongs to.  If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or  "example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.  If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,  but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services  with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.  This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.  This field will be wiped when a service is updated to a non 'LoadBalancer' type. |
+| zabbixWeb.service.loadBalancerIP | string | `""` | Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying  the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixWeb.service.loadBalancerSourceRanges | list | `[]` | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer  will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixWeb.service.nodePort | int | `31080` | NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer) |
+| zabbixWeb.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.  Must be ClientIP or None. Defaults to None. More info:  https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
+| zabbixWeb.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.  More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixWeb.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixWebService.containerAnnotations | object | `{}` | Annotations to add to the containers |
 | zabbixWebService.containerLabels | object | `{}` | Labels to add to the containers |
@@ -591,9 +612,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixWebService.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | Set the IgnoreURLCertErrors configuration setting of Zabbix Web Service ignoreURLCertErrors=1 |
 | zabbixWebService.service.annotations | object | `{}` | Annotations for the Zabbix Web Service |
-| zabbixWebService.service.clusterIP | string | `nil` | Cluster IP for Zabbix Web |
-| zabbixWebService.service.port | int | `10053` | Port to expose service |
-| zabbixWebService.service.type | string | `"ClusterIP"` | Type of service for Zabbix Web |
+| zabbixWebService.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,  is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
+| zabbixWebService.service.port | int | `10053` | Port of service in Kubernetes cluster |
+| zabbixWebService.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.  More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixWebService.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 
 ## Configure central database access related settings
