@@ -78,6 +78,7 @@ zabbixProxy:
   service:
     type: NodePort
     port: 10051
+    nodePort: 31053
   extraEnv:
     - name: "ZBX_EXAMPLE_MY_ENV_4"
       value: "true"

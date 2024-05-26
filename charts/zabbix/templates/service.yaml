@@ -18,30 +18,39 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixServer.service.type }}
-  {{- if .Values.zabbixServer.service.externalTrafficPolicy }}
+  {{- if and .Values.zabbixServer.service.externalTrafficPolicy (or (eq .Values.zabbixServer.service.type "NodePort") (eq .Values.zabbixServer.service.type "LoadBalancer" )) }}
   externalTrafficPolicy: {{ .Values.zabbixServer.service.externalTrafficPolicy }}
   {{- end }}
-  {{- if .Values.zabbixServer.service.externalIPs }}
+  {{- if and .Values.zabbixServer.service.externalIPs (eq .Values.zabbixServer.service.type "LoadBalancer") }}
   externalIPs: {{ .Values.zabbixServer.service.externalIPs | toYaml | nindent 6 }}
   {{- end }}
-  {{- if .Values.zabbixServer.service.loadBalancerIP }}
+  {{- if and .Values.zabbixServer.service.loadBalancerIP (eq .Values.zabbixServer.service.type "LoadBalancer") }}
   loadBalancerIP: {{ .Values.zabbixServer.service.loadBalancerIP }}
   {{- end }}
-  {{- if .Values.zabbixServer.service.clusterIP }}
+  {{- if and .Values.zabbixServer.service.clusterIP (eq .Values.zabbixServer.service.type "ClusterIP") }}
   clusterIP: {{ .Values.zabbixServer.service.clusterIP }}
+  {{- end }}
+  {{- if .Values.zabbixServer.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.zabbixServer.service.sessionAffinity }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixServer.service.type "LoadBalancer") (not (empty .Values.zabbixServer.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.zabbixServer.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixServer.service.type "LoadBalancer") .Values.zabbixServer.service.loadBalancerClass }}
+  loadBalancerClass: {{ .Values.zabbixServer.service.loadBalancerClass }}
   {{- end }}
   ports:
     - port: {{ .Values.zabbixServer.service.port }}
-      targetPort: 10051
       name: zabbix-server
+      targetPort: 10051
       protocol: TCP
-      {{- if ( and (eq .Values.zabbixServer.service.type "NodePort" ) (not (empty .Values.zabbixServer.service.nodePort)) ) }}
+      {{- if and (or (eq .Values.zabbixServer.service.type "NodePort") (eq .Values.zabbixServer.service.type "LoadBalancer" )) (not (empty .Values.zabbixServer.service.nodePort)) }}
       nodePort: {{ .Values.zabbixServer.service.nodePort }}
       {{- end }}
     - port: 10052
+      name: zabbix-jmx
       targetPort: 10052
       protocol: TCP
-      name: zabbix-jmx
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-server
 {{- end }}
@@ -67,26 +76,35 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixAgent.service.type }}
-  {{- if .Values.zabbixAgent.service.externalTrafficPolicy }}
+  {{- if and .Values.zabbixAgent.service.externalTrafficPolicy (or (eq .Values.zabbixAgent.service.type "NodePort") (eq .Values.zabbixAgent.service.type "LoadBalancer" )) }}
   externalTrafficPolicy: {{ .Values.zabbixAgent.service.externalTrafficPolicy }}
   {{- end }}
-  {{- if .Values.zabbixAgent.service.externalIPs }}
+  {{- if and .Values.zabbixAgent.service.externalIPs (eq .Values.zabbixAgent.service.type "LoadBalancer") }}
   externalIPs: {{ .Values.zabbixAgent.service.externalIPs | toYaml | nindent 6 }}
   {{- end }}
-  {{- if .Values.zabbixAgent.service.loadBalancerIP }}
+  {{- if and .Values.zabbixAgent.service.loadBalancerIP (eq .Values.zabbixAgent.service.type "LoadBalancer") }}
   loadBalancerIP: {{ .Values.zabbixAgent.service.loadBalancerIP }}
   {{- end }}
-  {{- if .Values.zabbixAgent.service.clusterIP }}
+  {{- if and .Values.zabbixAgent.service.clusterIP (eq .Values.zabbixAgent.service.type "ClusterIP") }}
   clusterIP: {{ .Values.zabbixAgent.service.clusterIP }}
+  {{- end }}
+  {{- if .Values.zabbixAgent.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.zabbixAgent.service.sessionAffinity }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixAgent.service.type "LoadBalancer") (not (empty .Values.zabbixAgent.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.zabbixAgent.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixAgent.service.type "LoadBalancer") .Values.zabbixAgent.service.loadBalancerClass }}
+  loadBalancerClass: {{ .Values.zabbixAgent.service.loadBalancerClass }}
   {{- end }}
   ports:
     - port: {{ .Values.zabbixAgent.service.port }}
+      name: zabbix-agent
       targetPort: 10050
-      {{- if ( and (eq .Values.zabbixAgent.service.type "NodePort" ) (not (empty .Values.zabbixAgent.service.nodePort)) ) }}
+      protocol: TCP
+      {{- if and (or (eq .Values.zabbixAgent.service.type "NodePort") (eq .Values.zabbixAgent.service.type "LoadBalancer" )) (not (empty .Values.zabbixAgent.service.nodePort)) }}
       nodePort: {{ .Values.zabbixAgent.service.nodePort }}
       {{- end }}
-      protocol: TCP
-      name: zabbix-agent
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-agent
 {{- end }}
@@ -112,24 +130,33 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixWeb.service.type }}
-  {{- if .Values.zabbixWeb.service.externalTrafficPolicy }}
+  {{- if and .Values.zabbixWeb.service.externalTrafficPolicy (or (eq .Values.zabbixWeb.service.type "NodePort") (eq .Values.zabbixWeb.service.type "LoadBalancer" )) }}
   externalTrafficPolicy: {{ .Values.zabbixWeb.service.externalTrafficPolicy }}
   {{- end }}
-  {{- if .Values.zabbixWeb.service.externalIPs }}
+  {{- if and .Values.zabbixWeb.service.externalIPs (eq .Values.zabbixWeb.service.type "LoadBalancer") }}
   externalIPs: {{ .Values.zabbixWeb.service.externalIPs | toYaml | nindent 6 }}
   {{- end }}
-  {{- if .Values.zabbixWeb.service.loadBalancerIP }}
+  {{- if and .Values.zabbixWeb.service.loadBalancerIP (eq .Values.zabbixWeb.service.type "LoadBalancer") }}
   loadBalancerIP: {{ .Values.zabbixWeb.service.loadBalancerIP }}
   {{- end }}
-  {{- if .Values.zabbixWeb.service.clusterIP }}
+  {{- if and .Values.zabbixWeb.service.clusterIP (eq .Values.zabbixWeb.service.type "ClusterIP") }}
   clusterIP: {{ .Values.zabbixWeb.service.clusterIP }}
+  {{- end }}
+  {{- if .Values.zabbixWeb.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.zabbixWeb.service.sessionAffinity }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixWeb.service.type "LoadBalancer") (not (empty .Values.zabbixWeb.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.zabbixWeb.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixWeb.service.type "LoadBalancer") .Values.zabbixWeb.service.loadBalancerClass }}
+  loadBalancerClass: {{ .Values.zabbixWeb.service.loadBalancerClass }}
   {{- end }}
   ports:
     - port: {{ .Values.zabbixWeb.service.port }}
+      name: zabbix-web
       targetPort: 8080
       protocol: TCP
-      name: zabbix-web
-      {{- if ( and (eq .Values.zabbixWeb.service.type "NodePort" ) (not (empty .Values.zabbixWeb.service.nodePort)) ) }}
+      {{- if and (or (eq .Values.zabbixWeb.service.type "NodePort") (eq .Values.zabbixWeb.service.type "LoadBalancer" )) (not (empty .Values.zabbixWeb.service.nodePort)) }}
       nodePort: {{ .Values.zabbixWeb.service.nodePort }}
       {{- end }}
   selector:
@@ -157,14 +184,14 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixWebService.service.type }}
-  {{- if .Values.zabbixWebService.service.clusterIP }}
+  {{- if and .Values.zabbixWebService.service.clusterIP (eq .Values.zabbixWebService.service.type "ClusterIP") }}
   clusterIP: {{ .Values.zabbixWebService.service.clusterIP }}
   {{- end }}
   ports:
     - port: {{ .Values.zabbixWebService.service.port }}
+      name: webservice
       targetPort: 10053
       protocol: TCP
-      name: webservice
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-webservice
   {{- end }}
@@ -190,14 +217,35 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixProxy.service.type }}
-  {{- if .Values.zabbixProxy.service.clusterIP }}
+  {{- if and .Values.zabbixProxy.service.externalTrafficPolicy (or (eq .Values.zabbixProxy.service.type "NodePort") (eq .Values.zabbixProxy.service.type "LoadBalancer" )) }}
+  externalTrafficPolicy: {{ .Values.zabbixProxy.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if and .Values.zabbixProxy.service.externalIPs (eq .Values.zabbixProxy.service.type "LoadBalancer") }}
+  externalIPs: {{ .Values.zabbixProxy.service.externalIPs | toYaml | nindent 6 }}
+  {{- end }}
+  {{- if and .Values.zabbixProxy.service.loadBalancerIP (eq .Values.zabbixProxy.service.type "LoadBalancer") }}
+  loadBalancerIP: {{ .Values.zabbixProxy.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and .Values.zabbixProxy.service.clusterIP (eq .Values.zabbixProxy.service.type "ClusterIP") }}
   clusterIP: {{ .Values.zabbixProxy.service.clusterIP }}
+  {{- end }}
+  {{- if .Values.zabbixProxy.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.zabbixProxy.service.sessionAffinity }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixProxy.service.type "LoadBalancer") (not (empty .Values.zabbixProxy.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.zabbixProxy.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixProxy.service.type "LoadBalancer") .Values.zabbixProxy.service.loadBalancerClass }}
+  loadBalancerClass: {{ .Values.zabbixProxy.service.loadBalancerClass }}
   {{- end }}
   ports:
     - port: {{ .Values.zabbixProxy.service.port }}
+      name: zabbix-proxy
       targetPort: 10051
       protocol: TCP
-      name: zabbix-proxy
+      {{- if and (or (eq .Values.zabbixProxy.service.type "NodePort") (eq .Values.zabbixProxy.service.type "LoadBalancer" )) (not (empty .Values.zabbixProxy.service.nodePort)) }}
+      nodePort: {{ .Values.zabbixProxy.service.nodePort }}
+      {{- end }}
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-proxy
 {{- end }}
@@ -222,14 +270,14 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.postgresql.service.type }}
-  {{- if .Values.postgresql.service.clusterIP }}
+  {{- if and .Values.postgresql.service.clusterIP (eq .Values.postgresql.service.type "ClusterIP") }}
   clusterIP: {{ .Values.postgresql.service.clusterIP }}
   {{- end }}
   ports:
     - port: {{ .Values.postgresql.service.port }}
+      name: db
       targetPort: 5432
       protocol: TCP
-      name: db
   selector:
     app: {{ template "zabbix.fullname" . }}-postgresql
 {{- end }}
@@ -254,17 +302,35 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.zabbixJavaGateway.service.type }}
-  {{- if .Values.zabbixJavaGateway.service.clusterIP }}
+  {{- if and .Values.zabbixJavaGateway.service.externalTrafficPolicy (or (eq .Values.zabbixJavaGateway.service.type "NodePort") (eq .Values.zabbixJavaGateway.service.type "LoadBalancer" )) }}
+  externalTrafficPolicy: {{ .Values.zabbixJavaGateway.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if and .Values.zabbixJavaGateway.service.externalIPs (eq .Values.zabbixJavaGateway.service.type "LoadBalancer") }}
+  externalIPs: {{ .Values.zabbixJavaGateway.service.externalIPs | toYaml | nindent 6 }}
+  {{- end }}
+  {{- if and .Values.zabbixJavaGateway.service.loadBalancerIP (eq .Values.zabbixJavaGateway.service.type "LoadBalancer") }}
+  loadBalancerIP: {{ .Values.zabbixJavaGateway.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and .Values.zabbixJavaGateway.service.clusterIP (eq .Values.zabbixJavaGateway.service.type "ClusterIP") }}
   clusterIP: {{ .Values.zabbixJavaGateway.service.clusterIP }}
+  {{- end }}
+  {{- if .Values.zabbixJavaGateway.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.zabbixJavaGateway.service.sessionAffinity }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixJavaGateway.service.type "LoadBalancer") (not (empty .Values.zabbixJavaGateway.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.zabbixJavaGateway.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixJavaGateway.service.type "LoadBalancer") .Values.zabbixJavaGateway.service.loadBalancerClass }}
+  loadBalancerClass: {{ .Values.zabbixJavaGateway.service.loadBalancerClass }}
   {{- end }}
   ports:
     - port: {{ .Values.zabbixJavaGateway.service.port }}
+      name: zabbix-java-gw
       targetPort: 10052
+      protocol: TCP
       {{- if ( and (eq .Values.zabbixJavaGateway.service.type "NodePort" ) (not (empty .Values.zabbixJavaGateway.service.nodePort)) ) }}
       nodePort: {{ .Values.zabbixJavaGateway.service.nodePort }}
       {{- end }}
-      protocol: TCP
-      name: zabbix-java-gw
   selector:
     app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
 {{- end }}
