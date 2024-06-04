@@ -144,6 +144,7 @@ helm uninstall zabbix -n monitoring
 ## Version 5.0.0
 
 * Will be used Postgresql 16.x and Zabbix 7.x.
+* Adjust in extraEnv to add support in environment variables from configmap and secret. More info: #93
 
 ## Version 4.0.0
 
