@@ -1,6 +1,6 @@
 # Custom values for zabbix.
 
-zabbixImageTag: alpine-trunk
+zabbixImageTag: alpine-7.0.0
 
 postgresAccess:
   useUnifiedSecret: true
@@ -31,6 +31,16 @@ zabbixServer:
       value: "false"
     - name: "ZBX_EXAMPLE_MY_ENV_3"
       value: "100"
+    - name: MY_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: user
+    - name: MY_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: password
 # Example of readinessProbe when zabbix-server has two or more replicas in HA mode
 #  readinessProbe:
 #    exec:
@@ -84,6 +94,16 @@ zabbixProxy:
       value: "false"
     - name: "ZBX_EXAMPLE_MY_ENV_6"
       value: "100"
+    - name: MY_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: user
+    - name: MY_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: password
 
 zabbixAgent:
   enabled: true
@@ -105,6 +125,16 @@ zabbixAgent:
       value: "false"
     - name: "ZBX_EXAMPLE_MY_ENV_9"
       value: "100"
+    - name: MY_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: user
+    - name: MY_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: password
 
 zabbixWeb:
   enabled: true
@@ -120,6 +150,16 @@ zabbixWeb:
       value: "false"
     - name: "ZBX_EXAMPLE_MY_ENV_12"
       value: "100"
+    - name: MY_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: user
+    - name: MY_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-envs
+          key: password
 
 ingress:
   enabled: true

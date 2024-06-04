@@ -105,9 +105,8 @@ spec:
             {{- include "zabbix.postgresAccess.variables" (list $ . "database") | nindent 12 }}
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
-            {{- range $item := .Values.postgresql.extraEnv }}
-            - name: {{ $item.name }}
-              value: {{ $item.value | quote }}
+            {{- with .Values.postgresql.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           volumeMounts:
           {{- if .Values.postgresql.persistence.enabled }}

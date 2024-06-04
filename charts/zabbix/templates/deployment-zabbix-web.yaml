@@ -88,9 +88,8 @@ spec:
         imagePullPolicy: {{ .Values.zabbixWeb.image.pullPolicy }}
         env:
           {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
-          {{- range $item := .Values.zabbixWeb.extraEnv }}
-          - name: {{ $item.name }}
-            value: {{ $item.value | quote }}
+          {{- with .Values.zabbixWeb.extraEnv }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
         ports:
           - name: zabbix-web

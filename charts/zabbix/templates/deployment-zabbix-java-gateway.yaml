@@ -115,9 +115,8 @@ spec:
               value: {{ .Values.zabbixJavaGateway.ZBX_PROPERTIES_FILE | quote }}
             - name: ZABBIX_OPTIONS
               value: {{ .Values.zabbixJavaGateway.ZABBIX_OPTIONS | quote }}
-            {{- range $item := .Values.zabbixJavaGateway.extraEnv }}
-            - name: {{ $item.name }}
-              value: {{ $item.value | quote }}
+            {{- with .Values.zabbixJavaGateway.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           {{- with .Values.zabbixJavaGateway.extraVolumeMounts }}
           volumeMounts:
