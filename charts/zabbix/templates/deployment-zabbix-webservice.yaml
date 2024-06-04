@@ -91,9 +91,8 @@ spec:
           - name: ZBX_IGNOREURLCERTERRORS
             value: {{ .Values.zabbixWebService.ignoreURLCertErrors }}
           {{- end }}
-          {{- range $item := .Values.zabbixWebService.extraEnv }}
-          - name: {{ $item.name }}
-            value: {{ $item.value | quote  }}
+          {{- with .Values.zabbixWebService.extraEnv }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
           - name: ZBX_ALLOWEDIP
             value: "::/0"

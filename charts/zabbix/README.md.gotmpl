@@ -44,7 +44,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='4.4.1'
+export ZABBIX_CHART_VERSION='5.0.0'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -141,6 +141,11 @@ helm uninstall zabbix -n monitoring
 ```
 
 # Breaking changes of this helm chart
+
+## Version 5.0.0
+
+* Will be used Postgresql 16.x and Zabbix 7.x.
+* Adjust in extraEnv to add support in environment variables from configmap and secret. More info: #93
 
 ## Version 4.0.0
 

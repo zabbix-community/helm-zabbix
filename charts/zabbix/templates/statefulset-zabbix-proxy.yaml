@@ -112,9 +112,8 @@ spec:
               value: {{ .Values.zabbixAgent.ZBX_TIMEOUT | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixAgent.ZBX_LOADMODULE | quote }}
-            {{- range $item := .Values.zabbixAgent.extraEnv }}
-            - name: {{ $item.name }}
-              value: {{ $item.value | quote }}
+            {{- with .Values.zabbixAgent.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
             - name: zabbix-agent
@@ -167,9 +166,8 @@ spec:
               value: {{ .Values.zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | quote }}
             - name: ZBX_VMWARECACHESIZE
               value: {{ .Values.zabbixProxy.ZBX_VMWARECACHESIZE | quote }}
-            {{- range $item := .Values.zabbixProxy.extraEnv }}
-            - name: {{ $item.name }}
-              value: {{ $item.value | quote }}
+            {{- with .Values.zabbixProxy.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
             - name: zabbix-proxy

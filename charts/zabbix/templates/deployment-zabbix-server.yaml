@@ -136,9 +136,8 @@ spec:
               {{- end}}
           env:
             {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 12 }}
-            {{- range $item := .Values.zabbixServer.extraEnv }}
-            - name: {{ $item.name }}
-              value: {{ $item.value | quote }}
+            {{- with .Values.zabbixServer.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
             - name: ZBX_AUTOHANODENAME
               value: "hostname"
@@ -209,9 +208,8 @@ spec:
               value: {{ .Values.zabbixAgent.ZBX_TIMEOUT | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixAgent.ZBX_LOADMODULE }}
-            {{- range $item := .Values.zabbixAgent.extraEnv }}
-            - name: {{ $item.name }}
-              value: {{ $item.value | quote }}
+            {{- with .Values.zabbixAgent.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
             - name: zabbix-agent

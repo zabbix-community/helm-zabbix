@@ -112,9 +112,8 @@ spec:
               value: {{ .Values.zabbixAgent.ZBX_TIMEOUT | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixAgent.ZBX_LOADMODULE }}
-            {{- range $item := .Values.zabbixAgent.extraEnv }}
-            - name: {{ $item.name }}
-              value: {{ $item.value | quote }}
+            {{- with .Values.zabbixAgent.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           volumeMounts:
             - name: proc
