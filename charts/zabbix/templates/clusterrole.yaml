@@ -49,6 +49,6 @@ rules:
       - daemonsets
     verbs: ["get", "list"]
 {{- if .Values.rbac.additionalRulesForClusterRole }}
-{{ toYaml .Values.rbac.additionalRulesForClusterRole | indent 0 }}
+{{ toYaml .Values.rbac.additionalRulesForClusterRole | indent 2 }}
 {{- end }}
 {{- end }}
