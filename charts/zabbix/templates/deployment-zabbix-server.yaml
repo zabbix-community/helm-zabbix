@@ -139,8 +139,10 @@ spec:
             {{- with .Values.zabbixServer.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if gt (.Values.zabbixServer.replicaCount | int) 1 }}
             - name: ZBX_AUTOHANODENAME
               value: "hostname"
+            {{- end }}
             - name: ZBX_NODEADDRESS
               valueFrom:
                 fieldRef:
