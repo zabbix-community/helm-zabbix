@@ -1,4 +1,4 @@
-{{- if and .Values.zabbixServer.enabled (gt (.Values.zabbixServer.replicaCount | int) 1) }}
+{{- if and .Values.zabbixServer.enabled (gt (.Values.zabbixServer.replicaCount | int) 1) false }}
 {{- if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}
 apiVersion: batch/v1
 {{- else }}
