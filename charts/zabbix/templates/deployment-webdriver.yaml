@@ -1,0 +1,32 @@
+{{- if and .Values.zabbixBrowserMonitoring.enabled .Values.zabbixBrowserMonitoring.webdriver.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+  labels:
+    app: {{ template "zabbix.name" . }}
+    release: {{ .Release.Name }}
+    component: webdriver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "zabbix.name" . }}
+      component: webdriver
+  template:
+    metadata:
+      labels:
+        app: {{ template "zabbix.name" . }}
+        component: webdriver
+    spec:
+      containers:
+      - name: {{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+        imagePullPolicy: {{ .Values.zabbixBrowserMonitoring.webdriver.image.pullPolicy }}
+        image: {{ .Values.zabbixBrowserMonitoring.webdriver.image.repository }}:{{ .Values.zabbixBrowserMonitoring.webdriver.image.tag }}
+        ports:
+        - containerPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
+{{- end }}
+      imagePullSecrets:
+      {{- range .Values.zabbixBrowserMonitoring.webdriver.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
