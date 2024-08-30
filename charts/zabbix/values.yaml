@@ -226,7 +226,7 @@ postgresql:
   persistence:
     # -- Whether to enable persistent storage for the postgres container or not
     enabled: false
-    # -- Existing persistent volume claim name to be used to store posgres data
+    # -- Existing persistent volume claim name to be used to store postgres data
     existingClaimName: false
     # -- Size of the PVC to be automatically generated
     storageSize: 5Gi
