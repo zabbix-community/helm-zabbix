@@ -159,6 +159,17 @@ spec:
             - name: ZBX_STARTJAVAPOLLERS
               value: {{ .Values.zabbixJavaGateway.ZBX_STARTJAVAPOLLERS | quote }}
             {{- end }}
+            {{- if .Values.zabbixBrowserMonitoring.enabled }}
+            - name: ZBX_STARTBROWSERPOLLERS
+              value: {{ .Values.zabbixBrowserMonitoring.pollers | quote }}
+            {{- end }}
+            {{- if .Values.zabbixBrowserMonitoring.customWebDriverURL }}
+            - name: ZBX_WEBDRIVERURL
+              value: {{ .Values.zabbixBrowserMonitoring.customWebDriverURL | quote }}
+            {{- else }}
+            - name: ZBX_WEBDRIVERURL
+              value: http://{{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}:{{ .Values.zabbixBrowserMonitoring.webdriver.port }}
+            {{- end }}
           {{- with .Values.zabbixServer.extraVolumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

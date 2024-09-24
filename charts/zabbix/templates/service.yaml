@@ -334,3 +334,23 @@ spec:
   selector:
     app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
 {{- end }}
+---
+{{- if and .Values.zabbixBrowserMonitoring.enabled .Values.zabbixBrowserMonitoring.webdriver.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+  labels:
+    app: {{ template "zabbix.name" . }}
+    release: {{ .Release.Name }}
+    component: webdriver
+spec:
+  ports:
+    - port: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
+      targetPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
+      protocol: TCP
+  selector:
+    app: {{ template "zabbix.name" . }}
+    component: webdriver
+  type: ClusterIP
+{{- end }}

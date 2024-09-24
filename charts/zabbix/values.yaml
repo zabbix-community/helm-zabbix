@@ -795,6 +795,39 @@ zabbixJavaGateway:
     failureThreshold: 5
     successThreshold: 1
 
+# Zabbix Browser Monitoring, supported since 7.0.
+# See https://assets.zabbix.com/files/events/2024/conference_benelux_2024/KasparsM_browser_monitoring.pdf
+# and https://www.zabbix.com/documentation/current/en/manual/config/items/itemtypes/browser
+zabbixBrowserMonitoring:
+  # -- Enable browser pollers
+  enabled: false
+
+  # -- Number of browser pollers to start
+  pollers: 1
+
+  webdriver:
+    # -- Enable webdriver
+    enabled: true
+
+    # -- WebDriver container name
+    name: chrome
+    
+    image:
+      # -- WebDriver container image
+      repository: selenium/standalone-chrome
+      # -- WebDriver container image tag, See https://hub.docker.com/r/selenium/standalone-chrome/tags
+      tag: 127.0-chromedriver-127.0-grid-4.23.0-20240727
+      # -- Pull policy of Docker image
+      pullPolicy: IfNotPresent
+      # -- List of dockerconfig secrets names to use when pulling images
+      pullSecrets: []
+
+    # -- WebDriver container port
+    port: 4444
+
+  # -- Custom WebDriver URL. If set, it overrides the default internal WebDriver service URL. Set zabbixBrowserMonitoring.webdriver.enabled to false when setting this.
+  customWebDriverURL: ""
+
 # Ingress configurations
 ingress:
   # -- Enables Ingress
