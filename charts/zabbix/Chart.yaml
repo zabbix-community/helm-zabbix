@@ -1,9 +1,9 @@
 ---
 apiVersion: v2 # Don't change this
 name: zabbix
-version: 5.0.1 # helm chart version
+version: 5.0.2 # helm chart version
 # LTS Zabbix version by default due to stability. See: https://www.zabbix.com/life_cycle_and_release_policy
-appVersion: 7.0.0 # zabbix version
+appVersion: 7.0.3 # zabbix version
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 keywords:
   - zabbix

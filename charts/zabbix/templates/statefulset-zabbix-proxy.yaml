@@ -203,6 +203,9 @@ spec:
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.zabbixAgent.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
   {{- with .Values.zabbixProxy.extraVolumeClaimTemplate }}
   volumeClaimTemplates:
     {{- toYaml . | nindent 4 }}

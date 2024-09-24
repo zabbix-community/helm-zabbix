@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 5.0.1](https://img.shields.io/badge/Version-5.0.1-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 5.0.2](https://img.shields.io/badge/Version-5.0.2-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -351,7 +351,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.image.tag | int | `16` | Tag of Docker image of Postgresql server, choice "16" for postgres "2.14.2-pg16" for timescaledb (Zabbix supports TimescaleDB 2.1.0-2.14.x. More info: https://www.zabbix.com/documentation/7.0/en/manual/installation/requirements) |
 | postgresql.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | postgresql.persistence.enabled | bool | `false` | Whether to enable persistent storage for the postgres container or not |
-| postgresql.persistence.existingClaimName | bool | `false` | Existing persistent volume claim name to be used to store posgres data |
+| postgresql.persistence.existingClaimName | bool | `false` | Existing persistent volume claim name to be used to store postgres data |
 | postgresql.persistence.storageSize | string | `"5Gi"` | Size of the PVC to be automatically generated |
 | postgresql.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | postgresql.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
@@ -418,7 +418,17 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.  More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixAgent.startupProbe | object | `{"failureThreshold":5,"initialDelaySeconds":15,"periodSeconds":5,"successThreshold":1,"tcpSocket":{"port":"zabbix-agent"},"timeoutSeconds":3}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixAgent.startupProbe.tcpSocket.port | string | `"zabbix-agent"` | Port number/alias name of the container |
-| zabbixImageTag | string | `"ubuntu-7.0.0"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixBrowserMonitoring.customWebDriverURL | string | `""` | Custom WebDriver URL. If set, it overrides the default internal WebDriver service URL. Set zabbixBrowserMonitoring.webdriver.enabled to false when setting this. |
+| zabbixBrowserMonitoring.enabled | bool | `false` | Enable browser pollers |
+| zabbixBrowserMonitoring.pollers | int | `1` | Number of browser pollers to start |
+| zabbixBrowserMonitoring.webdriver.enabled | bool | `true` | Enable webdriver |
+| zabbixBrowserMonitoring.webdriver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
+| zabbixBrowserMonitoring.webdriver.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
+| zabbixBrowserMonitoring.webdriver.image.repository | string | `"selenium/standalone-chrome"` | WebDriver container image |
+| zabbixBrowserMonitoring.webdriver.image.tag | string | `"127.0-chromedriver-127.0-grid-4.23.0-20240727"` | WebDriver container image tag, See https://hub.docker.com/r/selenium/standalone-chrome/tags |
+| zabbixBrowserMonitoring.webdriver.name | string | `"chrome"` | WebDriver container name |
+| zabbixBrowserMonitoring.webdriver.port | int | `4444` | WebDriver container port |
+| zabbixImageTag | string | `"ubuntu-7.0.3"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixJavaGateway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. ZABBIX_OPTIONS:  Java Gateway Service Name |
 | zabbixJavaGateway.ZBX_START_POLLERS | int | `5` | This variable is specified amount of pollers. By default, value is 5 |
