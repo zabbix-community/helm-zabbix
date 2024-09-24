@@ -21,20 +21,6 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
-  metadata:
-    labels:
-      app: {{ template "zabbix.fullname" . }}-init-db-schema
-      app.kubernetes.io/name: init-db-schema
-      helm.sh/chart: {{ include "zabbix.chart" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}-init-db-schema
-      app.kubernetes.io/managed-by: {{ .Release.Service }}-init-db-schema
-      {{- if .Values.zabbixServer.jobDBSchema.jobLabels }}
-      {{- toYaml .Values.zabbixServer.jobDBSchema.jobLabels | nindent 6 }}
-      {{- end }}
-    annotations:
-      {{- range $key,$value := .Values.zabbixServer.jobDBSchema.jobAnnotations }}
-      {{ $key }}: {{ $value | quote }}
-      {{- end }}
   ttlSecondsAfterFinished: 120
   template:
     spec:
