@@ -38,7 +38,7 @@ postgresAccess:
   #   * port
   #   * user
   #   * password
-  #   * database
+  #   * dbname
   # -- Whether to use the unified PostgreSQL access secret
   useUnifiedSecret: true
   # -- Name of one secret for unified configuration of PostgreSQL access
@@ -137,36 +137,36 @@ zabbixServer:
     # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
     securityContext: {}
   service:
-    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. 
+    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
     type: ClusterIP
-    # -- clusterIP is the IP address of the service and is usually assigned randomly. 
+    # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses 
-    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, 
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
-    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. 
+    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.
     #These IPs are not managed by Kubernetes.
     externalIPs: []
-    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying 
+    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying
     #the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerIP: ""
-    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer 
+    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer
     #will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerSourceRanges: []
-    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to. 
-    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or 
-    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'. 
-    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration, 
-    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services 
-    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field. 
-    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed. 
+    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to.
+    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or
+    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.
+    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,
+    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services
+    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.
+    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.
     #This field will be wiped when a service is updated to a non 'LoadBalancer' type.
     loadBalancerClass: ""
-    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. 
-    #Must be ClientIP or None. Defaults to None. More info: 
+    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.
+    #Must be ClientIP or None. Defaults to None. More info:
     #https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     sessionAffinity: None
     # -- Port of service in Kubernetes cluster
@@ -238,7 +238,7 @@ postgresql:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/
     type: ClusterIP
-    # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, 
+    # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP:
     # -- Port of service in Kubernetes cluster
@@ -314,36 +314,36 @@ zabbixProxy:
   # -- Cache size
   ZBX_VMWARECACHESIZE: 128M
   service:
-    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. 
+    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
     type: ClusterIP
-    # -- clusterIP is the IP address of the service and is usually assigned randomly. 
+    # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses 
-    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, 
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
-    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. 
+    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.
     #These IPs are not managed by Kubernetes.
     externalIPs: []
-    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying 
+    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying
     #the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerIP: ""
-    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer 
+    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer
     #will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerSourceRanges: []
-    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to. 
-    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or 
-    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'. 
-    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration, 
-    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services 
-    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field. 
-    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed. 
+    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to.
+    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or
+    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.
+    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,
+    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services
+    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.
+    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.
     #This field will be wiped when a service is updated to a non 'LoadBalancer' type.
     loadBalancerClass: ""
-    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. 
-    #Must be ClientIP or None. Defaults to None. More info: 
+    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.
+    #Must be ClientIP or None. Defaults to None. More info:
     #https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     sessionAffinity: None
     # -- Port of service in Kubernetes cluster
@@ -422,36 +422,36 @@ zabbixAgent:
   # -- The variable is used to specify timeout for processing checks. By default, value is 4.
   ZBX_TIMEOUT: 4
   service:
-    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. 
+    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
     type: ClusterIP
-    # -- clusterIP is the IP address of the service and is usually assigned randomly. 
+    # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses 
-    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, 
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
-    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. 
+    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.
     #These IPs are not managed by Kubernetes.
     externalIPs: []
-    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying 
+    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying
     #the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerIP: ""
-    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer 
+    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer
     #will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerSourceRanges: []
-    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to. 
-    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or 
-    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'. 
-    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration, 
-    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services 
-    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field. 
-    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed. 
+    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to.
+    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or
+    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.
+    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,
+    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services
+    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.
+    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.
     #This field will be wiped when a service is updated to a non 'LoadBalancer' type.
     loadBalancerClass: ""
-    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. 
-    #Must be ClientIP or None. Defaults to None. More info: 
+    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.
+    #Must be ClientIP or None. Defaults to None. More info:
     #https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     sessionAffinity: None
     # -- Port of service in Kubernetes cluster
@@ -531,36 +531,36 @@ zabbixWeb:
   # -- Certificate containing certificates for SAML configuration
   #samlCertsSecretName: zabbix-web-samlcerts
   service:
-    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. 
+    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
     type: ClusterIP
-    # -- clusterIP is the IP address of the service and is usually assigned randomly. 
+    # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses 
-    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, 
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
-    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. 
+    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.
     #These IPs are not managed by Kubernetes.
     externalIPs: []
-    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying 
+    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying
     #the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerIP: ""
-    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer 
+    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer
     #will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerSourceRanges: []
-    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to. 
-    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or 
-    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'. 
-    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration, 
-    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services 
-    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field. 
-    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed. 
+    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to.
+    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or
+    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.
+    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,
+    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services
+    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.
+    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.
     #This field will be wiped when a service is updated to a non 'LoadBalancer' type.
     loadBalancerClass: ""
-    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. 
-    #Must be ClientIP or None. Defaults to None. More info: 
+    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.
+    #Must be ClientIP or None. Defaults to None. More info:
     #https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     sessionAffinity: None    # -- Port of service in Kubernetes cluster
     port: 80
@@ -642,10 +642,10 @@ zabbixWebService:
   # -- Set the IgnoreURLCertErrors configuration setting of Zabbix Web Service
   #ignoreURLCertErrors=1
   service:
-    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. 
+    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
     type: ClusterIP
-    # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, 
+    # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP:
     # -- Port of service in Kubernetes cluster
@@ -702,46 +702,46 @@ zabbixJavaGateway:
   # -- This variable is specified amount of pollers. By default, value is 5
   ZBX_START_POLLERS: 5
   # -- Name of properties file. Can be used to set additional properties using a key-value format in such a way that they are not visible on a command line or to overwrite existing ones.
-  # ZBX_PROPERTIES_FILE: 
+  # ZBX_PROPERTIES_FILE:
   # -- The variable is used to specify debug level, from 0 to 5
   ZBX_DEBUGLEVEL: 3
   # -- This variable is used to specify timeout for outgoing connections. By default, value is 3.
   ZBX_TIMEOUT: 3
   # -- Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features.
-  # ZABBIX_OPTIONS: 
+  # ZABBIX_OPTIONS:
   # Java Gateway Service Name
   ZBX_JAVAGATEWAY: zabbix-java-gateway
   service:
-    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. 
+    # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
     type: ClusterIP
-    # -- clusterIP is the IP address of the service and is usually assigned randomly. 
+    # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses 
-    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters, 
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
-    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. 
+    # -- externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.
     #These IPs are not managed by Kubernetes.
     externalIPs: []
-    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying 
+    # -- Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying
     #the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerIP: ""
-    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer 
+    # -- If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer
     #will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature.
     loadBalancerSourceRanges: []
-    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to. 
-    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or 
-    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'. 
-    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration, 
-    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services 
-    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field. 
-    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed. 
+    # -- loadBalancerClass is the class of the load balancer implementation this Service belongs to.
+    #If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or
+    #"example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'.
+    #If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration,
+    #but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services
+    #with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field.
+    #This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed.
     #This field will be wiped when a service is updated to a non 'LoadBalancer' type.
     loadBalancerClass: ""
-    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. 
-    #Must be ClientIP or None. Defaults to None. More info: 
+    # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.
+    #Must be ClientIP or None. Defaults to None. More info:
     #https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     sessionAffinity: None
     # -- Port of service in Kubernetes cluster
@@ -811,7 +811,7 @@ zabbixBrowserMonitoring:
 
     # -- WebDriver container name
     name: chrome
-    
+
     image:
       # -- WebDriver container image
       repository: selenium/standalone-chrome
