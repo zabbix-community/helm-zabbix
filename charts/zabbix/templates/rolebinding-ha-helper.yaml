@@ -18,6 +18,8 @@ metadata:
   {{- end }}
 subjects:
 - kind: ServiceAccount
+  name: {{ template "zabbix.serviceAccountName" . }}
+- kind: ServiceAccount
   name: {{ template "zabbix.fullname" . }}-ha-helper
 roleRef:
   kind: Role

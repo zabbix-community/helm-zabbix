@@ -59,6 +59,9 @@ spec:
           {{- end }}
         {{- end }}
     spec:
+      {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+      shareProcessNamespace: true
+      {{- end }}
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixServer.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
@@ -200,6 +203,25 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
+        {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+        - name: ha-labels-sidecar
+          resources:
+            {{- toYaml .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.securityContext | nindent 12 }}
+          image: "{{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.image.repository }}:{{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.image.tag }}"
+          imagePullPolicy: {{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullPolicy }}
+          env:
+            {{- with .Values.zabbixServer.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            - name: LABEL_NAME
+              value: {{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.labelName }}
+          {{- with .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
         - name: zabbix-agent
           resources:
             {{- toYaml .Values.zabbixAgent.resources | nindent 12 }}

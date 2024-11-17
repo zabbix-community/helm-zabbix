@@ -100,6 +100,17 @@ zabbixServer:
       extraVolumes: []
       # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
       securityContext: {}
+    haLabelsSidecar:
+      image:
+        repository: registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager
+        tag: latest
+        pullPolicy: IfNotPresent
+        pullSecrets: []
+      labelName: zabbix.com/server-ha-role
+      resources: {}
+      securityContext: {}
+      extraVolumeMounts: []
+
 
   # -- Number of replicas of ``zabbixServer`` module
   replicaCount: 1
