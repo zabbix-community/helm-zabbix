@@ -23,7 +23,15 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
+  {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
   replicas: {{ .Values.zabbixServer.replicaCount }}
+  strategy:
+    type: RollingUpdate
+  {{- else }}
+  replicas: 1
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "zabbix.fullname" . }}-zabbix-server
@@ -34,6 +42,9 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
+        {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+        zabbix.com/server-ha-enabled: "true"
+        {{- end }}
         app: {{ template "zabbix.fullname" . }}-zabbix-server
         app.kubernetes.io/name: zabbix-server
         helm.sh/chart: {{ include "zabbix.chart" . }}
@@ -82,7 +93,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       initContainers:
-      {{- if gt (.Values.zabbixServer.replicaCount | int) 1 }}
+      {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
         - name: init-wait-for-database-schema
           {{- if .Values.zabbixServer.image.tag }}
           image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}"
@@ -139,12 +150,14 @@ spec:
             {{- with .Values.zabbixServer.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
             - name: ZBX_AUTOHANODENAME
               value: "hostname"
             - name: ZBX_NODEADDRESS
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            {{- end }}
             {{- if .Values.zabbixWebService.enabled }}
             - name: ZBX_WEBSERVICEURL
               value: "http://{{ template "zabbix.fullname" . }}-zabbix-webservice:{{ .Values.zabbixWebService.service.port }}/report"
@@ -254,7 +267,7 @@ spec:
         - name: {{ . | quote }}
       {{- end }}
       volumes:
-      {{- if gt (.Values.zabbixServer.replicaCount | int) 1 }}
+      {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
         - name: init-waitschema-script
           configMap:
             name: {{ template "zabbix.fullname" . }}-waitdbschema-script
