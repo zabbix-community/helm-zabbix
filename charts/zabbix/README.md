@@ -52,7 +52,7 @@ Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
 helm show values zabbix-community/zabbix --version $ZABBIX_CHART_VERSION > $HOME/zabbix_values.yaml
 ```
 
-Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of section [Configuration](#configuration) can be set via ``--set`` flag in
+Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of [Configuration](#configuration) section can be set via ``--set`` flag in
 installation command or change the values according to the need of the environment in ``$HOME/zabbix_values.yaml`` file.
 
 Test the installation/upgrade with the command:
@@ -143,11 +143,12 @@ helm uninstall zabbix -n monitoring
 
 ## Version 6.0.0
 
-* Fully support Zabbix 6.0+ Server High Availability. More info: #115
+* New implementation of native Zabbix Server High Availability (see [Support of native Zabbix Server High Availability](#support-of-native-zabbix-server-high-availability) section)
+* No breaking changes in values.yaml, but nevertheless you might want to review your values.yaml's `zabbixServer.zabbixServerHA` section
 
 ## Version 5.0.0
 
-* Will be used Postgresql 16.x and Zabbix 7.x.
+* Will be using Postgresql 16.x and Zabbix 7.x.
 * Adjust in extraEnv to add support in environment variables from configmap and secret. More info: #93
 
 ## Version 4.0.0
@@ -282,6 +283,20 @@ A database is required for zabbix to work, in this helm chart we're using Postgr
 
 > We use plain postgresql database by default WITHOUT persistence. If you want persistence or
 would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
+
+# Support of native Zabbix Server High Availability
+
+Since version 6.0, Zabbix has his own implementation of [High Availability](https://www.zabbix.com/documentation/current/en/manual/concepts/server/ha), which is a simple approach to realize a Hot-Standby high availability setup with Zabbix Server. This feature applies only to Zabbix Server component, not Zabbix Proxy, Webdriver, Web Frontend or such. In a Zabbix monitoring environment, by design, there can only be one central active Zabbix Server taking over the responsibility of storing data into database, calculating triggers, sending alerts, evt. The native High Availability concept does not change that, it just implements a way to have additional Zabbix Server processes being "standby" and "jumping in" as soon as the active one does not report it's availability (updating a table in the database), anymore. As such, the Zabbix Server High Availability works well together (and somewhat requires, to be an entirely high available setup), an also high available database setup. High availability of Postgres Database is not covered by this Helm Chart, but can rather easily be achieved by using one of the well-known Postgresql database operators [PGO](https://github.com/CrunchyData/postgres-operator) and [CNPG](https://cloudnative-pg.io), which are supported to be used with this Helm Chart.
+
+For the HA feature, which has not been designed for usage in Kubernetes, to work in K8S, there have been some challenges to overcome, primarily the fact that Zabbix Server doesn't allow to upgrade or to initialize database schema when running in HA mode enabled. Intention by Zabbix is to turn HA mode off, issue Major Release Upgrade, turn HA mode back on. This doesn't conclude with Kubernetes concepts. Beside of that, some additional circumstances led us to an implementation as follows:
+
+* added a portion in values.yaml generally switching "Zabbix Server HA" on or off. If turned off, the Zabbix Server deployment will always be started with 1 replica and without the ZBX_HANODENAME env variable. This is an easy-to-use setup with no additional job pods, but it's not possible to just scale up zabbix server pods from here
+* when .Values.zabbixServer.zabbixServerHA.enabled is set to true, a Kubernetes Job, marked as Helm post-install,post-upgrade hook, is being deployed together with a Role, Rolebinding and ServiceAccount, allowing this job pod to execute some changes via Kubernetes API. The job runs after each installation and upgrade process, scales down zabbix server pods if needed, manages db entries for active HA and non-HA server nodes being connected to the database, etc. Additionally, this job figures out whether a migration from a non-HA enabled setup to a HA-enabled one has been done, and handles necessary actions (scale down pods, delete entries in database) accordingly
+* the sidecar containers running together with the Zabbix Server pods have been updated not only to prevent starting Zabbix Server pods when database is not available, but also when the schema version of the database is not yet the correct one, adding an additional layer of preventing pods from crashing
+
+Additionally, in order to make it possible to use **Active checks** and **Active Zabbix Proxies** with a Zabbix Server setup having High Availability enabled, a **HA Labels sidecar** has been introduced, continuously monitoring the Zabbix server pod for amount of running Zabbix server processes to figure out whether the Pod is being "active" or "standby" Zabbix Server node, and updating HA-related labels on the pod, accordingly.
+
+The reason to implement it this way and not by probing the port number, which was my initial approach, is that probing the port of Zabbix Server will make it generate a message in the log, stating that a connection without a proper payload has been initiated towards the Zabbix Server. More info: #115
 
 # Thanks
 
@@ -556,28 +571,36 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixServer.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| zabbixServer.zabbixServerHA | object | `{"dbCreateUpgradeJob":{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"securityContext":{}},"enabled":true,"haLabelsSidecar":{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}},"role":{"annotations":{}},"roleBinding":{"annotations":{}},"serviceAccount":{"annotations":{}}}` | Section responsible for native Zabbix Server High Availability support of this Helm Chart |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob | object | `{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"securityContext":{}}` | Settings for the database initialization / upgrade job needed for HA enabled setups |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers | list | `[]` | Additional containers to start within the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraInitContainers | list | `[]` | Additional init containers to start within the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraPodSpecs | object | `{}` | Additional specifications to the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraVolumeMounts | list | `[]` | Additional volumeMounts to the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraVolumes | list | `[]` | Additional volumes to make available to the dbCreateUpgradeJob pod |
-| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullPolicy | string | `"IfNotPresent"` |  |
-| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullSecrets | list | `[]` |  |
-| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.repository | string | `"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db"` |  |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""}` | Image settings for the database initialization / upgrade job |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the db initialization / upgrade job |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullSecrets | list | `[]` | Pull secrets for the db initialization / upgrade job |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.repository | string | `"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db"` | Image repository for the database initialization / upgrade job |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag | string | `""` | it is going to be chosen based of the zabbix_server pod container otherwise |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixServer.zabbixServerHA.enabled | bool | `true` | enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1 |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.extraVolumeMounts | list | `[]` |  |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullPolicy | string | `"IfNotPresent"` |  |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullSecrets | list | `[]` |  |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.image.repository | string | `"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager"` |  |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.image.tag | string | `"latest"` |  |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.labelName | string | `"zabbix.com/server-ha-role"` |  |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.resources | object | `{}` |  |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.securityContext | object | `{}` |  |
-| zabbixServer.zabbixServerHA.role.annotations | object | `{}` | extra annotations for the role needed to give the HA related sidecars and the DB job API permissions |
-| zabbixServer.zabbixServerHA.roleBinding.annotations | object | `{}` | extra annotations for the roleBinding needed to give the HA related sidecars and the DB job API permissions |
-| zabbixServer.zabbixServerHA.serviceAccount.annotations | object | `{}` | extra annotations for the serviceAccount needed to give the HA related sidecars and the DB job API permissions |
+| zabbixServer.zabbixServerHA.enabled | bool | `true` | Enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1 |
+| zabbixServer.zabbixServerHA.haLabelsSidecar | object | `{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}}` | The HA labels sidecar checks for the current pod whether it is the active Zabbix Server HA node and sets labels on it, accordingly |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.extraVolumeMounts | list | `[]` | Extra VolumeMounts for the HA labels sidecar |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"}` | Image settings for the HA labels sidecar |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the HA labels sidecar image |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullSecrets | list | `[]` | Pull secrets for the HA labels sidecar image |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image.repository | string | `"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager"` | Repository where to get the image for the HA labels sidecar container |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image.tag | string | `"latest"` | Tag of the HA labels sidecar container image |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.labelName | string | `"zabbix.com/server-ha-role"` | Label name for the sidecar to set on the zabbix server pods, will be used in the zabbix server Service as an additional selector to point to the active Zabbix Server pod |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.resources | object | `{}` | Resource requests and limits for the HA labels sidecar |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.securityContext | object | `{}` | Security context for the HA labels sidecar |
+| zabbixServer.zabbixServerHA.role | object | `{"annotations":{}}` | K8S Role being used for database initialization and upgrade job, which needs access to certain Kubernetes resources |
+| zabbixServer.zabbixServerHA.role.annotations | object | `{}` | Extra annotations for the role needed to give the HA related sidecars and the DB job API permissions |
+| zabbixServer.zabbixServerHA.roleBinding | object | `{"annotations":{}}` | Rolebinding being used for the database initialization and upgrade job |
+| zabbixServer.zabbixServerHA.roleBinding.annotations | object | `{}` | Extra annotations for the roleBinding needed to give the HA related DB init and upgrade job |
+| zabbixServer.zabbixServerHA.serviceAccount | object | `{"annotations":{}}` | Serviceaccount for the database initialization and upgrade job |
+| zabbixServer.zabbixServerHA.serviceAccount.annotations | object | `{}` | Extra annotations for the serviceAccount needed to give the DB job API permissions |
 | zabbixWeb.containerAnnotations | object | `{}` | Annotations to add to the containers |
 | zabbixWeb.containerLabels | object | `{}` | Labels to add to the containers |
 | zabbixWeb.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |

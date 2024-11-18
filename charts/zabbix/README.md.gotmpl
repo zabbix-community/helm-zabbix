@@ -53,7 +53,7 @@ Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
 helm show values zabbix-community/zabbix --version $ZABBIX_CHART_VERSION > $HOME/zabbix_values.yaml
 ```
 
-Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of section [Configuration](#configuration) can be set via ``--set`` flag in 
+Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of [Configuration](#configuration) section can be set via ``--set`` flag in 
 installation command or change the values according to the need of the environment in ``$HOME/zabbix_values.yaml`` file.
 
 Test the installation/upgrade with the command:
@@ -144,7 +144,7 @@ helm uninstall zabbix -n monitoring
 
 ## Version 6.0.0
 
-* New implementation of native Zabbix Server High Availability (see below)
+* New implementation of native Zabbix Server High Availability (see [Support of native Zabbix Server High Availability](#support-of-native-zabbix-server-high-availability) section)
 * No breaking changes in values.yaml, but nevertheless you might want to review your values.yaml's `zabbixServer.zabbixServerHA` section
 
 ## Version 5.0.0
@@ -289,7 +289,7 @@ would like to use TimescaleDB instead, check the comments in the ``values.yaml``
 
 # Support of native Zabbix Server High Availability
 
-Since version 6.0, Zabbix has his own implementation of [High Availability](https://www.zabbix.com/documentation/current/en/manual/concepts/server/ha), which is a simple approach to realize a Hot-Standby high availability setup with Zabbix Server. This feature applies only to Zabbix Server component, not Zabbix Proxy, Webdriver, Web Frontend or such. In a Zabbix monitoring environment, by design, there can only be one central active Zabbix Server taking over the responsability of storing data into database, calculating triggers, sending alerts, evt. The native High Availability concept does not change that, it just implements a way to have additional Zabbix Server processes being "standby" and "jumping in" as soon as the active one does not report it's availability (updating a table in the database), anymore. As such, the Zabbix Server High Availability works well together (and somewhat requires, to be an entirely high available setup), an also high available database setup. High availability of Postgres Database is not covered by this Helm Chart, but can rather easily be achieved by using one of the well-known Postgresql databse operators [PGO](https://github.com/CrunchyData/postgres-operator) and [CNPG](https://cloudnative-pg.io), which are supported to be used with this Helm Chart. 
+Since version 6.0, Zabbix has his own implementation of [High Availability](https://www.zabbix.com/documentation/current/en/manual/concepts/server/ha), which is a simple approach to realize a Hot-Standby high availability setup with Zabbix Server. This feature applies only to Zabbix Server component, not Zabbix Proxy, Webdriver, Web Frontend or such. In a Zabbix monitoring environment, by design, there can only be one central active Zabbix Server taking over the responsibility of storing data into database, calculating triggers, sending alerts, evt. The native High Availability concept does not change that, it just implements a way to have additional Zabbix Server processes being "standby" and "jumping in" as soon as the active one does not report it's availability (updating a table in the database), anymore. As such, the Zabbix Server High Availability works well together (and somewhat requires, to be an entirely high available setup), an also high available database setup. High availability of Postgres Database is not covered by this Helm Chart, but can rather easily be achieved by using one of the well-known Postgresql database operators [PGO](https://github.com/CrunchyData/postgres-operator) and [CNPG](https://cloudnative-pg.io), which are supported to be used with this Helm Chart. 
 
 For the HA feature, which has not been designed for usage in Kubernetes, to work in K8S, there have been some challenges to overcome, primarily the fact that Zabbix Server doesn't allow to upgrade or to initialize database schema when running in HA mode enabled. Intention by Zabbix is to turn HA mode off, issue Major Release Upgrade, turn HA mode back on. This doesn't conclude with Kubernetes concepts. Beside of that, some additional circumstances led us to an implementation as follows:
 
@@ -299,7 +299,7 @@ For the HA feature, which has not been designed for usage in Kubernetes, to work
 
 Additionally, in order to make it possible to use **Active checks** and **Active Zabbix Proxies** with a Zabbix Server setup having High Availability enabled, a **HA Labels sidecar** has been introduced, continuously monitoring the Zabbix server pod for amount of running Zabbix server processes to figure out whether the Pod is being "active" or "standby" Zabbix Server node, and updating HA-related labels on the pod, accordingly.
 
-The reason to implement it this way and not by probing the port number, which was my initial approach, is that probing the port of Zabbix Server will make it generate a message in the log, stating that a connection without a proper payload has been initiated towards the Zabbix Server.
+The reason to implement it this way and not by probing the port number, which was my initial approach, is that probing the port of Zabbix Server will make it generate a message in the log, stating that a connection without a proper payload has been initiated towards the Zabbix Server. More info: #115
 
 
 # Thanks
