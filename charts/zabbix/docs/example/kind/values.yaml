@@ -1,6 +1,6 @@
 # Custom values for zabbix.
 
-zabbixImageTag: alpine-7.0.3
+zabbixImageTag: alpine-7.0.5
 
 postgresAccess:
   useUnifiedSecret: true
