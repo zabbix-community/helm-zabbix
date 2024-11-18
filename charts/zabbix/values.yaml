@@ -68,6 +68,50 @@ postgresAccess:
 zabbixServer:
   # -- Enables use of **Zabbix Server**
   enabled: true
+  zabbixServerHA:
+    # -- enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1
+    enabled: true
+    role:
+      # -- extra annotations for the role needed to give the HA related sidecars and the DB job API permissions
+      annotations: {}
+    roleBinding:
+      # -- extra annotations for the roleBinding needed to give the HA related sidecars and the DB job API permissions
+      annotations: {}
+    serviceAccount:
+      # -- extra annotations for the serviceAccount needed to give the HA related sidecars and the DB job API permissions
+      annotations: {}
+    dbCreateUpgradeJob:
+      image:
+        repository: registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db
+        # -- tag of the image to use for the dbCreateUpgradeJob. Don't override this if you don't have a specific reason.
+        # -- it is going to be chosen based of the zabbix_server pod container otherwise
+        tag: ""
+        pullPolicy: IfNotPresent
+        pullSecrets: []
+      # -- Additional init containers to start within the dbCreateUpgradeJob pod
+      extraInitContainers: []
+      # -- Additional containers to start within the dbCreateUpgradeJob pod
+      extraContainers: []
+      # -- Additional specifications to the dbCreateUpgradeJob pod
+      extraPodSpecs: {}
+      # -- Additional volumeMounts to the dbCreateUpgradeJob pod
+      extraVolumeMounts: []
+      # -- Additional volumes to make available to the dbCreateUpgradeJob pod
+      extraVolumes: []
+      # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+      securityContext: {}
+    haLabelsSidecar:
+      image:
+        repository: registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager
+        tag: latest
+        pullPolicy: IfNotPresent
+        pullSecrets: []
+      labelName: zabbix.com/server-ha-role
+      resources: {}
+      securityContext: {}
+      extraVolumeMounts: []
+
+
   # -- Number of replicas of ``zabbixServer`` module
   replicaCount: 1
   # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
@@ -119,23 +163,7 @@ zabbixServer:
     securityContext: {}
     # -- Labels to add to the cronjob for ha nodes autoclean
     cronjobLabels: {}
-  jobDBSchema:
-    # -- Annotations to add to the jobs
-    jobAnnotations: {}
-    # -- Labels to add to the jobs
-    jobLabels: {}
-    # -- Additional init containers to start within the Zabbix Server Job DB Schema pod
-    extraInitContainers: []
-    # -- Additional containers to start within the Zabbix Server Job DB Schema pod
-    extraContainers: []
-    # -- Additional specifications to the Zabbix Server Job DB Schema pod
-    extraPodSpecs: {}
-    # -- Additional volumeMounts to the Zabbix Server Job DB Schema pod
-    extraVolumeMounts: []
-    # -- Additional volumes to make available to the  Zabbix Server Job DB Schema pod
-    extraVolumes: []
-    # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-    securityContext: {}
+
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     #More details: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -207,6 +235,8 @@ zabbixServer:
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   startupProbe: {}
 
+
+
 # **PostgreSQL** configurations
 postgresql:
   # -- Create a database using Postgresql
@@ -248,7 +278,7 @@ postgresql:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- Extra Postgresql runtime parameters ("-c" options)
   extraRuntimeParameters:
-    max_connections: 50
+    max_connections: 100
   # -- Extra environment variables. A list of additional environment variables.
   extraEnv: []
   # -- Annotations to add to the statefulset

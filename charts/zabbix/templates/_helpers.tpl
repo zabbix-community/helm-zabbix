@@ -51,7 +51,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Create the name of the service account to use
 */}}
 {{- define "zabbix.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
+{{- if or .Values.serviceAccount.create (and .Values.zabbixServer.enabled .Values.zabbixServer.zabbixServerHA.enabled ) -}}
     {{ default (include "zabbix.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}

@@ -1,0 +1,105 @@
+{{ if and .Values.zabbixServer.enabled .Values.zabbixServer.zabbixServerHA.enabled }}
+{{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}
+apiVersion: batch/v1
+{{- else }}
+apiVersion: batch/v1beta1
+{{- end }}
+kind: Job
+metadata:
+  name: {{ template "zabbix.fullname" . }}-create-upgrade-db
+  labels:
+    app: {{ template "zabbix.fullname" . }}-create-upgrade-db
+    app.kubernetes.io/name: create-upgrade-db
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-create-upgrade-db
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-create-upgrade-db
+    {{- if .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels }}
+    {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels | nindent 6 }}
+    {{- end }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+    {{- range $key,$value := .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 120
+  template:
+    spec:
+      {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraPodSpecs }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.karpenter.enabled }}
+      {{- with .Values.karpenter.labels }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- else }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- end }}
+      {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraInitContainers }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}      
+      serviceAccountName: {{ template "zabbix.fullname" . }}-ha-helper
+      containers:
+        {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      - name: create-upgrade-db
+        {{- $pattern := "[0-9]+\\.[0-9]+" -}}
+        {{- $tag := "" -}}
+        {{- if .Values.zabbixServer.image.tag }}
+          {{- $zabbixTag := .Values.zabbixServer.image.tag -}}
+          {{- $match := regexFind $pattern $zabbixTag -}}
+          {{- if $match }}
+            {{- $tag = printf "%s-latest" $match -}}
+          {{- end }}
+        {{- else }}
+          {{- $globalTag := .Values.zabbixImageTag -}}
+          {{- $match := regexFind $pattern $globalTag -}}
+          {{- if $match }}
+            {{- $tag = printf "%s-latest" $match -}}
+          {{- end }}
+        {{- end }}
+        {{- if eq $tag "" }}
+          {{- fail "Failed to generate tag: Ensure the input values match the expected pattern." -}}
+        {{- else }}
+        image: "{{ .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.repository }}:{{ $tag }}"
+        {{- end }}
+        {{- if .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullPolicy }}
+        {{- end }}
+        securityContext:
+          {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.securityContext | nindent 10 }}
+        env:
+          - name: ZBX_SERVER_DEPLOYMENT_NAME
+            value: {{ template "zabbix.fullname" . }}-zabbix-server
+          {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
+          {{- with .Values.zabbixServer.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraVolumeMounts }}
+        volumeMounts:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        args:
+          - init_and_upgrade_db
+      imagePullSecrets:
+      {{- range .Values.zabbixServer.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      restartPolicy: Never
+      {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraVolumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

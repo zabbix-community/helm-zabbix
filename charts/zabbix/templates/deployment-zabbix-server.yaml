@@ -23,7 +23,15 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
+  {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
   replicas: {{ .Values.zabbixServer.replicaCount }}
+  strategy:
+    type: RollingUpdate
+  {{- else }}
+  replicas: 1
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "zabbix.fullname" . }}-zabbix-server
@@ -34,6 +42,9 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
+        {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+        zabbix.com/server-ha-enabled: "true"
+        {{- end }}
         app: {{ template "zabbix.fullname" . }}-zabbix-server
         app.kubernetes.io/name: zabbix-server
         helm.sh/chart: {{ include "zabbix.chart" . }}
@@ -48,6 +59,9 @@ spec:
           {{- end }}
         {{- end }}
     spec:
+      {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+      shareProcessNamespace: true
+      {{- end }}
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixServer.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
@@ -82,7 +96,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       initContainers:
-      {{- if gt (.Values.zabbixServer.replicaCount | int) 1 }}
+      {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
         - name: init-wait-for-database-schema
           {{- if .Values.zabbixServer.image.tag }}
           image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}"
@@ -139,12 +153,14 @@ spec:
             {{- with .Values.zabbixServer.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
             - name: ZBX_AUTOHANODENAME
               value: "hostname"
             - name: ZBX_NODEADDRESS
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            {{- end }}
             {{- if .Values.zabbixWebService.enabled }}
             - name: ZBX_WEBSERVICEURL
               value: "http://{{ template "zabbix.fullname" . }}-zabbix-webservice:{{ .Values.zabbixWebService.service.port }}/report"
@@ -187,6 +203,25 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
+        {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+        - name: ha-labels-sidecar
+          resources:
+            {{- toYaml .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.securityContext | nindent 12 }}
+          image: "{{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.image.repository }}:{{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.image.tag }}"
+          imagePullPolicy: {{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullPolicy }}
+          env:
+            {{- with .Values.zabbixServer.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            - name: LABEL_NAME
+              value: {{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.labelName }}
+          {{- with .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
         - name: zabbix-agent
           resources:
             {{- toYaml .Values.zabbixAgent.resources | nindent 12 }}
@@ -254,7 +289,7 @@ spec:
         - name: {{ . | quote }}
       {{- end }}
       volumes:
-      {{- if gt (.Values.zabbixServer.replicaCount | int) 1 }}
+      {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
         - name: init-waitschema-script
           configMap:
             name: {{ template "zabbix.fullname" . }}-waitdbschema-script

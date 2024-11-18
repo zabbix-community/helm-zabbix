@@ -1,0 +1,29 @@
+{{ if and .Values.zabbixServer.enabled .Values.zabbixServer.zabbixServerHA.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "zabbix.fullname" . }}-ha-helper
+  labels:
+    app: {{ template "zabbix.fullname" . }}-ha-helper
+    app.kubernetes.io/name: zabbix-server
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+  {{- if .Values.zabbixServer.zabbixServerHA.role.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixServer.zabbixServerHA.role.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["patch", "get", "list"]
+- apiGroups: ["apps"]
+  resources: ["deployments/scale"]
+  verbs: ["get", "update", "patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["patch", "get", "list"]
+{{ end }}
