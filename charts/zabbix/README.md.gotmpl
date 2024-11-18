@@ -44,7 +44,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='5.0.0'
+export ZABBIX_CHART_VERSION='5.1.0'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -141,6 +141,10 @@ helm uninstall zabbix -n monitoring
 ```
 
 # Breaking changes of this helm chart
+
+## Version 6.0.0
+
+* Fully support Zabbix 6.0+ Server High Availability. More info: #115
 
 ## Version 5.0.0
 

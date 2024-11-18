@@ -5,7 +5,7 @@
 #---------------------------
 
 URL=https://github.com/zabbix-community/helm-zabbix/
-HELM_IMAGE=alpine/helm:3.16.1
+HELM_IMAGE=alpine/helm:3.16.3
 HELM_DOCS_IMAGE=jnorwood/helm-docs:v1.14.2
 KNOWN_TARGETS=helm
 
