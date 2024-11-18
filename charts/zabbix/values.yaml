@@ -68,25 +68,34 @@ postgresAccess:
 zabbixServer:
   # -- Enables use of **Zabbix Server**
   enabled: true
+  # -- Section responsible for native Zabbix Server High Availability support of this Helm Chart
   zabbixServerHA:
-    # -- enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1
+    # -- Enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1
     enabled: true
+    # -- K8S Role being used for database initialization and upgrade job, which needs access to certain Kubernetes resources
     role:
-      # -- extra annotations for the role needed to give the HA related sidecars and the DB job API permissions
+      # -- Extra annotations for the role needed to give the HA related sidecars and the DB job API permissions
       annotations: {}
+    # -- Rolebinding being used for the database initialization and upgrade job
     roleBinding:
-      # -- extra annotations for the roleBinding needed to give the HA related sidecars and the DB job API permissions
+      # -- Extra annotations for the roleBinding needed to give the HA related DB init and upgrade job
       annotations: {}
+    # -- Serviceaccount for the database initialization and upgrade job
     serviceAccount:
-      # -- extra annotations for the serviceAccount needed to give the HA related sidecars and the DB job API permissions
+      # -- Extra annotations for the serviceAccount needed to give the DB job API permissions
       annotations: {}
+    # -- Settings for the database initialization / upgrade job needed for HA enabled setups
     dbCreateUpgradeJob:
+      # -- Image settings for the database initialization / upgrade job
       image:
+        # -- Image repository for the database initialization / upgrade job
         repository: registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db
-        # -- tag of the image to use for the dbCreateUpgradeJob. Don't override this if you don't have a specific reason.
+        # -- Tag of the image to use for the dbCreateUpgradeJob. Don't override this if you don't have a specific reason.
         # -- it is going to be chosen based of the zabbix_server pod container otherwise
         tag: ""
+        # -- Pull policy for the db initialization / upgrade job
         pullPolicy: IfNotPresent
+        # -- Pull secrets for the db initialization / upgrade job
         pullSecrets: []
       # -- Additional init containers to start within the dbCreateUpgradeJob pod
       extraInitContainers: []
@@ -100,18 +109,26 @@ zabbixServer:
       extraVolumes: []
       # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
       securityContext: {}
+    # -- The HA labels sidecar checks for the current pod whether it is the active Zabbix Server HA node and sets labels on it, accordingly
     haLabelsSidecar:
+      # -- Image settings for the HA labels sidecar
       image:
+        # -- Repository where to get the image for the HA labels sidecar container
         repository: registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager
+        # -- Tag of the HA labels sidecar container image
         tag: latest
+        # -- Pull policy for the HA labels sidecar image
         pullPolicy: IfNotPresent
+        # -- Pull secrets for the HA labels sidecar image
         pullSecrets: []
+      # -- Label name for the sidecar to set on the zabbix server pods, will be used in the zabbix server Service as an additional selector to point to the active Zabbix Server pod
       labelName: zabbix.com/server-ha-role
+      # -- Resource requests and limits for the HA labels sidecar
       resources: {}
+      # -- Security context for the HA labels sidecar
       securityContext: {}
+      # -- Extra VolumeMounts for the HA labels sidecar
       extraVolumeMounts: []
-
-
   # -- Number of replicas of ``zabbixServer`` module
   replicaCount: 1
   # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
@@ -170,8 +187,7 @@ zabbixServer:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -204,7 +220,7 @@ zabbixServer:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   #- name: ENABLE_TIMESCALEDB
   #  value: "true"
@@ -270,13 +286,13 @@ postgresql:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- Port of service in Kubernetes cluster
+    clusterIP: # -- Port of service in Kubernetes cluster
+
     port: 5432
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra Postgresql runtime parameters ("-c" options)
+    # -- Extra Postgresql runtime parameters ("-c" options)
   extraRuntimeParameters:
     max_connections: 100
   # -- Extra environment variables. A list of additional environment variables.
@@ -349,8 +365,7 @@ zabbixProxy:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -383,7 +398,7 @@ zabbixProxy:
     # -- Annotations for the zabbix-proxy service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the statefulset
   statefulSetAnnotations: {}
@@ -457,8 +472,7 @@ zabbixAgent:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -491,7 +505,7 @@ zabbixAgent:
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- If true, agent pods mounts host / at /host/root
+    # -- If true, agent pods mounts host / at /host/root
   hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
@@ -566,8 +580,7 @@ zabbixWeb:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -592,14 +605,14 @@ zabbixWeb:
     # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.
     #Must be ClientIP or None. Defaults to None. More info:
     #https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
-    sessionAffinity: None    # -- Port of service in Kubernetes cluster
+    sessionAffinity: None # -- Port of service in Kubernetes cluster
     port: 80
     # -- NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer)
     nodePort: 31080
     # -- Annotations for the Zabbix Web
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   #  - name: ZBX_SSO_SETTINGS
   #    value: '{"baseurl": "https://zabbix.example.com"}'
@@ -677,13 +690,13 @@ zabbixWebService:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- Port of service in Kubernetes cluster
+    clusterIP: # -- Port of service in Kubernetes cluster
+
     port: 10053
     # -- Annotations for the Zabbix Web Service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the deployment
   deploymentAnnotations: {}
@@ -747,8 +760,7 @@ zabbixJavaGateway:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -781,7 +793,7 @@ zabbixJavaGateway:
     # -- Annotations for the zabbix-java-gateway service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Additional volumeMounts to the Zabbix Java Gateway container
   extraVolumeMounts: []
@@ -868,10 +880,10 @@ ingress:
   # kubernetes.io/tls-acme: "true"
   # -- Ingress hosts
   hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
+  - host: chart-example.local
+    paths:
+    - path: /
+      pathType: ImplementationSpecific
   # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
@@ -891,7 +903,7 @@ ingressRoute:
   annotations: {}
   # -- Ingressroute entrypoints
   entryPoints:
-    - websecure
+  - websecure
   # -- Ingressroute host name
   hostName: chart-example.local
   # -- IngressRoute TLS configuration
@@ -909,7 +921,7 @@ route:
   tls:
     termination: edge
     #insecureEdgeTerminationPolicy: Redirect
-  # -- Openshift Route extra annotations
+    # -- Openshift Route extra annotations
   annotations: {}
 
 # -- nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
@@ -996,21 +1008,21 @@ karpenter:
   # Operators { In, NotIn, Exists, DoesNotExist, Gt, and Lt } are supported.
   # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators
   requirements:
-    - key: "karpenter.k8s.aws/instance-category"
-      operator: In
-      values: ["c", "m", "r"]
-    - key: "karpenter.k8s.aws/instance-cpu"
-      operator: In
-      values: ["2", "4", "8", "16", "32"]
-    - key: "kubernetes.io/arch"
-      operator: In
-      values: ["amd64"]
-    - key: kubernetes.io/os
-      operator: In
-      values: ["linux"]
-    - key: "karpenter.sh/capacity-type"
-      operator: In
-      values: ["spot", "on-demand"]
+  - key: "karpenter.k8s.aws/instance-category"
+    operator: In
+    values: [ "c", "m", "r" ]
+  - key: "karpenter.k8s.aws/instance-cpu"
+    operator: In
+    values: [ "2", "4", "8", "16", "32" ]
+  - key: "kubernetes.io/arch"
+    operator: In
+    values: [ "amd64" ]
+  - key: kubernetes.io/os
+    operator: In
+    values: [ "linux" ]
+  - key: "karpenter.sh/capacity-type"
+    operator: In
+    values: [ "spot", "on-demand" ]
   # -- Optional, configures IMDS for the instance
   metadataOptions:
     httpEndpoint: enabled
