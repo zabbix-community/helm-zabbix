@@ -900,35 +900,6 @@ ingress:
   # -- pathType is only for k8s >= 1.1=
   pathType: Prefix
 
-# Ingress CRD object for the Traefik Ingresscontroller
-ingressRoute:
-  # -- Enables Traefik IngressRoute
-  enabled: false
-  # -- IngressRoute annotations
-  annotations: {}
-  # -- Ingressroute entrypoints
-  entryPoints:
-  - websecure
-  # -- Ingressroute host name
-  hostName: chart-example.local
-  # -- IngressRoute TLS configuration
-  #tls:
-  #  certResolver: myresolver
-
-route:
-  # -- Enables Route object for Openshift
-  enabled: false
-  # -- Host Name for the route. Can be left empty
-  hostName: chart-example.local
-  # -- Openshift Route wildcardPolicy
-  #wildcardPolicy:
-  # -- Openshift Route TLS settings
-  tls:
-    termination: edge
-    #insecureEdgeTerminationPolicy: Redirect
-  # -- Openshift Route extra annotations
-  annotations: {}
-
 # -- nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 nodeSelector: {}
 
