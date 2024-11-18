@@ -199,8 +199,8 @@ spec:
       {{- range .Values.zabbixProxy.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
-      {{- with .Values.zabbixProxy.extraVolumes }}
       volumes:
+      {{- with .Values.zabbixProxy.extraVolumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.zabbixAgent.extraVolumes }}

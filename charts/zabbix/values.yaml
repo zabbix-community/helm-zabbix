@@ -129,7 +129,6 @@ zabbixServer:
       securityContext: {}
       # -- Extra VolumeMounts for the HA labels sidecar
       extraVolumeMounts: []
-
   # -- Number of replicas of ``zabbixServer`` module
   replicaCount: 1
   # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
@@ -189,7 +188,6 @@ zabbixServer:
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -252,6 +250,8 @@ zabbixServer:
   readinessProbe: {}
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   startupProbe: {}
+
+
 
 # **PostgreSQL** configurations
 postgresql:
@@ -366,7 +366,6 @@ zabbixProxy:
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -474,7 +473,6 @@ zabbixAgent:
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -583,7 +581,6 @@ zabbixWeb:
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -764,7 +761,6 @@ zabbixJavaGateway:
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
     clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local

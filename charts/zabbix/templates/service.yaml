@@ -53,6 +53,9 @@ spec:
       protocol: TCP
   selector:
     app: {{ template "zabbix.fullname" . }}-zabbix-server
+    {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+    {{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.labelName }}: "active"
+    {{- end }}
 {{- end }}
 
 

@@ -1,3 +1,4 @@
+{{- if .Values.karpenter.enabled }}
 # References:
 # https://karpenter.sh/v0.33/getting-started/getting-started-with-karpenter/
 # https://github.com/aws/karpenter/blob/v0.33.0/charts/karpenter/values.yaml
@@ -8,7 +9,6 @@
 # https://karpenter.sh/docs/upgrading/v1beta1-migration/#instanceprofile
 # https://karpenter.sh/docs/upgrading/v1beta1-migration/#helm-values
 # https://karpenter.sh/docs/troubleshooting/
-{{- if .Values.karpenter.enabled }}
 apiVersion: karpenter.sh/v1beta1
 kind: NodePool
 metadata:

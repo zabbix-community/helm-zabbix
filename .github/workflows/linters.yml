@@ -15,4 +15,4 @@ jobs:
       - name: Run code spelling check
         uses: codespell-project/actions-codespell@v2
         with:
-          ignore_words_list: aks
+          ignore_words_list: aks,NotIn
