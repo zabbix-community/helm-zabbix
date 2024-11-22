@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 6.0.0](https://img.shields.io/badge/Version-6.0.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 6.1.0](https://img.shields.io/badge/Version-6.1.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -318,6 +318,7 @@ The following tables lists the configurable parameters of the chart and their de
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
+| extraManifests | list | `[]` | Extra arbitrary Kubernetes manifests to deploy within the release |
 | global.commonLabels | object | `{}` | Labels to apply to all resources. |
 | global.imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images.  For example:  imagePullSecrets:    - name: "image-pull-secret" |
 | ingress.annotations | object | `{}` | Ingress annotations |
