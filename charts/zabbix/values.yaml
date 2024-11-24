@@ -31,20 +31,27 @@ postgresAccess:
   # All relevant components installed by this chart will respect it: zabbixServer, zabbixWeb and postgresql (if enabled)
   #
   # USING ONE SECRET CONTAINING ALL DB RELEVANT SETTINGS
-  # PostgreSQL access details all in one existing secret (matches the structure of secrets the CrunchyData pgo operator generates)
+  # PostgreSQL access details all in one existing secret (matches the structure of secrets the CrunchyData PGO operator 
+  # and the CNPG postgres operator generate)
   # if this option is chosen the below listed settings are being ignored
-  # the secret must contain the following keys:
-  #   * host
-  #   * port
-  #   * user
-  #   * password
-  #   * dbname
   # -- Whether to use the unified PostgreSQL access secret
   useUnifiedSecret: true
   # -- Name of one secret for unified configuration of PostgreSQL access
   unifiedSecretName: zabbixdb-pguser-zabbix
   # -- automatically create secret if not already present (works only in combination with postgresql.enabled=true)
   unifiedSecretAutoCreate: true
+  # -- key of the unified postgres access secret where host ip / dns name for the postgres db is found
+  unifiedSecretHostKey: host
+  # -- key of the unified postgres access secret where the port for the postgres db is found
+  unifiedSecretPortKey: port
+  # -- key of the unified postgres access secret where user name for the postgres db is found
+  unifiedSecretUserKey: user
+  # -- key of the unified postgres access secret where password for the postgres db is found
+  unifiedSecretPasswordKey: password
+  # -- key of the unified postgres access secret where database name for the postgres db is found
+  unifiedSecretDBKey: dbname
+  # -- key of the unified postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then)
+  unifiedSecretSchemaKey: ""
   #
   # If you do NOT want to use one unified secret for all settings, you can still set the credentials manually here.
   # These settings will be used for all components of this chart where it makes sense (zabbix server, postgresql,
@@ -63,6 +70,8 @@ postgresAccess:
   password: "zabbix"
   # -- Name of database
   database: "zabbix"
+  # -- Schema of database. Can be left empty if unifiedSecretSchemaKey is not set
+  schema: ""
 
 # **Zabbix Server** configurations
 zabbixServer:
