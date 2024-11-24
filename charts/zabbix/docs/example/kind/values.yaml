@@ -25,12 +25,12 @@ zabbixServer:
     port: 10051
     nodePort: 31051
   extraEnv:
-    - name: "ZBX_EXAMPLE_MY_ENV_1"
-      value: "true"
-    - name: "ZBX_EXAMPLE_MY_ENV_2"
-      value: "false"
-    - name: "ZBX_EXAMPLE_MY_ENV_3"
-      value: "100"
+  - name: "ZBX_EXAMPLE_MY_ENV_1"
+    value: "true"
+  - name: "ZBX_EXAMPLE_MY_ENV_2"
+    value: "false"
+  - name: "ZBX_EXAMPLE_MY_ENV_3"
+    value: "100"
 #    - name: MY_USERNAME
 #      valueFrom:
 #        secretKeyRef:
@@ -88,12 +88,12 @@ zabbixProxy:
     port: 10051
     nodePort: 31053
   extraEnv:
-    - name: "ZBX_EXAMPLE_MY_ENV_4"
-      value: "true"
-    - name: "ZBX_EXAMPLE_MY_ENV_5"
-      value: "false"
-    - name: "ZBX_EXAMPLE_MY_ENV_6"
-      value: "100"
+  - name: "ZBX_EXAMPLE_MY_ENV_4"
+    value: "true"
+  - name: "ZBX_EXAMPLE_MY_ENV_5"
+    value: "false"
+  - name: "ZBX_EXAMPLE_MY_ENV_6"
+    value: "100"
 #    - name: MY_USERNAME
 #      valueFrom:
 #        secretKeyRef:
@@ -119,12 +119,12 @@ zabbixAgent:
     type: ClusterIP
     port: 10050
   extraEnv:
-    - name: "ZBX_EXAMPLE_MY_ENV_7"
-      value: "true"
-    - name: "ZBX_EXAMPLE_MY_ENV_8"
-      value: "false"
-    - name: "ZBX_EXAMPLE_MY_ENV_9"
-      value: "100"
+  - name: "ZBX_EXAMPLE_MY_ENV_7"
+    value: "true"
+  - name: "ZBX_EXAMPLE_MY_ENV_8"
+    value: "false"
+  - name: "ZBX_EXAMPLE_MY_ENV_9"
+    value: "100"
 #    - name: MY_USERNAME
 #      valueFrom:
 #        secretKeyRef:
@@ -145,12 +145,12 @@ zabbixWeb:
     type: ClusterIP
     port: 80
   extraEnv:
-    - name: "ZBX_EXAMPLE_MY_ENV_10"
-      value: "true"
-    - name: "ZBX_EXAMPLE_MY_ENV_11"
-      value: "false"
-    - name: "ZBX_EXAMPLE_MY_ENV_12"
-      value: "100"
+  - name: "ZBX_EXAMPLE_MY_ENV_10"
+    value: "true"
+  - name: "ZBX_EXAMPLE_MY_ENV_11"
+    value: "false"
+  - name: "ZBX_EXAMPLE_MY_ENV_12"
+    value: "100"
 #    - name: MY_USERNAME
 #      valueFrom:
 #        secretKeyRef:
@@ -170,10 +170,10 @@ ingress:
   # Ingress extra labels
   extraLabels: {}
   hosts:
-    - host: zabbix.local
-      paths:
-        - path: /
-          pathType: Prefix
+  - host: zabbix.local
+    paths:
+    - path: /
+      pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -183,13 +183,3 @@ ingress:
   ingressClassName: nginx
   # pathType is only for k8s >= 1.1=
   pathType: Prefix
-
-karpenter:
-  # Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2.
-  enabled: false
-  clusterName: "CLUSTER_NAME"
-  tag: "karpenter.sh/discovery/CLUSTER_NAME: CLUSTER_NAME"
-  limits:
-    resources:
-      cpu: "20"
-      memory: 100Gi
