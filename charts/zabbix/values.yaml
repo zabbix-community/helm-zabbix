@@ -50,7 +50,7 @@ postgresAccess:
   unifiedSecretPasswordKey: password
   # -- key of the unified postgres access secret where database name for the postgres db is found
   unifiedSecretDBKey: dbname
-  # -- key of the unified postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then)
+  # -- key of the unified postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set) 
   unifiedSecretSchemaKey: ""
   #
   # If you do NOT want to use one unified secret for all settings, you can still set the credentials manually here.
@@ -70,7 +70,7 @@ postgresAccess:
   password: "zabbix"
   # -- Name of database
   database: "zabbix"
-  # -- Schema of database. Can be left empty if unifiedSecretSchemaKey is not set
+  # -- Schema of database. Can be left empty if unifiedSecretSchemaKey is not set. Only being used if external database is used (`postgresql.enabled` not set)
   schema: ""
 
 # **Zabbix Server** configurations
