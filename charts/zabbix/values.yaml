@@ -107,6 +107,9 @@ zabbixServer:
       extraVolumeMounts: []
       # -- Additional volumes to make available to the dbCreateUpgradeJob pod
       extraVolumes: []
+      # -- Resource requests and limits for the dbCreateUpgradeJob pod
+      resources: {}
+      # -- Security context for the HA labels sidecar
       # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
       securityContext: {}
     # -- The HA labels sidecar checks for the current pod whether it is the active Zabbix Server HA node and sets labels on it, accordingly
