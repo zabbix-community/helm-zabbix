@@ -187,8 +187,8 @@ zabbixServer:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -221,7 +221,7 @@ zabbixServer:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   #- name: ENABLE_TIMESCALEDB
   #  value: "true"
@@ -251,8 +251,6 @@ zabbixServer:
   readinessProbe: {}
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   startupProbe: {}
-
-
 
 # **PostgreSQL** configurations
 postgresql:
@@ -287,13 +285,13 @@ postgresql:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- Port of service in Kubernetes cluster
+    clusterIP: # -- Port of service in Kubernetes cluster
+
     port: 5432
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra Postgresql runtime parameters ("-c" options)
+    # -- Extra Postgresql runtime parameters ("-c" options)
   extraRuntimeParameters:
     max_connections: 100
   # -- Extra environment variables. A list of additional environment variables.
@@ -366,8 +364,8 @@ zabbixProxy:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -400,7 +398,7 @@ zabbixProxy:
     # -- Annotations for the zabbix-proxy service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the statefulset
   statefulSetAnnotations: {}
@@ -474,8 +472,8 @@ zabbixAgent:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -508,7 +506,7 @@ zabbixAgent:
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- If true, agent pods mounts host / at /host/root
+    # -- If true, agent pods mounts host / at /host/root
   hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
@@ -583,8 +581,8 @@ zabbixWeb:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -616,7 +614,7 @@ zabbixWeb:
     # -- Annotations for the Zabbix Web
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   #  - name: ZBX_SSO_SETTINGS
   #    value: '{"baseurl": "https://zabbix.example.com"}'
@@ -694,13 +692,13 @@ zabbixWebService:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- Port of service in Kubernetes cluster
+    clusterIP: # -- Port of service in Kubernetes cluster
+
     port: 10053
     # -- Annotations for the Zabbix Web Service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the deployment
   deploymentAnnotations: {}
@@ -764,8 +762,8 @@ zabbixJavaGateway:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP:
-    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
+
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -798,7 +796,7 @@ zabbixJavaGateway:
     # -- Annotations for the zabbix-java-gateway service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Additional volumeMounts to the Zabbix Java Gateway container
   extraVolumeMounts: []
@@ -911,100 +909,6 @@ affinity: {}
 
 # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 securityContext: {}
-
-karpenter:
-  # -- Enables support provisioner of Karpenter. Reference: https://karpenter.sh/.
-  # Tested only using EKS cluster 1.28 in AWS with Karpenter 0.33.0.
-  enabled: false
-  # -- Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter.
-  # Example: testing-my-cluster
-  clusterName: "CHANGE_HERE"
-  # -- Tag of discovery with name of cluster used by Karpenter.
-  # Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter.
-  # The cluster name, security group and subnets must have this tag.
-  tag: "karpenter.sh/discovery"
-  # -- Karpenter adds tags to all resources it creates, including EC2 Instances, EBS volumes, and Launch Templates.
-  # See details: https://karpenter.sh/v0.33/concepts/nodeclasses/#spectags
-  resourceTags:
-    Environment: testing
-    Scost: zabbix
-    product: zabbix
-  # -- Name of instanceProfile EKS cluster. Conflicts with karpenter.role. Must specify one of "role" or "instanceProfile" for Karpenter to launch nodes
-  # Example: Karpenter-testing-my-cluster-2023120112554517810000001e
-  instanceProfile:
-    use: false
-    name: "CHANGE_HERE"
-  # -- Name of role EKS cluster. The Karpenter spec.instanceProfile field has been removed from the EC2NodeClass in favor
-  # of the spec.role field. Karpenter is also removing support for the defaultInstanceProfile specified globally
-  # in the karpenter-global-settings, making the spec.role field required for all EC2NodeClasses.
-  # Karpenter will now auto-generate the instance profile in your EC2NodeClass, given the role that you specify.
-  # If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role
-  # provisioned by that process (which is limited to 64 characters).
-  # Example: karpenter-irsa-testing-my-cluster-2023120421433226760000001e
-  role:
-    use: true
-    name: "CHANGE_HERE"
-  # -- AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned
-  # through this EC2NodeClass but also selecting a group of recommended, latest AMIs by default.
-  # Currently, Karpenter supports amiFamily values AL2, Bottlerocket, Ubuntu, Windows2019, Windows2022 and Custom.
-  # GPUs are only supported by default with AL2 and Bottlerocket.
-  # The AL2 amiFamily does not support ARM64 GPU instance type
-  amiFamily: Bottlerocket
-  # -- Resource limits constrain the total size of the cluster.
-  # Limits prevent Karpenter from creating new instances once the limit is exceeded.
-  limits:
-    cpu: "2"
-    memory: "8Gi"
-  # -- Labels are arbitrary key-values that are applied to all nodes
-  labels:
-    karpenter: "true"
-    app: "zabbix"
-  # -- Priority given to the NodePool when the scheduler considers which NodePool to select.
-  # Higher weights indicate higher priority when comparing NodePools.
-  # Specifying no weight is equivalent to specifying a weight of 0.
-  weight: 10
-  # -- Disruption section which describes the ways in which Karpenter can disrupt and replace Nodes.
-  # Configuration in this section constrains how aggressive Karpenter can be with performing operations
-  # like rolling Nodes due to them hitting their maximum lifetime (expiry) or scaling down nodes to reduce cluster cost
-  disruption:
-    # -- Describes which types of Nodes Karpenter should consider for consolidation.
-    # If using 'WhenUnderutilized', Karpenter will consider all nodes for consolidation and attempt to remove or replace Nodes when it discovers that the Node is underutilized and could be changed to reduce cost
-    # If using `WhenEmpty`, Karpenter will only consider nodes for consolidation that contain no workload pods
-    consolidationPolicy: "WhenEmpty"
-    # -- The amount of time Karpenter should wait after discovering a consolidation decision
-    # This value can currently only be set when the consolidationPolicy is 'WhenEmpty'
-    # You can choose to disable consolidation entirely by setting the string value 'Never' here
-    consolidateAfter: "30s"
-    # -- The amount of time a Node can live on the cluster before being removed
-    # Avoiding long-running Nodes helps to reduce security vulnerabilities as well as to reduce the chance of issues that can plague Nodes with long uptimes such as file fragmentation or memory leaks from system processes
-    # You can choose to disable expiration entirely by setting the string value 'Never' here
-    expireAfter: "720h"
-  # -- Requirements that constrain the parameters of provisioned nodes.
-  # These requirements are combined with pod.spec.topologySpreadConstraints, pod.spec.affinity.nodeAffinity, pod.spec.affinity.podAffinity, and pod.spec.nodeSelector rules.
-  # Operators { In, NotIn, Exists, DoesNotExist, Gt, and Lt } are supported.
-  # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators
-  requirements:
-  - key: "karpenter.k8s.aws/instance-category"
-    operator: In
-    values: [ "c", "m", "r" ]
-  - key: "karpenter.k8s.aws/instance-cpu"
-    operator: In
-    values: [ "2", "4", "8", "16", "32" ]
-  - key: "kubernetes.io/arch"
-    operator: In
-    values: [ "amd64" ]
-  - key: kubernetes.io/os
-    operator: In
-    values: [ "linux" ]
-  - key: "karpenter.sh/capacity-type"
-    operator: In
-    values: [ "spot", "on-demand" ]
-  # -- Optional, configures IMDS for the instance
-  metadataOptions:
-    httpEndpoint: enabled
-    httpProtocolIPv6: disabled
-    httpPutResponseHopLimit: 2
-    httpTokens: required
 
 serviceAccount:
   # -- Specifies whether a service account should be created.
