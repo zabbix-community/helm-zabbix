@@ -1055,3 +1055,6 @@ rbac:
   #    resources:
   #      - nodes/proxy
   #    verbs: [ "get", "list", "watch" ]
+
+# -- Extra arbitrary Kubernetes manifests to deploy within the release
+extraManifests: []
