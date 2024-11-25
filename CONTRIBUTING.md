@@ -131,7 +131,7 @@ cd charts/zabbix
 make lint
 ```
 
-* Analyse the changes of the PRs merged and set a new release using the follow aproach:
+* Analyse the changes of the PRs merged and set a new release using the follow approach:
 
 A **major** version" should be the "dot-release". Example: *6.0.2* -> *6.1.0* is be a **major release update**. Users have to check whether they have to modify their values.yaml, and we need to write a short explanation of what has changed in the ``chart/zabbix/README.md.gotmpl``.
 
