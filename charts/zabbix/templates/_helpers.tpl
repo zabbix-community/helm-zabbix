@@ -134,7 +134,7 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
   valueFrom:
     secretKeyRef:
       name: {{ .Values.postgresAccess.unifiedSecretName }}
-      key: {{ .Values.postgresAccess.unifiedPortKey }}
+      key: {{ .Values.postgresAccess.unifiedSecretPortKey }}
       optional: true
 {{- else }}
 - name: {{ $hostvar }}
@@ -163,6 +163,7 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
 {{- if and (not .Values.postgresql.enabled) .Values.postgresAccess.unifiedSecretSchemaKey }}
 - name: {{ $schemavar }}
   valueFrom:
+    secretKeyRef:
       name: {{ .Values.postgresAccess.unifiedSecretName }}
       key: {{ .Values.postgresAccess.unifiedSecretSchemaKey }}
 {{- end }}
