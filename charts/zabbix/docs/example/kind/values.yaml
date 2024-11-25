@@ -1,6 +1,6 @@
 # Custom values for zabbix.
 
-zabbixImageTag: alpine-7.0.5
+zabbixImageTag: alpine-7.0.6
 
 postgresAccess:
   useUnifiedSecret: true
@@ -10,6 +10,8 @@ postgresAccess:
 zabbixServer:
   enabled: true
   replicaCount: 2
+  zabbixServerHA:
+    enabled: true
   haNodesAutoClean:
     enabled: true
     image:
