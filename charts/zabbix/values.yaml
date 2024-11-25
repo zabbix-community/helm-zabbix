@@ -187,8 +187,8 @@ zabbixServer:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
+    clusterIP:
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -221,7 +221,7 @@ zabbixServer:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   #- name: ENABLE_TIMESCALEDB
   #  value: "true"
@@ -285,13 +285,13 @@ postgresql:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP: # -- Port of service in Kubernetes cluster
-
+    clusterIP:
+    # -- Port of service in Kubernetes cluster
     port: 5432
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-    # -- Extra Postgresql runtime parameters ("-c" options)
+  # -- Extra Postgresql runtime parameters ("-c" options)
   extraRuntimeParameters:
     max_connections: 100
   # -- Extra environment variables. A list of additional environment variables.
@@ -364,8 +364,8 @@ zabbixProxy:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
+    clusterIP:
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -398,7 +398,7 @@ zabbixProxy:
     # -- Annotations for the zabbix-proxy service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the statefulset
   statefulSetAnnotations: {}
@@ -472,8 +472,8 @@ zabbixAgent:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
+    clusterIP:
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -506,7 +506,7 @@ zabbixAgent:
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-    # -- If true, agent pods mounts host / at /host/root
+  # -- If true, agent pods mounts host / at /host/root
   hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
@@ -581,8 +581,8 @@ zabbixWeb:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
+    clusterIP:
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -614,7 +614,7 @@ zabbixWeb:
     # -- Annotations for the Zabbix Web
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   #  - name: ZBX_SSO_SETTINGS
   #    value: '{"baseurl": "https://zabbix.example.com"}'
@@ -692,13 +692,13 @@ zabbixWebService:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually,
     #is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP: # -- Port of service in Kubernetes cluster
-
+    clusterIP:
+    # -- Port of service in Kubernetes cluster
     port: 10053
     # -- Annotations for the Zabbix Web Service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the deployment
   deploymentAnnotations: {}
@@ -762,8 +762,8 @@ zabbixJavaGateway:
     type: ClusterIP
     # -- clusterIP is the IP address of the service and is usually assigned randomly.
     #If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service.
-    clusterIP: # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
-
+    clusterIP:
+    # -- externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses
     #(NodePorts, ExternalIPs, and LoadBalancer IPs). "Local" to preserve sender's IP address. Please note that this might not work on multi-node clusters,
     #depending on your network settings.
     #externalTrafficPolicy: Local
@@ -796,7 +796,7 @@ zabbixJavaGateway:
     # -- Annotations for the zabbix-java-gateway service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-    # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Additional volumeMounts to the Zabbix Java Gateway container
   extraVolumeMounts: []
