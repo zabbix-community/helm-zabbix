@@ -105,6 +105,9 @@ spec:
           {{- end }}
           env:
             {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 12 }}
+            {{- with .Values.zabbixServer.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           securityContext:
             {{- toYaml .Values.zabbixServer.securityContext | nindent 12 }}
           resources:

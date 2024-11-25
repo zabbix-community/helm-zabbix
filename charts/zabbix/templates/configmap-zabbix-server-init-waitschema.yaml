@@ -147,7 +147,7 @@ data:
 
             if [ -n "${DBVERSION_TABLE_EXISTS}" ]; then
                 echo "** Table '${DB_SERVER_DBNAME}.dbversion' exists."
-                ZBX_DB_VERSION=$(psql_query "SELECT mandatory FROM dbversion" "${DB_SERVER_DBNAME}")
+                ZBX_DB_VERSION=$(psql_query "SELECT mandatory FROM ${DB_SERVER_SCHEMA}.dbversion" "${DB_SERVER_DBNAME}")
             fi
 
             if [ -n "${ZBX_DB_VERSION}" ]; then
@@ -181,7 +181,7 @@ data:
                 if [ ${ZBX_SRV_VERSION_MAJOR} -eq ${ZBX_DB_VERSION_MAJOR} ]; then
                     echo "** schema is the appropriate version, continuing checks"
 
-                    DB_AMOUNT_USERS=$(psql_query "SELECT count(*) FROM users" "${DB_SERVER_DBNAME}")
+                    DB_AMOUNT_USERS=$(psql_query "SELECT count(*) FROM ${DB_SERVER_SCHEMA}.users" "${DB_SERVER_DBNAME}")
                     if [ ${DB_AMOUNT_USERS} -gt 0 ]; then
                         echo "** amount of users in users table is ${DB_AMOUNT_USERS}, letting the Zabbix Server container start"
                         break
