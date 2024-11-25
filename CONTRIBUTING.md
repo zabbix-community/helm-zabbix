@@ -8,8 +8,7 @@
 # Contributing
 
 * Configure authentication on your Github account to use the SSH protocol instead of HTTP. Watch this tutorial to learn how to set up: https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account
-* Have the ``make`` and ``docker`` commands installed on your system. With this, you don't need the below mentioned ``helm`` and ``helm-docs`` and use containers for the needed steps instead. See this [tutorial](charts/zabbix/docs/requirements.md).
-
+* Have the ``make`` and ``docker`` commands installed on your system. With this, you don't need the below mentioned ``helm`` and use containers for the needed steps instead. See this [tutorial](charts/zabbix/docs/requirements.md).
 * Create a fork this repository.
 * Clone the forked repository to your local system:
 
@@ -38,11 +37,13 @@ git branch
 ```
 
 * Make your changes and tests to the new branch.
-* Keep the ``charts/zabbix/values.yaml`` file updated with working default values ​​in case any variables are referenced in the helm chart template files.
-* Change the ``version`` and ``appVersion`` parameters (helm chart and Zabbix version respectively) in ``charts/zabbix/Chart.yaml`` and ``charts/zabbix/artifacthub-pkg.yml`` files.
-* Verify your changed do not introduce syntactical/semantic errors:
+* Keep the ``charts/zabbix/values.yaml`` file updated with working default values ​​in case any variables are referenced in the helm chart template files
+* Change the ``appVersion`` parameter in ``charts/zabbix/Chart.yaml`` in case you have updated the ``zabbixImageTag`` in ``charts/zabbix/values.yaml`` (upgrade to a newer version released by Zabbix)
+* Verify your changes do not introduce syntactical/semantic errors:
+* Do NOT change ``version`` in ``charts/zabbix/chart.yaml`` nor in ``charts/zabbix/artifacthub-pkg.yml``, as this is now part of the release process issued by the code owners
+* Make any changes you want in ``charts/zabbix/README.md`` in ``charts/zabbix/README.md.gotmpl``, out of which ``charts/zabbix/README.md`` will be generated using ``helm-docs`` during the version release process by the code owners
 
-Method using make and docker:
+Method to check for syntactical/semantic errors using ``make`` and ``docker``:
 
 ```bash
 cd charts/zabbix
@@ -54,22 +55,6 @@ make lint
 ```bash
 cd charts/zabbix
 helm lint .
-```
-
-* Run command ``helm-docs`` to update content of ``README.md`` file using the ``README.md.gotmpl`` template. More info about [helm-docs](https://github.com/norwoodj/helm-docs).
-
-Method using make and docker:
-
-```bash
-cd charts/zabbix
-make gen-docs
-```
-
-Method using locally installed ``helm-docs`` command:
-
-```bash
-cd charts/zabbix
-helm-docs
 ```
 
 * Commit the changes to the branch.
@@ -118,6 +103,106 @@ git push origin master --tags
 
 Reference:
 * https://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/
+
+
+## For code mainteners only
+
+To generate a new release of the helm chart, follow these instructions:
+
+* Review and merge the opened PRs
+* Run local tests
+* Create a branch. Example:
+
+```
+git checkout -b BRANCH_NAME
+```
+
+Make sure you are on the correct branch using the following command. The branch in use will show with a '*' before the name.
+
+```
+git branch
+```
+
+* Make your changes and tests to the new branch
+* Verify the syntax errors using the follow commands:
+
+```
+cd charts/zabbix
+make lint
+```
+
+* Analyse the changes of the PRs merged and set a new release using the follow approach:
+
+A **major** version" should be the "dot-release". Example: *6.0.2* -> *6.1.0* is be a **major release update**. Users have to check whether they have to modify their values.yaml, and we need to write a short explanation of what has changed in the ``chart/zabbix/README.md.gotmpl``.
+
+A **minor** is the "dot-dot" release. Example: *6.0.2* -> *6.0.3* is **minor upgrade**, no changes in any APIs, interfaces etc. should be necessary.
+
+* Change the ``version`` and ``appVersion`` parameters (helm chart and Zabbix version, respectively) in ``charts/zabbix/Chart.yaml`` and ``charts/zabbix/artifacthub-pkg.yml`` files.
+* Run the following commands to update the documentation of the helm chart.
+
+```
+cd charts/zabbix
+make gen-docs
+```
+
+* Commit the changes to the branch.
+* Push files to repository remote with command:
+
+```
+git push --set-upstream origin BRANCH_NAME
+```
+
+* Create Pull Request (PR) to the master branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+* Update the content with the suggestions of the reviewer (if necessary).
+* After your pull request is merged to the master branch, update your local clone:
+
+```
+git checkout master
+git pull upstream master
+```
+
+* Clean up after your pull request is merged with command:
+
+```
+git branch -d BRANCH_NAME
+```
+
+Then you can update the master branch in your forked repository.
+
+```
+git push origin master
+```
+
+And push the deletion of the feature branch to your GitHub repository with command:
+
+```
+git push --delete origin BRANCH_NAME
+```
+
+* Create a new tag to generate a new release of the helm chart using the following commands:
+
+```
+git tag -a 6.1.0 -m "New release" #example
+git push upstream --tags
+```
+
+* The before commands will start the pipeline and will generate a new release and tag in standad ``zabbix-6.0.0``.
+* To keep your fork in sync with the original repository, use these commands:
+
+```
+git pull upstream master
+git pull upstream master --tags
+
+git push origin master
+git push origin master --tags
+```
+
+* After this, edit and adjust the text generated automatically for new release and adjust the release notes follow the examples the other releases published in https://github.com/zabbix-community/helm-zabbix/releases
+
+# Reference:
+
+* https://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/
+
 
 # About Visual Code (VSCode)
 

@@ -142,6 +142,13 @@ helm uninstall zabbix -n monitoring
 
 # Breaking changes of this helm chart
 
+## Version 6.1.0
+* Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: #123
+* Removing support for [karpenter](https://karpenter.sh) due to the more generalistic approach: #121
+* Adding support to deploy any arbitrary manifests together with this Helm Chart by embedding them in the `.Values.extraManifests` list (#121)
+* From now on, the keys to use for a *unifiedSecret* to configure postgresql access globally for all relevant components that this Helm Chart deploys, can be configured in values.yaml
+* It is now possible to use a different Schema other than "public" in Postgresql database, when using an external database
+
 ## Version 6.0.0
 
 * New implementation of native Zabbix Server High Availability (see [Support of native Zabbix Server High Availability](#support-of-native-zabbix-server-high-availability) section)
