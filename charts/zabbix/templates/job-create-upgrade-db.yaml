@@ -80,6 +80,8 @@ spec:
         {{- end }}
         securityContext:
           {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.resources | nindent 10 }}
         env:
           - name: ZBX_SERVER_DEPLOYMENT_NAME
             value: {{ template "zabbix.fullname" . }}-zabbix-server
