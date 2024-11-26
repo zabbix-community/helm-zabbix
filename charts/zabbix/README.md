@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 6.0.0](https://img.shields.io/badge/Version-6.0.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 6.1.0](https://img.shields.io/badge/Version-6.1.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -140,6 +140,13 @@ helm uninstall zabbix -n monitoring
 ```
 
 # Breaking changes of this helm chart
+
+## Version 6.1.0
+* Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: #123
+* Removing support for [karpenter](https://karpenter.sh) due to the more generalistic approach: #121
+* Adding support to deploy any arbitrary manifests together with this Helm Chart by embedding them in the `.Values.extraManifests` list (#121)
+* From now on, the keys to use for a *unifiedSecret* to configure postgresql access globally for all relevant components that this Helm Chart deploys, can be configured in values.yaml
+* It is now possible to use a different Schema other than "public" in Postgresql database, when using an external database
 
 ## Version 6.0.0
 
@@ -318,6 +325,7 @@ The following tables lists the configurable parameters of the chart and their de
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
+| extraManifests | list | `[]` | Extra arbitrary Kubernetes manifests to deploy within the release |
 | global.commonLabels | object | `{}` | Labels to apply to all resources. |
 | global.imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images.  For example:  imagePullSecrets:    - name: "image-pull-secret" |
 | ingress.annotations | object | `{}` | Ingress annotations |
@@ -325,33 +333,20 @@ The following tables lists the configurable parameters of the chart and their de
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
 | ingress.pathType | string | `"Prefix"` | pathType is only for k8s >= 1.1= |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
-| ingressRoute.annotations | object | `{}` | IngressRoute annotations |
-| ingressRoute.enabled | bool | `false` | Enables Traefik IngressRoute |
-| ingressRoute.entryPoints | list | `["websecure"]` | Ingressroute entrypoints |
-| ingressRoute.hostName | string | `"chart-example.local"` | Ingressroute host name |
-| karpenter.amiFamily | string | `"Bottlerocket"` | AMIFamily is a required field, dictating both the default bootstrapping logic for nodes provisioned through this EC2NodeClass but also selecting a group of recommended, latest AMIs by default. Currently, Karpenter supports amiFamily values AL2, Bottlerocket, Ubuntu, Windows2019, Windows2022 and Custom. GPUs are only supported by default with AL2 and Bottlerocket. The AL2 amiFamily does not support ARM64 GPU instance type |
-| karpenter.clusterName | string | `"CHANGE_HERE"` | Name of cluster. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. Example: testing-my-cluster |
-| karpenter.disruption | object | `{"consolidateAfter":"30s","consolidationPolicy":"WhenEmpty","expireAfter":"720h"}` | Disruption section which describes the ways in which Karpenter can disrupt and replace Nodes. Configuration in this section constrains how aggressive Karpenter can be with performing operations like rolling Nodes due to them hitting their maximum lifetime (expiry) or scaling down nodes to reduce cluster cost |
-| karpenter.disruption.consolidateAfter | string | `"30s"` | The amount of time Karpenter should wait after discovering a consolidation decision This value can currently only be set when the consolidationPolicy is 'WhenEmpty' You can choose to disable consolidation entirely by setting the string value 'Never' here |
-| karpenter.disruption.consolidationPolicy | string | `"WhenEmpty"` | Describes which types of Nodes Karpenter should consider for consolidation. If using 'WhenUnderutilized', Karpenter will consider all nodes for consolidation and attempt to remove or replace Nodes when it discovers that the Node is underutilized and could be changed to reduce cost If using `WhenEmpty`, Karpenter will only consider nodes for consolidation that contain no workload pods |
-| karpenter.disruption.expireAfter | string | `"720h"` | The amount of time a Node can live on the cluster before being removed Avoiding long-running Nodes helps to reduce security vulnerabilities as well as to reduce the chance of issues that can plague Nodes with long uptimes such as file fragmentation or memory leaks from system processes You can choose to disable expiration entirely by setting the string value 'Never' here |
-| karpenter.enabled | bool | `false` | Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.28 in AWS with Karpenter 0.33.0. |
-| karpenter.instanceProfile | object | `{"name":"CHANGE_HERE","use":false}` | Name of instanceProfile EKS cluster. Conflicts with karpenter.role. Must specify one of "role" or "instanceProfile" for Karpenter to launch nodes Example: Karpenter-testing-my-cluster-2023120112554517810000001e |
-| karpenter.labels | object | `{"app":"zabbix","karpenter":"true"}` | Labels are arbitrary key-values that are applied to all nodes |
-| karpenter.limits | object | `{"cpu":"2","memory":"8Gi"}` | Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded. |
-| karpenter.metadataOptions | object | `{"httpEndpoint":"enabled","httpProtocolIPv6":"disabled","httpPutResponseHopLimit":2,"httpTokens":"required"}` | Optional, configures IMDS for the instance |
-| karpenter.requirements | list | `[{"key":"karpenter.k8s.aws/instance-category","operator":"In","values":["c","m","r"]},{"key":"karpenter.k8s.aws/instance-cpu","operator":"In","values":["2","4","8","16","32"]},{"key":"kubernetes.io/arch","operator":"In","values":["amd64"]},{"key":"kubernetes.io/os","operator":"In","values":["linux"]},{"key":"karpenter.sh/capacity-type","operator":"In","values":["spot","on-demand"]}]` | Requirements that constrain the parameters of provisioned nodes. These requirements are combined with pod.spec.topologySpreadConstraints, pod.spec.affinity.nodeAffinity, pod.spec.affinity.podAffinity, and pod.spec.nodeSelector rules. Operators { In, NotIn, Exists, DoesNotExist, Gt, and Lt } are supported. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators |
-| karpenter.resourceTags | object | `{"Environment":"testing","Scost":"zabbix","product":"zabbix"}` | Karpenter adds tags to all resources it creates, including EC2 Instances, EBS volumes, and Launch Templates. See details: https://karpenter.sh/v0.33/concepts/nodeclasses/#spectags |
-| karpenter.role | object | `{"name":"CHANGE_HERE","use":true}` | Name of role EKS cluster. The Karpenter spec.instanceProfile field has been removed from the EC2NodeClass in favor of the spec.role field. Karpenter is also removing support for the defaultInstanceProfile specified globally in the karpenter-global-settings, making the spec.role field required for all EC2NodeClasses. Karpenter will now auto-generate the instance profile in your EC2NodeClass, given the role that you specify. If using the Karpenter Getting Started Guide to deploy Karpenter, you can use the karpenter-irsa-$CLUSTER_NAME-$ID role provisioned by that process (which is limited to 64 characters). Example: karpenter-irsa-testing-my-cluster-2023120421433226760000001e |
-| karpenter.tag | string | `"karpenter.sh/discovery"` | Tag of discovery with name of cluster used by Karpenter. Change the term CHANGE_HERE by EKS cluster name if you want to use Karpenter. The cluster name, security group and subnets must have this tag. |
-| karpenter.weight | int | `10` | Priority given to the NodePool when the scheduler considers which NodePool to select. Higher weights indicate higher priority when comparing NodePools. Specifying no weight is equivalent to specifying a weight of 0. |
 | nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | postgresAccess.database | string | `"zabbix"` | Name of database |
 | postgresAccess.host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
 | postgresAccess.password | string | `"zabbix"` | Password of database - ignored if passwordSecret is set |
 | postgresAccess.port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true |
+| postgresAccess.schema | string | `""` | Schema of database. Can be left empty if unifiedSecretSchemaKey is not set. Only being used if external database is used (`postgresql.enabled` not set) |
 | postgresAccess.unifiedSecretAutoCreate | bool | `true` | automatically create secret if not already present (works only in combination with postgresql.enabled=true) |
+| postgresAccess.unifiedSecretDBKey | string | `"dbname"` | key of the unified postgres access secret where database name for the postgres db is found |
+| postgresAccess.unifiedSecretHostKey | string | `"host"` | key of the unified postgres access secret where host ip / dns name for the postgres db is found |
 | postgresAccess.unifiedSecretName | string | `"zabbixdb-pguser-zabbix"` | Name of one secret for unified configuration of PostgreSQL access |
+| postgresAccess.unifiedSecretPasswordKey | string | `"password"` | key of the unified postgres access secret where password for the postgres db is found |
+| postgresAccess.unifiedSecretPortKey | string | `"port"` | key of the unified postgres access secret where the port for the postgres db is found |
+| postgresAccess.unifiedSecretSchemaKey | string | `""` | key of the unified postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set)  |
+| postgresAccess.unifiedSecretUserKey | string | `"user"` | key of the unified postgres access secret where user name for the postgres db is found |
 | postgresAccess.useUnifiedSecret | bool | `true` | Whether to use the unified PostgreSQL access secret |
 | postgresAccess.user | string | `"zabbix"` | User of database |
 | postgresql.containerAnnotations | object | `{}` | Annotations to add to the containers |
@@ -384,10 +379,6 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.statefulSetLabels | object | `{}` | Labels to add to the statefulset |
 | rbac.additionalRulesForClusterRole | list | `[]` |  |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
-| route.annotations | object | `{}` | Openshift Route extra annotations |
-| route.enabled | bool | `false` | Enables Route object for Openshift |
-| route.hostName | string | `"chart-example.local"` | Host Name for the route. Can be left empty |
-| route.tls | object | `{"termination":"edge"}` | Openshift Route TLS settings |
 | securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | serviceAccount.annotations | object | `{}` | Optional additional annotations to add to the Service Account. |
 | serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for a Service Account. |
@@ -447,7 +438,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixBrowserMonitoring.webdriver.image.tag | string | `"127.0-chromedriver-127.0-grid-4.23.0-20240727"` | WebDriver container image tag, See https://hub.docker.com/r/selenium/standalone-chrome/tags |
 | zabbixBrowserMonitoring.webdriver.name | string | `"chrome"` | WebDriver container name |
 | zabbixBrowserMonitoring.webdriver.port | int | `4444` | WebDriver container port |
-| zabbixImageTag | string | `"ubuntu-7.0.3"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixImageTag | string | `"ubuntu-7.0.6"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 6.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixJavaGateway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. ZABBIX_OPTIONS: Java Gateway Service Name |
 | zabbixJavaGateway.ZBX_START_POLLERS | int | `5` | This variable is specified amount of pollers. By default, value is 5 |
@@ -571,8 +562,8 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixServer.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixServer.zabbixServerHA | object | `{"dbCreateUpgradeJob":{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"securityContext":{}},"enabled":true,"haLabelsSidecar":{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}},"role":{"annotations":{}},"roleBinding":{"annotations":{}},"serviceAccount":{"annotations":{}}}` | Section responsible for native Zabbix Server High Availability support of this Helm Chart |
-| zabbixServer.zabbixServerHA.dbCreateUpgradeJob | object | `{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"securityContext":{}}` | Settings for the database initialization / upgrade job needed for HA enabled setups |
+| zabbixServer.zabbixServerHA | object | `{"dbCreateUpgradeJob":{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"resources":{},"securityContext":{}},"enabled":true,"haLabelsSidecar":{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}},"role":{"annotations":{}},"roleBinding":{"annotations":{}},"serviceAccount":{"annotations":{}}}` | Section responsible for native Zabbix Server High Availability support of this Helm Chart |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob | object | `{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"resources":{},"securityContext":{}}` | Settings for the database initialization / upgrade job needed for HA enabled setups |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers | list | `[]` | Additional containers to start within the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraInitContainers | list | `[]` | Additional init containers to start within the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraPodSpecs | object | `{}` | Additional specifications to the dbCreateUpgradeJob pod |
@@ -583,6 +574,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullSecrets | list | `[]` | Pull secrets for the db initialization / upgrade job |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.repository | string | `"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db"` | Image repository for the database initialization / upgrade job |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag | string | `""` | it is going to be chosen based of the zabbix_server pod container otherwise |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.resources | object | `{}` | Resource requests and limits for the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.zabbixServerHA.enabled | bool | `true` | Enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1 |
 | zabbixServer.zabbixServerHA.haLabelsSidecar | object | `{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}}` | The HA labels sidecar checks for the current pod whether it is the active Zabbix Server HA node and sets labels on it, accordingly |
