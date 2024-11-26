@@ -1,6 +1,6 @@
 # Helm Zabbix
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Release Charts](https://github.com/zabbix-community/helm-zabbix/workflows/Release%20Charts/badge.svg?branch=master) [![Releases downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total.svg)](https://github.com/zabbix-community/helm-zabbix/releases)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Release Charts](https://github.com/zabbix-community/helm-zabbix/workflows/Release%20Charts/badge.svg?branch=main) [![Releases downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total.svg)](https://github.com/zabbix-community/helm-zabbix/releases)
 
 This is the new home of the Zabbix helm chart. It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
 

@@ -10,7 +10,7 @@ on:
   push:
     # Sequence of patterns matched against refs/heads
     #branches:
-    #  - master
+    #  - main
     # Sequence of patterns matched against refs/tags
     tags:
       - '*'
