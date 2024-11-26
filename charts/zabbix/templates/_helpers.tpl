@@ -176,3 +176,17 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
 {{- end }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Render a piece of yaml that defines manifests
+Usage:
+{{ include "zabbix.tools.render" ( dict "value" .Values.path.to.value "context" $ ) }}
+*/}}
+{{- define "zabbix.tools.render" -}}
+{{- $value := typeIs "string" .value | ternary .value (.value | toYaml) }}
+{{- if contains "{{" $value }}
+  {{- tpl $value .context }}
+{{- else }}
+  {{- $value }}
+{{- end }}
+{{- end -}}
