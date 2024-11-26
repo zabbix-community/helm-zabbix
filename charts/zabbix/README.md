@@ -43,7 +43,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='6.0.0'
+export ZABBIX_CHART_VERSION='6.1.0'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -142,6 +142,7 @@ helm uninstall zabbix -n monitoring
 # Breaking changes of this helm chart
 
 ## Version 6.1.0
+
 * Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: #123
 * Removing support for [karpenter](https://karpenter.sh) due to the more generalistic approach: #121
 * Adding support to deploy any arbitrary manifests together with this Helm Chart by embedding them in the `.Values.extraManifests` list (#121)
@@ -733,9 +734,6 @@ postgresql:
 ## Configure the way how to expose Zabbix service
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
-- **IngressRoute**: The custom resource definition if you use the
-[Traefik](https://traefik.io/traefik/) ingress controller.
-- **Route**: The ingress controller used by Red Hat Openshift, based on HAProxy
 - **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the
 service only reachable from within the cluster.
 - **NodePort**: Exposes the service on each Node's IP at a static port (the NodePort).
