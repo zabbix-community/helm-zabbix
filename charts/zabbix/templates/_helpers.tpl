@@ -109,6 +109,7 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
 {{- $uservar := "POSTGRES_USER" }}
 {{- $passwordvar := "POSTGRES_PASSWORD" }}
 {{- $dbvar := "POSTGRES_DB" }}
+{{- $schemavar := "DB_SERVER_SCHEMA" }}
 {{/* special settings for the DB client (autoclean cron job) container, needs different env variable names */}}
 {{- if eq $cntxt "db_client" }}
 {{- $hostvar = "PGHOST" }}
@@ -128,12 +129,12 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
   valueFrom:
     secretKeyRef:
       name: {{ .Values.postgresAccess.unifiedSecretName }}
-      key: host
+      key: {{ .Values.postgresAccess.unifiedSecretHostKey }}
 - name: {{ $portvar }}
   valueFrom:
     secretKeyRef:
       name: {{ .Values.postgresAccess.unifiedSecretName }}
-      key: port
+      key: {{ .Values.postgresAccess.unifiedSecretPortKey }}
       optional: true
 {{- else }}
 - name: {{ $hostvar }}
@@ -146,19 +147,26 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
   valueFrom:
     secretKeyRef:
       name: {{ .Values.postgresAccess.unifiedSecretName }}
-      key: user
+      key: {{ .Values.postgresAccess.unifiedSecretUserKey }}
       optional: true
 - name: {{ $passwordvar }}
   valueFrom:
     secretKeyRef:
       name: {{ .Values.postgresAccess.unifiedSecretName }}
-      key: password
+      key: {{ .Values.postgresAccess.unifiedSecretPasswordKey }}
 - name: {{ $dbvar }}
   valueFrom:
     secretKeyRef:
       name: {{ .Values.postgresAccess.unifiedSecretName }}
-      key: dbname
+      key: {{ .Values.postgresAccess.unifiedSecretDBKey }}
       optional: true
+{{- if and (not .Values.postgresql.enabled) .Values.postgresAccess.unifiedSecretSchemaKey }}
+- name: {{ $schemavar }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.postgresAccess.unifiedSecretName }}
+      key: {{ .Values.postgresAccess.unifiedSecretSchemaKey }}
+{{- end }}
 {{- else }}
 - name: {{ $uservar }}
   value: {{ .Values.postgresAccess.user | quote }}
@@ -173,6 +181,10 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
   {{- end }}
 - name: {{ $dbvar }}
   value: {{ .Values.postgresAccess.database | quote }}
+{{- if and (not .Values.postgresql.enabled) .Values.postgresAccess.schema }}
+- name: {{ $schemavar }}
+  value: {{ .Values.postgresAccess.schema }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end -}}
