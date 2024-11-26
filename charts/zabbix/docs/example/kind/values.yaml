@@ -172,10 +172,10 @@ ingress:
   # Ingress extra labels
   extraLabels: {}
   hosts:
-    - host: zabbix.local
-      paths:
-        - path: /
-          pathType: Prefix
+  - host: zabbix.local
+    paths:
+    - path: /
+      pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -185,13 +185,3 @@ ingress:
   ingressClassName: nginx
   # pathType is only for k8s >= 1.1=
   pathType: Prefix
-
-karpenter:
-  # Enables support provisioner of Karpenter. Reference: https://karpenter.sh/. Tested only using EKS cluster 1.23 in AWS with Karpenter 0.19.2.
-  enabled: false
-  clusterName: "CLUSTER_NAME"
-  tag: "karpenter.sh/discovery/CLUSTER_NAME: CLUSTER_NAME"
-  limits:
-    resources:
-      cpu: "20"
-      memory: 100Gi
