@@ -1,6 +1,7 @@
 <!-- TOC -->
 
 - [Contributing](#contributing)
+  - [For code mainteners only](#for-code-mainteners-only)
 - [About Visual Code (VSCode)](#about-visual-code-vscode)
 
 <!-- TOC -->
@@ -101,9 +102,9 @@ git push origin master
 git push origin master --tags
 ```
 
-Reference:
-* https://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/
+References:
 
+* https://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/
 
 ## For code mainteners only
 
@@ -113,20 +114,20 @@ To generate a new release of the helm chart, follow these instructions:
 * Run local tests
 * Create a branch. Example:
 
-```
+```bash
 git checkout -b BRANCH_NAME
 ```
 
 Make sure you are on the correct branch using the following command. The branch in use will show with a '*' before the name.
 
-```
+```bash
 git branch
 ```
 
 * Make your changes and tests to the new branch
 * Verify the syntax errors using the follow commands:
 
-```
+```bash
 cd charts/zabbix
 make lint
 ```
@@ -138,9 +139,11 @@ A **major** version" should be the "dot-release". Example: *6.0.2* -> *6.1.0* is
 A **minor** is the "dot-dot" release. Example: *6.0.2* -> *6.0.3* is **minor upgrade**, no changes in any APIs, interfaces etc. should be necessary.
 
 * Change the ``version`` and ``appVersion`` parameters (helm chart and Zabbix version, respectively) in ``charts/zabbix/Chart.yaml`` and ``charts/zabbix/artifacthub-pkg.yml`` files.
+* Change the ``createdAt`` parameter in ``charts/zabbix/artifacthub-pkg.yml`` file using the output of the command ``date +%Y-%m-%dT%TZ`` command.
+* Change the ``ZABBIX_CHART_VERSION`` variable in ``charts/zabbix/artifacthub-pkg.yml`` file.
 * Run the following commands to update the documentation of the helm chart.
 
-```
+```bash
 cd charts/zabbix
 make gen-docs
 ```
@@ -148,7 +151,7 @@ make gen-docs
 * Commit the changes to the branch.
 * Push files to repository remote with command:
 
-```
+```bash
 git push --set-upstream origin BRANCH_NAME
 ```
 
@@ -156,32 +159,32 @@ git push --set-upstream origin BRANCH_NAME
 * Update the content with the suggestions of the reviewer (if necessary).
 * After your pull request is merged to the master branch, update your local clone:
 
-```
+```bash
 git checkout master
 git pull upstream master
 ```
 
 * Clean up after your pull request is merged with command:
 
-```
+```bash
 git branch -d BRANCH_NAME
 ```
 
 Then you can update the master branch in your forked repository.
 
-```
+```bash
 git push origin master
 ```
 
 And push the deletion of the feature branch to your GitHub repository with command:
 
-```
+```bash
 git push --delete origin BRANCH_NAME
 ```
 
 * Create a new tag to generate a new release of the helm chart using the following commands:
 
-```
+```bash
 git tag -a 6.1.0 -m "New release" #example
 git push upstream --tags
 ```
@@ -189,7 +192,7 @@ git push upstream --tags
 * The before commands will start the pipeline and will generate a new release and tag in standad ``zabbix-6.0.0``.
 * To keep your fork in sync with the original repository, use these commands:
 
-```
+```bash
 git pull upstream master
 git pull upstream master --tags
 
@@ -199,10 +202,9 @@ git push origin master --tags
 
 * After this, edit and adjust the text generated automatically for new release and adjust the release notes follow the examples the other releases published in https://github.com/zabbix-community/helm-zabbix/releases
 
-# Reference:
+References:
 
 * https://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/
-
 
 # About Visual Code (VSCode)
 

@@ -11,7 +11,7 @@ appVersion: 7.0.6 # zabbix version
 name: zabbix
 category: monitoring, networking, metrics
 displayName: Zabbix - The Enterprise-Class Open Source Network Monitoring Solution
-createdAt: 2024-11-18T10:11:55Z # Command Linux: date +%Y-%m-%dT%TZ
+createdAt: 2024-11-26T07:23:30Z # Command Linux: date +%Y-%m-%dT%TZ
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 logoURL: https://assets.zabbix.com/img/logo/zabbix_logo_500x131.png
 license: Apache-2.0
@@ -53,7 +53,7 @@ install: |
   Set the helm chart version you want to use. Example:
 
   ```bash
-  export ZABBIX_CHART_VERSION='6.0.0'
+  export ZABBIX_CHART_VERSION='6.1.0'
   ```
 
   Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
