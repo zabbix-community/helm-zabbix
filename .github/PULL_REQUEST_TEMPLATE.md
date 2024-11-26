@@ -2,8 +2,8 @@
 Thank you for contributing to this repository. Before you submit this PR we'd like to
 make sure you are aware of our technical requirements and best practices:
 
-* https://github.com/zabbix-community/helm-zabbix/blob/master/CONTRIBUTING.md
-* https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/requirements.md
+* https://github.com/zabbix-community/helm-zabbix/blob/main/CONTRIBUTING.md
+* https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/requirements.md
 
 Following our best practices right from the start will accelerate the review process and
 help get your PR merged quicker.
@@ -25,5 +25,5 @@ For fast feedback, please @-mention maintainers that are listed in the Chart.yam
 
 #### Checklist
 [Place an '[x]' (no spaces) in all applicable fields. Please remove unrelated fields.]
-- [ ] [DCO](https://github.com/zabbix-community/helm-zabbix/blob/master/CONTRIBUTING.md) signed
+- [ ] [DCO](https://github.com/zabbix-community/helm-zabbix/blob/main/CONTRIBUTING.md) signed
 - [ ] Variables are documented in values.yaml with [Helm-Docs](https://github.com/norwoodj/helm-docs) comments, as we build README.md using this utility
