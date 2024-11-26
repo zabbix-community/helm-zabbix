@@ -65,13 +65,13 @@ helm lint .
 git push --set-upstream origin BRANCH_NAME
 ```
 
-* Create Pull Request (PR) to the `master` branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+* Create Pull Request (PR) to the `main` branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
 * Update the content with the suggestions of the reviewer (if necessary).
-* After your pull request is merged to the `master` branch, update your local clone:
+* After your pull request is merged to the `main` branch, update your local clone:
 
 ```bash
-git checkout master
-git pull upstream master
+git checkout main
+git pull upstream main
 ```
 
 * Clean up after your pull request is merged with command:
@@ -80,10 +80,10 @@ git pull upstream master
 git branch -d BRANCH_NAME
 ```
 
-* Then you can update the ``master`` branch in your forked repository.
+* Then you can update the ``main`` branch in your forked repository.
 
 ```bash
-git push origin master
+git push origin main
 ```
 
 * And push the deletion of the feature branch to your GitHub repository with command:
@@ -95,11 +95,11 @@ git push --delete origin BRANCH_NAME
 * To keep your fork in sync with the original repository, use these commands:
 
 ```bash
-git pull upstream master
-git pull upstream master --tags
+git pull upstream main
+git pull upstream main --tags
 
-git push origin master
-git push origin master --tags
+git push origin main
+git push origin main --tags
 ```
 
 References:
@@ -155,13 +155,13 @@ make gen-docs
 git push --set-upstream origin BRANCH_NAME
 ```
 
-* Create Pull Request (PR) to the master branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+* Create Pull Request (PR) to the main branch. See this [tutorial](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
 * Update the content with the suggestions of the reviewer (if necessary).
-* After your pull request is merged to the master branch, update your local clone:
+* After your pull request is merged to the main branch, update your local clone:
 
 ```bash
-git checkout master
-git pull upstream master
+git checkout main
+git pull upstream main
 ```
 
 * Clean up after your pull request is merged with command:
@@ -170,10 +170,10 @@ git pull upstream master
 git branch -d BRANCH_NAME
 ```
 
-Then you can update the master branch in your forked repository.
+Then you can update the main branch in your forked repository.
 
 ```bash
-git push origin master
+git push origin main
 ```
 
 And push the deletion of the feature branch to your GitHub repository with command:
@@ -193,11 +193,11 @@ git push upstream --tags
 * To keep your fork in sync with the original repository, use these commands:
 
 ```bash
-git pull upstream master
-git pull upstream master --tags
+git pull upstream main
+git pull upstream main --tags
 
-git push origin master
-git push origin master --tags
+git push origin main
+git push origin main --tags
 ```
 
 * After this, edit and adjust the text generated automatically for new release and adjust the release notes follow the examples the other releases published in https://github.com/zabbix-community/helm-zabbix/releases

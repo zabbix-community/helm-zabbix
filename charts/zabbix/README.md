@@ -400,7 +400,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
 | zabbixAgent.extraContainers | list | `[]` | Additional containers to start within the Zabbix Agent pod |
-| zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixAgent.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Agent pod |
 | zabbixAgent.extraVolumeMounts | list | `[]` | Additional volumeMounts to the zabbix Agent container |
@@ -450,7 +450,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixJavaGateway.enabled | bool | `false` | Enables use of **Zabbix Java Gateway** |
 | zabbixJavaGateway.extraContainers | list | `[]` | Additional containers to start within the Zabbix Java Gateway pod |
-| zabbixJavaGateway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixJavaGateway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixJavaGateway.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Java Gateway pod |
 | zabbixJavaGateway.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Java Gateway pod |
 | zabbixJavaGateway.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Java Gateway container |
@@ -489,7 +489,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.containerLabels | object | `{}` | Labels to add to the containers |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixProxy.extraContainers | list | `[]` | Additional containers to start within the Zabbix Proxy pod |
-| zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixProxy.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Proxy pod |
 | zabbixProxy.extraVolumeClaimTemplate | list | `[]` | Extra volumeClaimTemplate for zabbixProxy statefulset |
@@ -523,7 +523,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixServer.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixServer.extraContainers | list | `[]` | Additional containers to start within the Zabbix Server pod |
-| zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixServer.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Server pod |
 | zabbixServer.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Server pod |
 | zabbixServer.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Server container |
@@ -600,7 +600,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWeb.enabled | bool | `true` | Enables use of **Zabbix Web** |
 | zabbixWeb.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web pod |
-| zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWeb.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web pod |
 | zabbixWeb.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Web pod |
 | zabbixWeb.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Web container |
@@ -644,7 +644,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWebService.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixWebService.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web Service pod |
-| zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/master/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWebService.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web Service pod |
 | zabbixWebService.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Web Service pod |
 | zabbixWebService.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Web Service container |
