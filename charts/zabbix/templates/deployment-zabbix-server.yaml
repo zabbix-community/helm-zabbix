@@ -152,11 +152,11 @@ spec:
             {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
             - name: ZBX_AUTOHANODENAME
               value: "hostname"
+            {{- end }}
             - name: ZBX_NODEADDRESS
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-            {{- end }}
             {{- if .Values.zabbixWebService.enabled }}
             - name: ZBX_WEBSERVICEURL
               value: "http://{{ template "zabbix.fullname" . }}-zabbix-webservice:{{ .Values.zabbixWebService.service.port }}/report"
