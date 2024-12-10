@@ -449,6 +449,8 @@ zabbixAgent:
   runAsSidecar: true
   # -- Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false.
   runAsDaemonSet: false
+  # -- Run Daemonset on host network
+  hostNetwork: false
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
