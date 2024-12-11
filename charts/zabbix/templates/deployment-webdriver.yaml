@@ -26,7 +26,7 @@ spec:
         ports:
         - containerPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
       imagePullSecrets:
-      {{- range .Values.zabbixBrowserMonitoring.webdriver.pullSecrets }}
+      {{- range .Values.zabbixBrowserMonitoring.webdriver.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
 {{- end }}
