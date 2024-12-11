@@ -39,7 +39,6 @@ git branch
 
 * Make your changes and tests to the new branch.
 * Keep the ``charts/zabbix/values.yaml`` file updated with working default values ​​in case any variables are referenced in the helm chart template files
-* Change the ``appVersion`` parameter in ``charts/zabbix/Chart.yaml`` in case you have updated the ``zabbixImageTag`` in ``charts/zabbix/values.yaml`` (upgrade to a newer version released by Zabbix)
 * Verify your changes do not introduce syntactical/semantic errors:
 * Do NOT change ``version`` in ``charts/zabbix/chart.yaml`` nor in ``charts/zabbix/artifacthub-pkg.yml``, as this is now part of the release process issued by the code owners
 * Make any changes you want in ``charts/zabbix/README.md`` in ``charts/zabbix/README.md.gotmpl``, out of which ``charts/zabbix/README.md`` will be generated using ``helm-docs`` during the version release process by the code owners

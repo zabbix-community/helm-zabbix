@@ -1,6 +1,6 @@
 # Custom values for zabbix.
 
-zabbixImageTag: alpine-7.0.6
+zabbixImageTag: alpine-7.2.0
 
 postgresAccess:
   useUnifiedSecret: true
@@ -11,17 +11,17 @@ zabbixServer:
   enabled: true
   replicaCount: 2
   zabbixServerHA:
-    enabled: true
+    enabled: false
   haNodesAutoClean:
-    enabled: true
+    enabled: false
     image:
       # Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
       repository: postgres
       #repository: timescale/timescaledb
-      # -- Tag of Docker image of Postgresql server, choice "16" for postgres "2.14.2-pg16" for timescaledb
-      # (Zabbix supports TimescaleDB 2.1.0-2.14.x. More info: https://www.zabbix.com/documentation/7.0/en/manual/installation/requirements)
-      tag: 16
-      #tag: 2.14.2-pg16
+      # -- Tag of Docker image of Postgresql server, choice "17" for postgres "2.17.2-pg16" for timescaledb
+      # (Zabbix supports TimescaleDB. More info: https://www.zabbix.com/documentation/7.2/en/manual/installation/requirements)
+      tag: 17
+      #tag: 2.17.2-pg16
   service:
     type: NodePort
     port: 10051
@@ -63,10 +63,10 @@ postgresql:
     # Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
     repository: postgres
     #repository: timescale/timescaledb
-    # -- Tag of Docker image of Postgresql server, choice "16" for postgres "2.14.2-pg16" for timescaledb
-    # (Zabbix supports TimescaleDB 2.1.0-2.14.x. More info: https://www.zabbix.com/documentation/7.0/en/manual/installation/requirements)
-    tag: 16
-    #tag: 2.14.2-pg16
+    # -- Tag of Docker image of Postgresql server, choice "17" for postgres "2.17.2-pg16" for timescaledb
+    # (Zabbix supports TimescaleDB7. More info: https://www.zabbix.com/documentation/7.0/en/manual/installation/requirements)
+    tag: 17
+    #tag: 2.17.2-pg16
   max_connections: 100
   persistence:
     enabled: true
