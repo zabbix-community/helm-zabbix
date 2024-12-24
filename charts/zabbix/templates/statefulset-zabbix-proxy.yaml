@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-proxy
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "zabbix.fullname" . }}-zabbix-proxy
     app.kubernetes.io/name: zabbix-proxy
