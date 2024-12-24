@@ -6,6 +6,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ template "zabbix.fullname" . }}-create-upgrade-db
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: create-upgrade-db
