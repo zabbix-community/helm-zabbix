@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-postgresql
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "zabbix.fullname" . }}-postgresql
     app.kubernetes.io/name: postgresql

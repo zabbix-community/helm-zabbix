@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "zabbix.name" . }}
     release: {{ .Release.Name }}

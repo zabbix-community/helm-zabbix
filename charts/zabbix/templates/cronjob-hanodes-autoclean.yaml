@@ -7,6 +7,7 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: {{ template "zabbix.fullname" . }}-nodesclean
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "zabbix.fullname" . }}-nodesclean
     app.kubernetes.io/name: nodesclean

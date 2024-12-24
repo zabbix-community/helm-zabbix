@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-webservice
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "zabbix.fullname" . }}-zabbix-webservice
     app.kubernetes.io/name: zabbix-webservice

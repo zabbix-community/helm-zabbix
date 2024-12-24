@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-agent
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "zabbix.fullname" . }}-zabbix-agent
     app.kubernetes.io/name: zabbix-agent

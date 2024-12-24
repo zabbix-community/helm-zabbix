@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "zabbix.fullname" . }}-waitdbschema-script
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "zabbix.fullname" . }}-waitdbschema-script
     app.kubernetes.io/name: waitdbschema-script
