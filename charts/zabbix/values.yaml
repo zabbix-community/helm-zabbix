@@ -128,7 +128,7 @@ zabbixServer:
       # -- Image settings for the HA labels sidecar
       image:
         # -- Repository where to get the image for the HA labels sidecar container
-        repository: ghcr.io/zabbix-community/zabbix-server-ha-label-manager:
+        repository: ghcr.io/zabbix-community/zabbix-server-ha-label-manager
         # -- Tag of the HA labels sidecar container image
         tag: "20241230230305"
         # -- Pull policy for the HA labels sidecar image
