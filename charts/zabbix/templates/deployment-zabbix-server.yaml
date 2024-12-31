@@ -88,31 +88,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      initContainers:
-      {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
-        - name: init-wait-for-database-schema
-          {{- if .Values.zabbixServer.image.tag }}
-          image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixServer.image.tag }}"
-          {{- else }}
-          image: "{{ .Values.zabbixServer.image.repository }}:{{ .Values.zabbixImageTag }}"
-          {{- end }}
-          env:
-            {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 12 }}
-            {{- with .Values.zabbixServer.extraEnv }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
-          securityContext:
-            {{- toYaml .Values.zabbixServer.securityContext | nindent 12 }}
-          resources:
-            {{- toYaml .Values.zabbixServer.resources | nindent 12 }}
-          command:
-            - "/bin/bash"
-            - "/script/wait_db_schema.sh"
-          volumeMounts:
-            - name: init-waitschema-script
-              mountPath: /script
-      {{- end }}
       {{- with .Values.zabbixServer.extraInitContainers }}
+      initContainers:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:

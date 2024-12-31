@@ -17,7 +17,7 @@ metadata:
     {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels | nindent 6 }}
     {{- end }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": hook-succeeded
     {{- range $key,$value := .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobAnnotations }}
@@ -42,7 +42,9 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}      
+      {{- if .Release.IsUpgrade }}
       serviceAccountName: {{ template "zabbix.fullname" . }}-ha-helper
+      {{- end }}
       containers:
         {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers }}
         {{- toYaml . | nindent 8 }}
@@ -50,17 +52,19 @@ spec:
       - name: create-upgrade-db
         {{- $pattern := "[0-9]+\\.[0-9]+" -}}
         {{- $tag := "" -}}
-        {{- if .Values.zabbixServer.image.tag }}
+        {{- if .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag }}
+          {{- $tag = .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag }}
+        {{- else if .Values.zabbixServer.image.tag }}
           {{- $zabbixTag := .Values.zabbixServer.image.tag -}}
           {{- $match := regexFind $pattern $zabbixTag -}}
           {{- if $match }}
-            {{- $tag = printf "%s-latest" $match -}}
+            {{- $tag = printf "%s-%s" $match .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix -}}
           {{- end }}
         {{- else }}
           {{- $globalTag := .Values.zabbixImageTag -}}
           {{- $match := regexFind $pattern $globalTag -}}
           {{- if $match }}
-            {{- $tag = printf "%s-latest" $match -}}
+            {{- $tag = printf "%s-%s" $match .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix -}}
           {{- end }}
         {{- end }}
         {{- if eq $tag "" }}
@@ -78,6 +82,14 @@ spec:
         env:
           - name: ZBX_SERVER_DEPLOYMENT_NAME
             value: {{ template "zabbix.fullname" . }}-zabbix-server
+          - name: HELM_HOOK_TYPE
+            {{- if .Release.IsUpgrade }}
+            value: upgrade
+            {{- else if .Release.IsInstall }}
+            value: install
+            {{- else }}
+            value: unknown
+            {{- end }}
           {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
           {{- with .Values.zabbixServer.extraEnv }}
           {{- toYaml . | nindent 10 }}

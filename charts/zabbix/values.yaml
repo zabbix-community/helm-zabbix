@@ -98,10 +98,12 @@ zabbixServer:
       # -- Image settings for the database initialization / upgrade job
       image:
         # -- Image repository for the database initialization / upgrade job
-        repository: registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db
+        repository: ghcr.io/zabbix-community/zabbix-server-create-upgrade-db
         # -- Tag of the image to use for the dbCreateUpgradeJob. Don't override this if you don't have a specific reason.
         # -- it is going to be chosen based of the zabbix_server pod container otherwise
         tag: ""
+        # -- The tag suffix used for the dbCreateUpgradeJob's image when not explicitly specifying a tag for the image. The tag name will be concatenated with major release of zabbix_server image if specified
+        tagSuffix: "20241230222241"
         # -- Pull policy for the db initialization / upgrade job
         pullPolicy: IfNotPresent
         # -- Pull secrets for the db initialization / upgrade job
@@ -126,9 +128,9 @@ zabbixServer:
       # -- Image settings for the HA labels sidecar
       image:
         # -- Repository where to get the image for the HA labels sidecar container
-        repository: registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager
+        repository: ghcr.io/zabbix-community/zabbix-server-ha-label-manager:
         # -- Tag of the HA labels sidecar container image
-        tag: latest
+        tag: "20241230230305"
         # -- Pull policy for the HA labels sidecar image
         pullPolicy: IfNotPresent
         # -- Pull secrets for the HA labels sidecar image
@@ -142,7 +144,7 @@ zabbixServer:
       # -- Extra VolumeMounts for the HA labels sidecar
       extraVolumeMounts: []
   # -- Number of replicas of ``zabbixServer`` module
-  replicaCount: 1
+  replicaCount: 2
   # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
   podAntiAffinity: true
   # -- Optional set true open a port direct on node where Zabbix Server runs
