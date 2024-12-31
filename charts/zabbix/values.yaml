@@ -34,43 +34,36 @@ postgresAccess:
   # PostgreSQL access details all in one existing secret (matches the structure of secrets the CrunchyData PGO operator 
   # and the CNPG postgres operator generate)
   # if this option is chosen the below listed settings are being ignored
-  # -- Whether to use the unified PostgreSQL access secret
-  useUnifiedSecret: true
-  # -- Name of one secret for unified configuration of PostgreSQL access
-  unifiedSecretName: zabbixdb-pguser-zabbix
-  # -- automatically create secret if not already present (works only in combination with postgresql.enabled=true)
-  unifiedSecretAutoCreate: true
-  # -- key of the unified postgres access secret where host ip / dns name for the postgres db is found
-  unifiedSecretHostKey: host
-  # -- key of the unified postgres access secret where the port for the postgres db is found
-  unifiedSecretPortKey: port
-  # -- key of the unified postgres access secret where user name for the postgres db is found
-  unifiedSecretUserKey: user
+  # -- Name of an existing secret to use for database access. This could be one created by a Postgres operator such as CNPG or PGO
+  existingSecretName: ""
+  # -- key of the postgres access secret where host ip / dns name for the postgres db is found
+  secretHostKey: host
+  # -- key of the postgres access secret where the port for the postgres db is found
+  secretPortKey: port
+  # -- key of the postgres access secret where user name for the postgres db is found
+  secretUserKey: user
   # -- key of the unified postgres access secret where password for the postgres db is found
-  unifiedSecretPasswordKey: password
-  # -- key of the unified postgres access secret where database name for the postgres db is found
-  unifiedSecretDBKey: dbname
-  # -- key of the unified postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set) 
-  unifiedSecretSchemaKey: ""
+  secretPasswordKey: password
+  # -- key of the postgres access secret where database name for the postgres db is found
+  secretDBKey: dbname
+  # -- key of the postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set) 
+  secretSchemaKey: ""
   #
-  # If you do NOT want to use one unified secret for all settings, you can still set the credentials manually here.
-  # These settings will be used for all components of this chart where it makes sense (zabbix server, postgresql,
-  # web frontend, ...)
+  # If you are not using an existing secret for all db relevant settings, you have to supply these here
+  # a secret is then automatically generated containing those values under the above listed keys. This secret is then
+  # being used in all components except the db-init-upgrade-job. The job will get the database access credentials
+  # as literal values always if no existing secret is used, due to anatomy of Helm Charts and pre-install/pre-upgrade hooks
   # -- Address of database host - ignored if postgresql.enabled=true
   host: "zabbix-postgresql"
-  # -- Port of database host - ignored if postgresql.enabled=true
+  # -- Port of database host - ignored if postgresql.enabled=true or when existingSecretName is set
   port: "5432"
-  # -- User of database
+  # -- User of database, ignored if existingSecretName is set
   user: "zabbix"
-  # -- Name of a secret used for Postgres Password, if set, it overrules the POSTGRES_PASSWORD value
-  #passwordSecret: mysecret
-  # -- Key of the secret used for Postgres Password, requires POSTGRES_PASSWORD_SECRET, defaults to password
-  #passwordSecretKey: "password"
-  # -- Password of database - ignored if passwordSecret is set
+  # -- Password of databas, eignored if existingSecretName is set
   password: "zabbix"
-  # -- Name of database
+  # -- Name of database, eignored if existingSecretName is set
   database: "zabbix"
-  # -- Schema of database. Can be left empty if unifiedSecretSchemaKey is not set. Only being used if external database is used (`postgresql.enabled` not set)
+  # -- Schema of database. Can be left empty if secretSchemaKey is not set. Only being used if external database is used (`postgresql.enabled` not set)
   schema: ""
 
 # **Zabbix Server** configurations
@@ -128,7 +121,7 @@ zabbixServer:
       # -- Image settings for the HA labels sidecar
       image:
         # -- Repository where to get the image for the HA labels sidecar container
-        repository: ghcr.io/zabbix-community/zabbix-server-ha-label-manager:
+        repository: ghcr.io/zabbix-community/zabbix-server-ha-label-manager
         # -- Tag of the HA labels sidecar container image
         tag: "20241230230305"
         # -- Pull policy for the HA labels sidecar image

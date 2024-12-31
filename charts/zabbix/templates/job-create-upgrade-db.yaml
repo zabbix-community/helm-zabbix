@@ -90,7 +90,7 @@ spec:
             {{- else }}
             value: unknown
             {{- end }}
-          {{- include "zabbix.postgresAccess.variables" (list $ . "zabbix") | nindent 10 }}
+          {{- include "zabbix.postgresAccess.variables" (list $ . "db_init_upgrade") | nindent 10 }}
           {{- with .Values.zabbixServer.extraEnv }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
