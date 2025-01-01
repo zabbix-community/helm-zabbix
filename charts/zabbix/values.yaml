@@ -72,8 +72,8 @@ zabbixServer:
   enabled: true
   # -- Section responsible for native Zabbix Server High Availability support of this Helm Chart
   zabbixServerHA:
-    # -- Enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1
-    enabled: true
+    # -- Enables support for Zabbix Server High Availability. If disabled, replicaCount will always be 1. Can not be combined with ``postgresql.enabled=true``
+    enabled: false
     # -- K8S Role being used for database initialization and upgrade job, which needs access to certain Kubernetes resources
     role:
       # -- Extra annotations for the role needed to give the HA related sidecars and the DB job API permissions
@@ -136,8 +136,8 @@ zabbixServer:
       securityContext: {}
       # -- Extra VolumeMounts for the HA labels sidecar
       extraVolumeMounts: []
-  # -- Number of replicas of ``zabbixServer`` module
-  replicaCount: 2
+  # -- Number of replicas of ``zabbixServer`` module. Will be forced to be 1 if ``zabbixServer.zabbixServerHA=false``
+  replicaCount: 1
   # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
   podAntiAffinity: true
   # -- Optional set true open a port direct on node where Zabbix Server runs
@@ -259,9 +259,9 @@ zabbixServer:
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   startupProbe: {}
 
-# **PostgreSQL** configurations
+# **PostgreSQL** configuration
 postgresql:
-  # -- Create a database using Postgresql
+  # -- Create a database using Postgresql. Not usable in combination with ``zabbixserver.zabbixServerHA=true``
   enabled: true
   image:
     # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
