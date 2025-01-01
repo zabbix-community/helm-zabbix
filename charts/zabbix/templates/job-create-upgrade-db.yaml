@@ -1,4 +1,7 @@
 {{ if and .Values.zabbixServer.enabled .Values.zabbixServer.zabbixServerHA.enabled }}
+{{ if and .Values.zabbixServer.zabbixServerHA.enabled .Values.postgresql.enabled }}
+{{ fail "We do not support enabling Zabbix Server native High Availability combined with `postgresql.enabled=true`. Please bring your own database to use Zabbix Server HA!" }}
+{{ end }}
 {{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}
 apiVersion: batch/v1
 {{- else }}
