@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  test_internal_db_no_ha:
+  test_intdb_noha_noextsecret:
     if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
@@ -74,7 +74,7 @@ jobs:
           helm test --namespace zabbix zabbix
 
 
-  test_external_db_ha:
+  test_extdb_ha_extsecret:
     if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
@@ -119,6 +119,82 @@ jobs:
       - name: Run helm uninstall and reset database
         run: |
           helm uninstall --wait zabbix --namespace zabbix
+          kubectl --namespace zabbix delete pod postgres
+          kubectl --namespace zabbix wait --for=delete pod -l run=postgres --timeout=60s
+          kubectl --namespace zabbix run postgres --image=postgres:16 --env="POSTGRES_PASSWORD=zabbix123" --env="POSTGRES_DB=zabbix" --env="POSTGRES_USER=zabbix" --port=5432
+          kubectl --namespace zabbix wait --for=condition=ready pod -l run=postgres --timeout=60s
+
+      - name: Run Helm install with version 6.0 LTS
+        run: |
+          helm install --wait --namespace zabbix zabbix --set zabbixImageTag=ubuntu-6.0-latest ${{ env.VALUES_SET }} ./charts/zabbix
+
+      - name: Run helm test 6.0
+        run: |
+          kubectl --namespace zabbix get pods -o ${{ env.COLUMN_OPTIONS }}
+          helm test --namespace zabbix zabbix
+
+      - name: Run Helm upgrade with custom values (AppVersion)
+        run: |
+          helm upgrade --wait --namespace zabbix zabbix ${{ env.VALUES_SET }} ./charts/zabbix
+
+      - name: Run helm test CURRENT LTS
+        run: |
+          kubectl --namespace zabbix get pods -o ${{ env.COLUMN_OPTIONS }}
+          helm test --namespace zabbix zabbix
+
+      - name: Run Helm upgrade with version 7.2 non-LTS
+        run: |
+          helm upgrade --wait --namespace zabbix zabbix --set zabbixImageTag=ubuntu-7.2-latest ${{ env.VALUES_SET }} ./charts/zabbix
+
+      - name: Run helm test 7.2 non-LTS
+        run: |
+          kubectl --namespace zabbix get pods -o ${{ env.COLUMN_OPTIONS }}
+          helm test --namespace zabbix zabbix
+
+
+  test_extdb_ha_noextsecret:
+    if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      COLUMN_OPTIONS: 'custom-columns="NAME:.metadata.name,READY:.status.containerStatuses[*].ready,STATUS:.status.phase,RESTARTS:.status.containerStatuses[*].restartCount,IP:.status.podIP,IMAGE:.spec.containers[*].image"'
+      VALUES_SET: '--set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=1 --set postgresAcces.host=postgres --set postgresAccess.password=zabbix123'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Kind
+        uses: helm/kind-action@v1
+
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod +x get_helm.sh
+          ./get_helm.sh
+
+      - name: Create Namespace in Kind
+        run: |
+          kubectl create namespace zabbix
+
+      - name: Create simple postgresql database for testing
+        run: |
+          kubectl --namespace zabbix run postgres --image=postgres:16 --env="POSTGRES_PASSWORD=zabbix123" --env="POSTGRES_DB=zabbix" --env="POSTGRES_USER=zabbix" --port=5432
+          kubectl --namespace zabbix wait --for=condition=ready pod -l run=postgres --timeout=60s
+          kubectl --namespace zabbix expose pod postgres
+
+      - name: Run Helm install with HA and external DB (AppVersion)
+        run: |
+          helm install --wait --namespace zabbix zabbix ${{ env.VALUES_SET }} ./charts/zabbix
+
+      - name: Run helm test CURRENT LTS
+        run: |
+          kubectl --namespace zabbix get pods -o ${{ env.COLUMN_OPTIONS }}
+          helm test --namespace zabbix zabbix
+
+      - name: Run helm uninstall and reset database
+        run: |
+          helm uninstall --wait zabbix --namespace zabbix
+          kubectl --namespace zabbix delete pod postgres
+          kubectl --namespace zabbix wait --for=delete pod -l run=postgres --timeout=60s
           kubectl --namespace zabbix run postgres --image=postgres:16 --env="POSTGRES_PASSWORD=zabbix123" --env="POSTGRES_DB=zabbix" --env="POSTGRES_USER=zabbix" --port=5432
           kubectl --namespace zabbix wait --for=condition=ready pod -l run=postgres --timeout=60s
 
