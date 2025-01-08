@@ -157,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COLUMN_OPTIONS: 'custom-columns="NAME:.metadata.name,READY:.status.containerStatuses[*].ready,STATUS:.status.phase,RESTARTS:.status.containerStatuses[*].restartCount,IP:.status.podIP,IMAGE:.spec.containers[*].image"'
-      VALUES_SET: '--set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=1 --set postgresAcces.host=postgres --set postgresAccess.password=zabbix123'
+      VALUES_SET: '--set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=1 --set postgresAccess.host=postgres --set postgresAccess.password=zabbix123'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
