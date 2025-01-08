@@ -1,10 +1,13 @@
 name: Helm Chart Tests with Kind
 
 on:
-  workflow_run:
-    workflows: ["Linters"]
-    types:
-      - completed
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test_helm_installation:
