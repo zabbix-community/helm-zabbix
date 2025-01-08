@@ -940,3 +940,33 @@ rbac:
 
 # -- Extra arbitrary Kubernetes manifests to deploy within the release
 extraManifests: []
+
+helmTestJobs:
+  webConnection:
+    image:
+      # -- Image repository for Helm test job testing connection to web frontend
+      repository: busybox
+      # -- Image tag for Helm test job testing connection to web frontend
+      tag: latest
+      # -- Pull Policy for Helm test job testing connection to web frontend
+      pullPolicy: IfNotPresent
+      # -- Pull Secrets for Helm test job testing connection to web frontend
+      pullSecrets: []
+    # -- Security Context for Helm test job testing connection to web frontend
+    securityContext: {}
+    # -- Resource limits/reservations for Helm test job testing connection to web frontend
+    resources: {}
+  serverConnection:
+    image:
+      # -- Image repository for Helm test job testing connection to Zabbix server
+      repository: busybox
+      # -- Image tag for Helm test job testing connection to Zabbix server
+      tag: latest
+      # -- Pull Policy for Helm test job testing connection to Zabbix server
+      pullPolicy: IfNotPresent
+      # -- Pull Secrets for Helm test job testing connection to Zabbix server
+      pullSecrets: []
+    # -- Security Context for Helm test job testing connection to Zabbix server
+    securityContext: {}
+    # -- Resource limits/reservations for Helm test job testing connection to Zabbix server
+    resources: {}

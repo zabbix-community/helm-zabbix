@@ -1,0 +1,44 @@
+{{ if .Values.zabbixWeb.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "zabbix.fullname" . }}-test-web-connection
+  labels:
+    app: {{ template "zabbix.fullname" . }}-test-web-connection
+    app.kubernetes.io/name: test-web-connection
+    helm.sh/chart: {{ include "zabbix.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-test-web-connection
+    app.kubernetes.io/managed-by: {{ .Release.Service }}-test-web-connection
+  annotations:
+    "helm.sh/hook": test
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 120
+  template:
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}      
+      containers:
+      - name: test-web-connection
+        image: {{ .Values.helmTestJobs.webConnection.image.repository }}:{{ .Values.helmTestJobs.webConnection.image.tag }}
+        {{- if .Values.helmTestJobs.webConnection.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.helmTestJobs.webConnection.image.pullPolicy }}
+        {{- end }}
+        securityContext:
+          {{- toYaml .Values.helmTestJobs.webConnection.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.helmTestJobs.webConnection.resources | nindent 10 }}
+        command: ['wget']
+        args: ['http://{{ template "zabbix.fullname" . }}-zabbix-web:{{ .Values.zabbixWeb.service.port }}']
+      imagePullSecrets:
+      {{- range .Values.helmTestJobs.webConnection.image.pullSecrets }}
+        - name: {{ . | quote }}
+      {{- end }}
+      restartPolicy: Never
+{{ end }}
