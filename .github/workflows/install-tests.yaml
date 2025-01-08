@@ -1,0 +1,43 @@
+name: Helm Chart Tests with Kind
+
+on:
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Kind
+        uses: helm/kind-action@v1.2.0
+
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod +x get_helm.sh
+          ./get_helm.sh
+
+      - name: Create Namespace in Kind
+        run: |
+          kubectl create namespace zabbix
+
+      - name: Run Helm install with default values
+        run: |
+          helm install --wait --namespace zabbix zabbix ./charts/zabbix
+
+      - name: Run Helm test
+        run: |
+          helm test --namespace zabbix zabbix
+
+      #- name: Run Helm upgrade with custom values
+      #  run: |
+      #    helm upgrade test-release ./chart --values ./test-values.yaml
+      #    kubectl get all
