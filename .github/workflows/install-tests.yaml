@@ -10,9 +10,25 @@ on:
       - main
 
 jobs:
+  codespell:
+    if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run code spelling check
+        uses: codespell-project/actions-codespell@v2
+        with:
+          ignore_words_list: aks,NotIn
+
+
   test_intdb_noha_noextsecret:
     if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: codespell
     env:
       COLUMN_OPTIONS: 'custom-columns="NAME:.metadata.name,READY:.status.containerStatuses[*].ready,STATUS:.status.phase,RESTARTS:.status.containerStatuses[*].restartCount,IP:.status.podIP,IMAGE:.spec.containers[*].image"'
     steps:
@@ -77,6 +93,7 @@ jobs:
   test_extdb_ha_extsecret:
     if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: codespell
     env:
       COLUMN_OPTIONS: 'custom-columns="NAME:.metadata.name,READY:.status.containerStatuses[*].ready,STATUS:.status.phase,RESTARTS:.status.containerStatuses[*].restartCount,IP:.status.podIP,IMAGE:.spec.containers[*].image"'
       VALUES_SET: '--set postgresAccess.existingSecretName=db-access --set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=2'
@@ -155,6 +172,7 @@ jobs:
   test_extdb_ha_noextsecret:
     if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: codespell
     env:
       COLUMN_OPTIONS: 'custom-columns="NAME:.metadata.name,READY:.status.containerStatuses[*].ready,STATUS:.status.phase,RESTARTS:.status.containerStatuses[*].restartCount,IP:.status.podIP,IMAGE:.spec.containers[*].image"'
       VALUES_SET: '--set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=1 --set postgresAccess.host=postgres --set postgresAccess.password=zabbix123'
