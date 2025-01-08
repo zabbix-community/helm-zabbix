@@ -10,14 +10,15 @@ on:
       - main
 
 jobs:
-  test:
+  test_helm_installation:
+    if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Kind
-        uses: helm/kind-action@v1.2.0
+        uses: helm/kind-action@v1
 
       - name: Install Helm
         run: |
@@ -37,7 +38,7 @@ jobs:
         run: |
           helm test --namespace zabbix zabbix
 
-      #- name: Run Helm upgrade with custom values
-      #  run: |
-      #    helm upgrade test-release ./chart --values ./test-values.yaml
-      #    kubectl get all
+      - name: Run Helm upgrade with custom values
+        run: |
+          helm upgrade test-release ./chart --values ./test-values.yaml
+          kubectl get all
