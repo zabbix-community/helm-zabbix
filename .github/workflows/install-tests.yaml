@@ -30,12 +30,27 @@ jobs:
         run: |
           kubectl create namespace zabbix
 
+      - name: Run Helm install with default values (AppVersion)
+        run: |
+          helm install --wait --namespace zabbix zabbix ./charts/zabbix
+
+      - name: Run helm test CURRENT LTS
+        run: |
+          kubectl get pods -o wide
+          helm test --namespace zabbix zabbix
+
+      - name: Run helm uninstall
+        run: |
+          helm uninstall --wait zabbix
+          kubectl delete secrets --all
+
       - name: Run Helm install with version 6.0 LTS
         run: |
           helm install --wait --namespace zabbix zabbix --set zabbixImageTag=ubuntu-6.0-latest ./charts/zabbix
 
       - name: Run helm test 6.0
         run: |
+          kubectl get pods -o wide
           helm test --namespace zabbix zabbix
 
       - name: Run Helm upgrade with default values (AppVersion)
@@ -44,6 +59,7 @@ jobs:
 
       - name: Run helm test CURRENT LTS
         run: |
+          kubectl get pods -o wide
           helm test --namespace zabbix zabbix
 
       - name: Run Helm upgrade with version 7.2 non-LTS
@@ -52,4 +68,5 @@ jobs:
 
       - name: Run helm test 7.2 non-LTS
         run: |
+          kubectl get pods -o wide
           helm test --namespace zabbix zabbix
