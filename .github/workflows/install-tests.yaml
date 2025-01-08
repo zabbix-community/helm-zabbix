@@ -1,4 +1,4 @@
-name: Helm Chart Tests with Kind
+name: Helm Chart Tests, internal DB, no HA, create Secret
 
 on:
   push:
@@ -30,15 +30,26 @@ jobs:
         run: |
           kubectl create namespace zabbix
 
-      - name: Run Helm install with default values
+      - name: Run Helm install with version 6.0 LTS
         run: |
-          helm install --wait --namespace zabbix zabbix ./charts/zabbix
+          helm install --wait --namespace zabbix zabbix --set zabbixImageTag=ubuntu-6.0-latest ./charts/zabbix
 
-      - name: Run Helm test
+      - name: Run helm test 6.0
         run: |
           helm test --namespace zabbix zabbix
 
-      - name: Run Helm upgrade with custom values
+      - name: Run Helm upgrade with default values (AppVersion)
         run: |
-          helm upgrade test-release ./chart --values ./test-values.yaml
-          kubectl get all
+          helm upgrade --wait --namespace zabbix zabbix ./charts/zabbix
+
+      - name: Run helm test CURRENT LTS
+        run: |
+          helm test --namespace zabbix zabbix
+
+      - name: Run Helm upgrade with version 7.2 non-LTS
+        run: |
+          helm upgrade --wait --namespace zabbix zabbix --set zabbixImageTag=ubuntu-7.2-latest ./charts/zabbix
+
+      - name: Run helm test 7.2 non-LTS
+        run: |
+          helm test --namespace zabbix zabbix
