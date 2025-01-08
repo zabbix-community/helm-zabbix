@@ -125,7 +125,7 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
   value: {{ template "zabbix.fullname" . }}-postgresql
 - name: {{ $portvar }}
   value: {{ .Values.postgresql.service.port | quote }}
-{{- else if eq $cntxt "db_init_upgrade" }}
+{{- else if and (eq $cntxt "db_init_upgrade") (not .Values.postgresAccess.existingSecretName) }}
 - name: {{ $hostvar }}
   value: {{ .Values.postgresAccess.host | quote }}
 - name: {{ $portvar }}
@@ -144,7 +144,7 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
       optional: true
 {{- end }}
 
-{{- if eq $cntxt "db_init_upgrade" }}
+{{- if and (eq $cntxt "db_init_upgrade") (not .Values.postgresAccess.existingSecretName) }}
 - name: {{ $uservar }}
   value: {{ .Values.postgresAccess.user | quote }}
 - name: {{ $passwordvar }}
