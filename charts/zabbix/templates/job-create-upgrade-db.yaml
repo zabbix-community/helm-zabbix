@@ -2,11 +2,7 @@
 {{ if and .Values.zabbixServer.zabbixServerHA.enabled .Values.postgresql.enabled }}
 {{ fail "We do not support enabling Zabbix Server native High Availability combined with `postgresql.enabled=true`. Please bring your own database to use Zabbix Server HA!" }}
 {{ end }}
-{{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}
 apiVersion: batch/v1
-{{- else }}
-apiVersion: batch/v1beta1
-{{- end }}
 kind: Job
 metadata:
   name: {{ template "zabbix.fullname" . }}-create-upgrade-db
