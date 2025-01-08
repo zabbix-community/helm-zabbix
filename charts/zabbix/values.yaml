@@ -59,7 +59,7 @@ postgresAccess:
   port: "5432"
   # -- User of database, ignored if existingSecretName is set
   user: "zabbix"
-  # -- Password of databas, eignored if existingSecretName is set
+  # -- Password of database, eignored if existingSecretName is set
   password: "zabbix"
   # -- Name of database, eignored if existingSecretName is set
   database: "zabbix"
