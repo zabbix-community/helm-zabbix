@@ -13,6 +13,7 @@ jobs:
   test_helm_installation:
     if: github.event.repository.fork == true || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: codespell
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
