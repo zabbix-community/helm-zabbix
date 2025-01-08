@@ -9,7 +9,7 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
 
 # Prerequisites
 
-- Kubernetes cluster 1.21+
+- Kubernetes cluster 1.10+
 - Helm 3.0+
 - Kubectl
 - PV provisioner support in the underlying infrastructure (optional).
