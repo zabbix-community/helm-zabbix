@@ -12,8 +12,6 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  backoffLimit: 0
-  ttlSecondsAfterFinished: 120
   template:
     spec:
       {{- with .Values.nodeSelector }}
