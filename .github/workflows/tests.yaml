@@ -1,4 +1,4 @@
-name: Helm Chart Install and Upgrade Tests
+name: Helm Chart Linting and Tests
 
 on:
   push:
