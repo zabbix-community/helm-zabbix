@@ -160,7 +160,10 @@ helm uninstall zabbix -n monitoring
 
 # Breaking changes of this helm chart
 
-## Version 6.2.0
+## Version 7.0.0
+
+> [!CAUTION]
+> Re-installation of your Release will be necessary. Make sure you do not lose any data!
 
 * Changed values under `postgresAccess`, partially made necessary by changing *db-create-upgrade-job* for [Native Zabbix Server High Availability](#native-zabbix-server-high-availability) to be a *pre-install/pre-upgrade* job:
   * removed `postgresAccess.useUnifiedSecret`. It's now ALWAYS a unified secret containing DB connection relevant settings that is used by all components of this Chart requiring a DB connection
@@ -168,7 +171,7 @@ helm uninstall zabbix -n monitoring
   * `unifiedSecretAutoCreate` has been removed. Secret generation now depends on having set `existingSecretName`
   * `unifiedSecretXXXKey` renamed to simpler `secretXXXKey` value names
 * Default settings in `values.yaml` are now `postgresql.enabled=true` (no change here) and `zabbixServer.zabbixServerHA=false` (changed, due to [Native Zabbix Server High Availability](#native-zabbix-server-high-availability))
-* All labels of all manifests have been unified to fulfill the best practices / standards of how a newly created helm chart (`helm create...`) would do it. This should actually not cause any harm in terms of upgrading to the new release, but you may have some extra services or other stuff that refers to manifests deployed by this helm chart, which would need some fixes
+* All labels of all manifests have been unified to fulfill the best practices / standards of how a newly created helm chart (`helm create...`) would do it. This results in you having to **uninstall and install your Release again**, as `spec.selector` label matchers are *immutable* for *Deployments*, *Statefulsets* and such. If you use `postgresql.enabled=true` ("internal database"), be careful not to delete your Zabbix database when issuing uninstallation. By default, Helm does not remove *PersistentVolumeClaims* when uninstalling a release, but to be sure, you can [annotate your PVC additionally](https://github.com/helm/helm/issues/6261#issuecomment-523472128) to prevent its deletion
 * Removed all pre 1.21 Kubernetes compatibility switches (`v1beta1`, ...)
 * `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`
 * `deploymentLabels` have been renamed to `extraDeploymentLabels` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetLabels`, etc.
