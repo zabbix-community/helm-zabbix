@@ -7,16 +7,16 @@ metadata:
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: server
-    {{- if .Values.zabbixServer.deploymentLabels }}
-    {{- toYaml .Values.zabbixServer.deploymentLabels | nindent 4 }}
+    {{- if .Values.zabbixServer.extraDeploymentLabels }}
+    {{- toYaml .Values.zabbixServer.extraDeploymentLabels | nindent 4 }}
     {{- end }}
     {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
-      {{- if .Values.zabbixAgent.deploymentLabels }}
-        {{- toYaml .Values.zabbixAgent.deploymentLabels | nindent 4 }}
+      {{- if .Values.zabbixAgent.extraDeploymentLabels }}
+        {{- toYaml .Values.zabbixAgent.extraDeploymentLabels | nindent 4 }}
       {{- end }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.zabbixServer.deploymentAnnotations }}
+    {{- range $key,$value := .Values.zabbixServer.extraDeploymentAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
@@ -36,7 +36,7 @@ spec:
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixServer.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixServer.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
@@ -45,12 +45,12 @@ spec:
         {{- end }}
         {{- include "zabbix.labels" . | nindent 8 }}
         app.kubernetes.io/component: server
-        {{- if .Values.zabbixServer.containerLabels }}
-        {{- toYaml .Values.zabbixServer.containerLabels | nindent 8 }}
+        {{- if .Values.zabbixServer.extraPodLabels }}
+        {{- toYaml .Values.zabbixServer.extraPodLabels | nindent 8 }}
         {{- end }}
         {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
-          {{- if .Values.zabbixAgent.containerLabels }}
-            {{- toYaml .Values.zabbixAgent.containerLabels | nindent 8 }}
+          {{- if .Values.zabbixAgent.extraPodLabels }}
+            {{- toYaml .Values.zabbixAgent.extraPodLabels | nindent 8 }}
           {{- end }}
         {{- end }}
     spec:

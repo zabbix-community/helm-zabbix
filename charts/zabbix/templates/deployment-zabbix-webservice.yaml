@@ -6,11 +6,11 @@ metadata:
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: webservice
-    {{- if .Values.zabbixWebService.deploymentLabels }}
-    {{- toYaml .Values.zabbixWebService.deploymentLabels | nindent 4 }}
+    {{- if .Values.zabbixWebService.extraDeploymentLabels }}
+    {{- toYaml .Values.zabbixWebService.extraDeploymentLabels | nindent 4 }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.zabbixWebService.deploymentAnnotations }}
+    {{- range $key,$value := .Values.zabbixWebService.extraDeploymentAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
@@ -22,14 +22,14 @@ spec:
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixWebService.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixWebService.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         {{- include "zabbix.labels" . | nindent 8 }}
         app.kubernetes.io/component: webservice
-        {{- if .Values.zabbixWebService.containerLabels }}
-        {{- toYaml .Values.zabbixWebService.containerLabels | nindent 8 }}
+        {{- if .Values.zabbixWebService.extraPodLabels }}
+        {{- toYaml .Values.zabbixWebService.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}

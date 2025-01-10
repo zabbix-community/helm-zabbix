@@ -7,11 +7,11 @@ metadata:
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: postgresql
-    {{- if .Values.postgresql.statefulSetLabels }}
-    {{- toYaml .Values.postgresql.statefulSetLabels | nindent 4 }}
+    {{- if .Values.postgresql.extraStatefulSetLabels }}
+    {{- toYaml .Values.postgresql.extraStatefulSetLabels | nindent 4 }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.postgresql.statefulSetAnnotations }}
+    {{- range $key,$value := .Values.postgresql.extraStatefulSetAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
@@ -44,14 +44,14 @@ spec:
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.postgresql.containerAnnotations }}
+        {{- range $key,$value := .Values.postgresql.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         {{- include "zabbix.labels" . | nindent 8 }}
         app.kubernetes.io/component: postgresql
-        {{- if .Values.postgresql.containerLabels }}
-        {{- toYaml .Values.postgresql.containerLabels | nindent 8 }}
+        {{- if .Values.postgresql.extraPodLabels }}
+        {{- toYaml .Values.postgresql.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}

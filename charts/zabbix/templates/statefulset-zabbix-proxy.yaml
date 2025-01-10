@@ -7,16 +7,16 @@ metadata:
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: proxy
-    {{- if .Values.zabbixProxy.statefulSetLabels }}
-    {{- toYaml .Values.zabbixProxy.statefulSetLabels | nindent 4 }}
+    {{- if .Values.zabbixProxy.extraStatefulSetLabels }}
+    {{- toYaml .Values.zabbixProxy.extraStatefulSetLabels | nindent 4 }}
     {{- end }}
     {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
-      {{- if .Values.zabbixAgent.deploymentLabels }}
-        {{- toYaml .Values.zabbixAgent.deploymentLabels | nindent 4 }}
+      {{- if .Values.zabbixAgent.extraDeploymentLabels }}
+        {{- toYaml .Values.zabbixAgent.extraDeploymentLabels | nindent 4 }}
       {{- end }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.zabbixProxy.statefulSetAnnotations }}
+    {{- range $key,$value := .Values.zabbixProxy.extraStatefulSetAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
@@ -29,18 +29,18 @@ spec:
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixProxy.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixProxy.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         {{- include "zabbix.labels" . | nindent 8 }}
         app.kubernetes.io/component: proxy
-        {{- if .Values.zabbixProxy.containerLabels }}
-        {{- toYaml .Values.zabbixProxy.containerLabels | nindent 8 }}
+        {{- if .Values.zabbixProxy.extraPodLabels }}
+        {{- toYaml .Values.zabbixProxy.extraPodLabels | nindent 8 }}
         {{- end }}
         {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
-          {{- if .Values.zabbixAgent.containerLabels }}
-            {{- toYaml .Values.zabbixAgent.containerLabels | nindent 8 }}
+          {{- if .Values.zabbixAgent.extraPodLabels }}
+            {{- toYaml .Values.zabbixAgent.extraPodLabels | nindent 8 }}
           {{- end }}
         {{- end }}
     spec:

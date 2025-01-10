@@ -170,6 +170,10 @@ helm uninstall zabbix -n monitoring
 * Default settings in `values.yaml` are now `postgresql.enabled=true` (no change here) and `zabbixServer.zabbixServerHA=false` (changed, due to [Native Zabbix Server High Availability](#native-zabbix-server-high-availability))
 * All labels of all manifests have been unified to fulfill the best practices / standards of how a newly created helm chart (`helm create...`) would do it. This should actually not cause any harm in terms of upgrading to the new release, but you may have some extra services or other stuff that refers to manifests deployed by this helm chart, which would need some fixes
 * Removed all pre 1.21 Kubernetes compatibility switches (`v1beta1`, ...)
+* `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`
+* `deploymentLabels` have been renamed to `extraDeploymentLabels` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetLabels`, etc.
+* `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetAnnotations`, `daemonSetAnnotations`, etc.
+* `containerLabels` are now called `extraPodLabels` and `containerAnnotations` went to be `extraPodAnnotations`, as these names match better to what the values actually do
 
 ## Version 6.1.0
 
