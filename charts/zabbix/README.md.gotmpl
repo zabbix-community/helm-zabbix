@@ -168,6 +168,8 @@ helm uninstall zabbix -n monitoring
   * `unifiedSecretAutoCreate` has been removed. Secret generation now depends on having set `existingSecretName`
   * `unifiedSecretXXXKey` renamed to simpler `secretXXXKey` value names
 * Default settings in `values.yaml` are now `postgresql.enabled=true` (no change here) and `zabbixServer.zabbixServerHA=false` (changed, due to [Native Zabbix Server High Availability](#native-zabbix-server-high-availability))
+* All labels of all manifests have been unified to fulfill the best practices / standards of how a newly created helm chart (`helm create...`) would do it. This should actually not cause any harm in terms of upgrading to the new release, but you may have some extra services or other stuff that refers to manifests deployed by this helm chart, which would need some fixes
+* Removed all pre 1.21 Kubernetes compatibility switches (`v1beta1`, ...)
 
 ## Version 6.1.0
 
