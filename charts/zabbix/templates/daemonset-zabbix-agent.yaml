@@ -4,11 +4,8 @@ kind: DaemonSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-agent
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-agent
-    app.kubernetes.io/name: zabbix-agent
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-agent
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: agent
     {{- if .Values.zabbixAgent.daemonSetLabels }}
     {{- toYaml .Values.zabbixAgent.daemonSetLabels | nindent 4 }}
     {{- end }}
@@ -19,7 +16,8 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ template "zabbix.fullname" . }}-zabbix-agent
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: agent
   template:
     metadata:
       annotations:
@@ -27,11 +25,8 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-zabbix-agent
-        app.kubernetes.io/name: zabbix-agent
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-agent
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: agent
         {{- if .Values.zabbixAgent.containerLabels }}
         {{- toYaml .Values.zabbixAgent.containerLabels | nindent 8 }}
         {{- end }}

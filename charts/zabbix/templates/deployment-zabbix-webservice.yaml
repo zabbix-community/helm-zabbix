@@ -4,11 +4,8 @@ kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-webservice
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-webservice
-    app.kubernetes.io/name: zabbix-webservice
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webservice
     {{- if .Values.zabbixWebService.deploymentLabels }}
     {{- toYaml .Values.zabbixWebService.deploymentLabels | nindent 4 }}
     {{- end }}
@@ -20,7 +17,8 @@ spec:
   replicas: {{ .Values.zabbixWebService.replicaCount }}
   selector:
     matchLabels:
-      app:  {{ template "zabbix.fullname" . }}-zabbix-webservice
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webservice
   template:
     metadata:
       annotations:
@@ -28,11 +26,8 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-zabbix-webservice
-        app.kubernetes.io/name: zabbix-webservice
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: webservice
         {{- if .Values.zabbixWebService.containerLabels }}
         {{- toYaml .Values.zabbixWebService.containerLabels | nindent 8 }}
         {{- end }}

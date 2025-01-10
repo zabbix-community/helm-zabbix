@@ -5,11 +5,8 @@ kind: StatefulSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-postgresql
   labels:
-    app: {{ template "zabbix.fullname" . }}-postgresql
-    app.kubernetes.io/name: postgresql
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
     {{- if .Values.postgresql.statefulSetLabels }}
     {{- toYaml .Values.postgresql.statefulSetLabels | nindent 4 }}
     {{- end }}
@@ -42,7 +39,8 @@ spec:
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
     matchLabels:
-      app: {{ template "zabbix.fullname" . }}-postgresql
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgresql
   template:
     metadata:
       annotations:
@@ -50,11 +48,8 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-postgresql
-        app.kubernetes.io/name: postgresql
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: postgresql
         {{- if .Values.postgresql.containerLabels }}
         {{- toYaml .Values.postgresql.containerLabels | nindent 8 }}
         {{- end }}

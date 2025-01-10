@@ -7,11 +7,8 @@ kind: Job
 metadata:
   name: {{ template "zabbix.fullname" . }}-create-upgrade-db
   labels:
-    app: {{ template "zabbix.fullname" . }}-create-upgrade-db
-    app.kubernetes.io/name: create-upgrade-db
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-create-upgrade-db
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-create-upgrade-db
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: create-upgrade-db
     {{- if .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels }}
     {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels | nindent 6 }}
     {{- end }}

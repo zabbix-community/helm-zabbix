@@ -5,11 +5,8 @@ kind: StatefulSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-proxy
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-proxy
-    app.kubernetes.io/name: zabbix-proxy
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: proxy
     {{- if .Values.zabbixProxy.statefulSetLabels }}
     {{- toYaml .Values.zabbixProxy.statefulSetLabels | nindent 4 }}
     {{- end }}
@@ -27,7 +24,8 @@ spec:
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
     matchLabels:
-      app: {{ template "zabbix.fullname" . }}-zabbix-proxy
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: proxy
   template:
     metadata:
       annotations:
@@ -35,11 +33,8 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-zabbix-proxy
-        app.kubernetes.io/name: zabbix-proxy
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: proxy
         {{- if .Values.zabbixProxy.containerLabels }}
         {{- toYaml .Values.zabbixProxy.containerLabels | nindent 8 }}
         {{- end }}

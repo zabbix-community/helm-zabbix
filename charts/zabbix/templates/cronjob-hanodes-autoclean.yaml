@@ -4,11 +4,7 @@ kind: CronJob
 metadata:
   name: {{ template "zabbix.fullname" . }}-nodesclean
   labels:
-    app: {{ template "zabbix.fullname" . }}-nodesclean
-    app.kubernetes.io/name: nodesclean
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-nodesclean
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-nodesclean
+    {{- include "zabbix.labels" . | nindent 4 }}
     {{- if .Values.zabbixServer.haNodesAutoClean.cronjobLabels }}
     {{- toYaml .Values.zabbixServer.haNodesAutoClean.cronjobLabels | nindent 4 }}
     {{- end }}

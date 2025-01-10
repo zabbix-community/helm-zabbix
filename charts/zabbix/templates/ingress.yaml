@@ -18,6 +18,7 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

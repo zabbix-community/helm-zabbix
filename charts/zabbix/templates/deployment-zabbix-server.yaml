@@ -5,11 +5,8 @@ kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-server
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-server
-    app.kubernetes.io/name: zabbix-server
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
     {{- if .Values.zabbixServer.deploymentLabels }}
     {{- toYaml .Values.zabbixServer.deploymentLabels | nindent 4 }}
     {{- end }}
@@ -34,7 +31,8 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app: {{ template "zabbix.fullname" . }}-zabbix-server
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: server
   template:
     metadata:
       annotations:
@@ -45,11 +43,8 @@ spec:
         {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
         zabbix.com/server-ha-enabled: "true"
         {{- end }}
-        app: {{ template "zabbix.fullname" . }}-zabbix-server
-        app.kubernetes.io/name: zabbix-server
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: server
         {{- if .Values.zabbixServer.containerLabels }}
         {{- toYaml .Values.zabbixServer.containerLabels | nindent 8 }}
         {{- end }}
@@ -82,7 +77,8 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
+                  {{- include "zabbix.selectorLabels" . | nindent 18 }}
+                  app.kubernetes.io/component: server
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:

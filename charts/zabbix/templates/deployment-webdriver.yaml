@@ -4,20 +4,19 @@ kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
   labels:
-    app: {{ template "zabbix.name" . }}
-    release: {{ .Release.Name }}
-    component: webdriver
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webdriver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ template "zabbix.name" . }}
-      component: webdriver
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webdriver
   template:
     metadata:
       labels:
-        app: {{ template "zabbix.name" . }}
-        component: webdriver
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: webdriver
     spec:
       containers:
       - name: {{ .Values.zabbixBrowserMonitoring.webdriver.name }}

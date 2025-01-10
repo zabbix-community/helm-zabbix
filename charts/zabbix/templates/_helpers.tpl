@@ -35,17 +35,21 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "zabbix.labels" -}}
-app.kubernetes.io/name: {{ include "zabbix.name" . }}
 helm.sh/chart: {{ include "zabbix.chart" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+{{ include "zabbix.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.global.commonLabels}}
-{{ toYaml .Values.global.commonLabels }}
 {{- end }}
-{{- end -}}
+
+{{/*
+Selector labels
+*/}}
+{{- define "zabbix.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "zabbix.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
 
 {{/*
 Create the name of the service account to use
