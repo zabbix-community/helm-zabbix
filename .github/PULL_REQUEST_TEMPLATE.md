@@ -2,8 +2,8 @@
 Thank you for contributing to this repository. Before you submit this PR we'd like to
 make sure you are aware of our technical requirements and best practices:
 
-* https://github.com/zabbix-community/helm-zabbix/blob/main/CONTRIBUTING.md
-* https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/requirements.md
+- https://github.com/zabbix-community/helm-zabbix/blob/main/CONTRIBUTING.md
+- https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/requirements.md
 
 Following our best practices right from the start will accelerate the review process and
 help get your PR merged quicker.
