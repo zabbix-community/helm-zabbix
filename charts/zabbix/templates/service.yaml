@@ -105,10 +105,7 @@ spec:
       {{- end }}
   selector:
     {{- include "zabbix.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: server
-    {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
-    {{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.labelName }}: "active"
-    {{- end }}
+    app.kubernetes.io/component: agent
 {{- end }}
 
 
