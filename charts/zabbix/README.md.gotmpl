@@ -177,6 +177,7 @@ helm uninstall zabbix -n monitoring
 * `deploymentLabels` have been renamed to `extraDeploymentLabels` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetLabels`, etc.
 * `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetAnnotations`, `daemonSetAnnotations`, etc.
 * `containerLabels` are now called `extraPodLabels` and `containerAnnotations` went to be `extraPodAnnotations`, as these names match better to what the values actually do
+* when using `zabbixAgent.runAsDaemonSet=true`, zabbix agent pods now default to use `hostNetwork: true`
 
 ## Version 6.1.0
 

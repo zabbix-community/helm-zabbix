@@ -513,6 +513,8 @@ zabbixAgent:
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
+  # -- set whether zabbix agent / agent2 in DaemonSet mode should use hostNetwork. Usually the right option if using zabbix agent for node monitoring. Only applies if `zabbixAgent.runAsDaemonSet=true`
+  hostNetwork: true
   # -- If true, agent pods mounts host / at /host/root
   hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml

@@ -31,6 +31,10 @@ spec:
         {{- toYaml .Values.zabbixAgent.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.zabbixAgent.hostNetwork }}
+      hostNetwork: {{ .Values.zabbixAgent.hostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixAgent.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
