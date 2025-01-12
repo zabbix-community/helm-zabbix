@@ -11,7 +11,7 @@ appVersion: 7.0.8  # zabbix version
 name: zabbix
 category: monitoring, networking, metrics
 displayName: Zabbix - The Enterprise-Class Open Source Network Monitoring Solution
-createdAt: 2025-01-12T14:58:04Z # Command Linux: date +%Y-%m-%dT%TZ
+createdAt: 2025-01-12T17:58:04Z # Command Linux: date +%Y-%m-%dT%TZ
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 logoURL: https://assets.zabbix.com/img/logo/zabbix_logo_500x131.png
 license: Apache-2.0
