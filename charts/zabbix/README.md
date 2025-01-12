@@ -1,15 +1,32 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 6.1.2](https://img.shields.io/badge/Version-6.1.2-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.0](https://img.shields.io/badge/Version-7.0.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
-This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster.
+This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster. It supports only Postgresql/TimescaleDB as a database backend at this point in time, without any plans to extend database support towards MySQL, MariaDB, etc. Also, this Helm Chart supports [Zabbix Server High Availability](#native-zabbix-server-high-availability)
+
+# Table of Contents
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+* [How to access Zabbix](#how-to-access-zabbix)
+* [Troubleshooting](#troubleshooting)
+* [Uninstallation](#uninstallation)
+* [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart)
+* [Zabbix components](#zabbix-components)
+* [Thanks](#thanks)
+* [License](#license)
+* [Configuration](#configuration)
+  * [Helm Values](#helm-values)
+  * [Database access settings](#database-access-settings)
+  * [Postgresql database](#postgresql-database)
+  * [Native Zabbix Server High Availability](#native-zabbix-server-high-availability)
+  * [Expose Zabbix service](#expose-zabbix-service)
 
 # Prerequisites
 
-- Kubernetes cluster 1.10+
+- Kubernetes cluster 1.21+
 - Helm 3.0+
 - Kubectl
 - PV provisioner support in the underlying infrastructure (optional).
@@ -18,7 +35,8 @@ Install the ``kubectl`` and ``helm`` requirements following the instructions in 
 
 # Installation
 
-> **Attention!!! Read the [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart).**
+> [!IMPORTANT]
+> Read the [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart)!
 
 Access the Kubernetes cluster.
 
@@ -43,7 +61,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='6.1.2'
+export ZABBIX_CHART_VERSION='7.0.0'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -141,6 +159,25 @@ helm uninstall zabbix -n monitoring
 
 # Breaking changes of this helm chart
 
+## Version 7.0.0
+
+> [!CAUTION]
+> Re-installation of your Release will be necessary. Make sure you do not lose any data!
+
+* Changed values under `postgresAccess`, partially made necessary by changing *db-create-upgrade-job* for [Native Zabbix Server High Availability](#native-zabbix-server-high-availability) to be a *pre-install/pre-upgrade* job:
+  * removed `postgresAccess.useUnifiedSecret`. It's now ALWAYS a unified secret containing DB connection relevant settings that is used by all components of this Chart requiring a DB connection
+  * `unifiedSecretName` now called `existingSecretName` to be more compliant with other Helm Charts
+  * `unifiedSecretAutoCreate` has been removed. Secret generation now depends on having set `existingSecretName`
+  * `unifiedSecretXXXKey` renamed to simpler `secretXXXKey` value names
+* Default settings in `values.yaml` are now `postgresql.enabled=true` (no change here) and `zabbixServer.zabbixServerHA=false` (changed, due to [Native Zabbix Server High Availability](#native-zabbix-server-high-availability))
+* All labels of all manifests have been unified to fulfill the best practices / standards of how a newly created helm chart (`helm create...`) would do it. This results in you having to **uninstall and install your Release again**, as `spec.selector` label matchers are *immutable* for *Deployments*, *Statefulsets* and such. If you use `postgresql.enabled=true` ("internal database"), be careful not to delete your Zabbix database when issuing uninstallation. By default, Helm does not remove *PersistentVolumeClaims* when uninstalling a release, but to be sure, you can [annotate your PVC additionally](https://github.com/helm/helm/issues/6261#issuecomment-523472128) to prevent its deletion
+* Removed all pre 1.21 Kubernetes compatibility switches (`v1beta1`, ...)
+* `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`
+* `deploymentLabels` have been renamed to `extraDeploymentLabels` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetLabels`, etc.
+* `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetAnnotations`, `daemonSetAnnotations`, etc.
+* `containerLabels` are now called `extraPodLabels` and `containerAnnotations` went to be `extraPodAnnotations`, as these names match better to what the values actually do
+* when using `zabbixAgent.runAsDaemonSet=true`, zabbix agent pods now default to use `hostNetwork: true`
+
 ## Version 6.1.0
 
 * Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: #123
@@ -232,11 +269,13 @@ possible is possible, while still obtaining a good level of security.
 
 # Zabbix components
 
-> **About the Zabbix version supported**
+> [!NOTE]
+> About the Zabbix version supported
+
 * This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
-* But by default this helm chart will install the latest LTS version (example: 6.0.x).
+* But by default this helm chart will install the latest LTS version (example: 7.0.x).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-* When you want use a non-LTS version (example: 6.4.x), you have to set this in ``values.yaml`` yourself.
+* When you want use a non-LTS version (example: 7.2.x), you have to set this in ``values.yaml`` yourself. This Helm Chart is actively being tested with the current non-LTS major releases, so it will be most probably working without any problem just setting `zabbixImageTag`, for example to the value of `ubuntu-7.2.1` or `alpine-7.2-latest`.
 
 ## Zabbix Server
 
@@ -258,7 +297,8 @@ raising the amount of replicas of the Zabbix Server.
 
 ## Zabbix Agent
 
-> **zabbix-agent2** is supported in this helm chart.
+> [!NOTE]
+> **zabbix-agent2** is supported in this helm chart and will be used by default.
 
 **Zabbix Agent** is deployed on a monitoring target to actively monitor local resources and
 applications (hard drives, memory, processor statistics etc)
@@ -277,6 +317,7 @@ monitoring and view monitoring statistics
 
 ## Zabbix Proxy
 
+> [!NOTE]
 > This helm chart installs Zabbix Proxy with SQLite3 support
 
 **Zabbix Proxy** is a process that may collect monitoring data from one or more monitored devices
@@ -289,22 +330,9 @@ proxy belongs to
 
 A database is required for zabbix to work, in this helm chart we're using Postgresql.
 
+> [!IMPORTANT]
 > We use plain postgresql database by default WITHOUT persistence. If you want persistence or
 would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
-
-# Support of native Zabbix Server High Availability
-
-Since version 6.0, Zabbix has his own implementation of [High Availability](https://www.zabbix.com/documentation/current/en/manual/concepts/server/ha), which is a simple approach to realize a Hot-Standby high availability setup with Zabbix Server. This feature applies only to Zabbix Server component, not Zabbix Proxy, Webdriver, Web Frontend or such. In a Zabbix monitoring environment, by design, there can only be one central active Zabbix Server taking over the responsibility of storing data into database, calculating triggers, sending alerts, evt. The native High Availability concept does not change that, it just implements a way to have additional Zabbix Server processes being "standby" and "jumping in" as soon as the active one does not report it's availability (updating a table in the database), anymore. As such, the Zabbix Server High Availability works well together (and somewhat requires, to be an entirely high available setup), an also high available database setup. High availability of Postgres Database is not covered by this Helm Chart, but can rather easily be achieved by using one of the well-known Postgresql database operators [PGO](https://github.com/CrunchyData/postgres-operator) and [CNPG](https://cloudnative-pg.io), which are supported to be used with this Helm Chart.
-
-For the HA feature, which has not been designed for usage in Kubernetes, to work in K8S, there have been some challenges to overcome, primarily the fact that Zabbix Server doesn't allow to upgrade or to initialize database schema when running in HA mode enabled. Intention by Zabbix is to turn HA mode off, issue Major Release Upgrade, turn HA mode back on. This doesn't conclude with Kubernetes concepts. Beside of that, some additional circumstances led us to an implementation as follows:
-
-* added a portion in values.yaml generally switching "Zabbix Server HA" on or off. If turned off, the Zabbix Server deployment will always be started with 1 replica and without the ZBX_HANODENAME env variable. This is an easy-to-use setup with no additional job pods, but it's not possible to just scale up zabbix server pods from here
-* when .Values.zabbixServer.zabbixServerHA.enabled is set to true, a Kubernetes Job, marked as Helm post-install,post-upgrade hook, is being deployed together with a Role, Rolebinding and ServiceAccount, allowing this job pod to execute some changes via Kubernetes API. The job runs after each installation and upgrade process, scales down zabbix server pods if needed, manages db entries for active HA and non-HA server nodes being connected to the database, etc. Additionally, this job figures out whether a migration from a non-HA enabled setup to a HA-enabled one has been done, and handles necessary actions (scale down pods, delete entries in database) accordingly
-* the sidecar containers running together with the Zabbix Server pods have been updated not only to prevent starting Zabbix Server pods when database is not available, but also when the schema version of the database is not yet the correct one, adding an additional layer of preventing pods from crashing
-
-Additionally, in order to make it possible to use **Active checks** and **Active Zabbix Proxies** with a Zabbix Server setup having High Availability enabled, a **HA Labels sidecar** has been introduced, continuously monitoring the Zabbix server pod for amount of running Zabbix server processes to figure out whether the Pod is being "active" or "standby" Zabbix Server node, and updating HA-related labels on the pod, accordingly.
-
-The reason to implement it this way and not by probing the port number, which was my initial approach, is that probing the port of Zabbix Server will make it generate a message in the log, stating that a connection without a proper payload has been initiated towards the Zabbix Server. More info: #115
 
 # Thanks
 
@@ -321,6 +349,8 @@ It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
 
 # Configuration
 
+## Helm Values
+
 The following tables lists the configurable parameters of the chart and their default values.
 
 | Key | Type | Default | Description |
@@ -329,35 +359,47 @@ The following tables lists the configurable parameters of the chart and their de
 | extraManifests | list | `[]` | Extra arbitrary Kubernetes manifests to deploy within the release |
 | global.commonLabels | object | `{}` | Labels to apply to all resources. |
 | global.imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images.  For example:  imagePullSecrets:    - name: "image-pull-secret" |
+| helmTestJobs.serverConnection.image.pullPolicy | string | `"IfNotPresent"` | Pull Policy for Helm test job testing connection to Zabbix server |
+| helmTestJobs.serverConnection.image.pullSecrets | list | `[]` | Pull Secrets for Helm test job testing connection to Zabbix server |
+| helmTestJobs.serverConnection.image.repository | string | `"busybox"` | Image repository for Helm test job testing connection to Zabbix server |
+| helmTestJobs.serverConnection.image.tag | string | `"latest"` | Image tag for Helm test job testing connection to Zabbix server |
+| helmTestJobs.serverConnection.resources | object | `{}` | Resource limits/reservations for Helm test job testing connection to Zabbix server |
+| helmTestJobs.serverConnection.securityContext | object | `{}` | Security Context for Helm test job testing connection to Zabbix server |
+| helmTestJobs.webConnection.image.pullPolicy | string | `"IfNotPresent"` | Pull Policy for Helm test job testing connection to web frontend |
+| helmTestJobs.webConnection.image.pullSecrets | list | `[]` | Pull Secrets for Helm test job testing connection to web frontend |
+| helmTestJobs.webConnection.image.repository | string | `"busybox"` | Image repository for Helm test job testing connection to web frontend |
+| helmTestJobs.webConnection.image.tag | string | `"latest"` | Image tag for Helm test job testing connection to web frontend |
+| helmTestJobs.webConnection.resources | object | `{}` | Resource limits/reservations for Helm test job testing connection to web frontend |
+| helmTestJobs.webConnection.securityContext | object | `{}` | Security Context for Helm test job testing connection to web frontend |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Enables Ingress |
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
 | ingress.pathType | string | `"Prefix"` | pathType is only for k8s >= 1.1= |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
-| postgresAccess.database | string | `"zabbix"` | Name of database |
+| postgresAccess.database | string | `"zabbix"` | Name of database, eignored if existingSecretName is set |
+| postgresAccess.existingSecretName | string | `""` | Name of an existing secret to use for database access. This could be one created by a Postgres operator such as CNPG or PGO |
 | postgresAccess.host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
-| postgresAccess.password | string | `"zabbix"` | Password of database - ignored if passwordSecret is set |
-| postgresAccess.port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true |
-| postgresAccess.schema | string | `""` | Schema of database. Can be left empty if unifiedSecretSchemaKey is not set. Only being used if external database is used (`postgresql.enabled` not set) |
-| postgresAccess.unifiedSecretAutoCreate | bool | `true` | automatically create secret if not already present (works only in combination with postgresql.enabled=true) |
-| postgresAccess.unifiedSecretDBKey | string | `"dbname"` | key of the unified postgres access secret where database name for the postgres db is found |
-| postgresAccess.unifiedSecretHostKey | string | `"host"` | key of the unified postgres access secret where host ip / dns name for the postgres db is found |
-| postgresAccess.unifiedSecretName | string | `"zabbixdb-pguser-zabbix"` | Name of one secret for unified configuration of PostgreSQL access |
-| postgresAccess.unifiedSecretPasswordKey | string | `"password"` | key of the unified postgres access secret where password for the postgres db is found |
-| postgresAccess.unifiedSecretPortKey | string | `"port"` | key of the unified postgres access secret where the port for the postgres db is found |
-| postgresAccess.unifiedSecretSchemaKey | string | `""` | key of the unified postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set)  |
-| postgresAccess.unifiedSecretUserKey | string | `"user"` | key of the unified postgres access secret where user name for the postgres db is found |
-| postgresAccess.useUnifiedSecret | bool | `true` | Whether to use the unified PostgreSQL access secret |
-| postgresAccess.user | string | `"zabbix"` | User of database |
-| postgresql.containerAnnotations | object | `{}` | Annotations to add to the containers |
-| postgresql.containerLabels | object | `{}` | Labels to add to the containers |
-| postgresql.enabled | bool | `true` | Create a database using Postgresql |
+| postgresAccess.password | string | `"zabbix"` | Password of database, eignored if existingSecretName is set |
+| postgresAccess.port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true or when existingSecretName is set |
+| postgresAccess.schema | string | `""` | Schema of database. Can be left empty if secretSchemaKey is not set. Only being used if external database is used (`postgresql.enabled` not set) |
+| postgresAccess.secretDBKey | string | `"dbname"` | key of the postgres access secret where database name for the postgres db is found |
+| postgresAccess.secretHostKey | string | `"host"` | key of the postgres access secret where host ip / dns name for the postgres db is found |
+| postgresAccess.secretPasswordKey | string | `"password"` | key of the unified postgres access secret where password for the postgres db is found |
+| postgresAccess.secretPortKey | string | `"port"` | key of the postgres access secret where the port for the postgres db is found |
+| postgresAccess.secretSchemaKey | string | `""` | key of the postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set) |
+| postgresAccess.secretUserKey | string | `"user"` | key of the postgres access secret where user name for the postgres db is found |
+| postgresAccess.user | string | `"zabbix"` | User of database, ignored if existingSecretName is set |
+| postgresql.enabled | bool | `true` | Create a database using Postgresql. Not usable in combination with ``zabbixserver.zabbixServerHA=true`` |
 | postgresql.extraContainers | list | `[]` | Additional containers to start within the postgresql pod |
 | postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
 | postgresql.extraInitContainers | list | `[]` | Additional init containers to start within the postgresql pod |
+| postgresql.extraPodAnnotations | object | `{}` | Annotations to add to the pod |
+| postgresql.extraPodLabels | object | `{}` | Labels to add to the pod |
 | postgresql.extraPodSpecs | object | `{}` | Additional specifications to the postgresql pod |
 | postgresql.extraRuntimeParameters | object | `{"max_connections":100}` | Extra Postgresql runtime parameters ("-c" options) |
+| postgresql.extraStatefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
+| postgresql.extraStatefulSetLabels | object | `{}` | Labels to add to the statefulset |
 | postgresql.extraVolumeMounts | list | `[]` | Additional volumeMounts to the postgresql container |
 | postgresql.extraVolumes | list | `[]` | Additional volumes to make available to the postgresql pod |
 | postgresql.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -376,8 +418,6 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.service.port | int | `5432` | Port of service in Kubernetes cluster |
 | postgresql.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | postgresql.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| postgresql.statefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
-| postgresql.statefulSetLabels | object | `{}` | Labels to add to the statefulset |
 | rbac.additionalRulesForClusterRole | list | `[]` |  |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
 | securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
@@ -393,18 +433,19 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.ZBX_SERVER_HOST | string | `"0.0.0.0/0"` | Zabbix Server host |
 | zabbixAgent.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixAgent.ZBX_TIMEOUT | int | `4` | The variable is used to specify timeout for processing checks. By default, value is 4. |
-| zabbixAgent.containerAnnotations | object | `{}` | Annotations to add to the containers |
-| zabbixAgent.containerLabels | object | `{}` | Labels to add to the containers |
-| zabbixAgent.daemonSetAnnotations | object | `{}` | Annotations to add to the daemonSet |
-| zabbixAgent.daemonSetLabels | object | `{}` | Labels to add to the daemonSet |
-| zabbixAgent.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
 | zabbixAgent.extraContainers | list | `[]` | Additional containers to start within the Zabbix Agent pod |
+| zabbixAgent.extraDaemonSetAnnotations | object | `{}` | Annotations to add to the daemonSet |
+| zabbixAgent.extraDaemonSetLabels | object | `{}` | Labels to add to the daemonSet |
+| zabbixAgent.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixAgent.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Agent pod |
+| zabbixAgent.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
+| zabbixAgent.extraPodLabels | object | `{}` | Labels to add to the pods |
 | zabbixAgent.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Agent pod |
 | zabbixAgent.extraVolumeMounts | list | `[]` | Additional volumeMounts to the zabbix Agent container |
 | zabbixAgent.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Agent pod |
+| zabbixAgent.hostNetwork | bool | `true` | set whether zabbix agent / agent2 in DaemonSet mode should use hostNetwork. Usually the right option if using zabbix agent for node monitoring. Only applies if `zabbixAgent.runAsDaemonSet=true` |
 | zabbixAgent.hostRootFsMount | bool | `true` | If true, agent pods mounts host / at /host/root |
 | zabbixAgent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixAgent.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
@@ -439,19 +480,19 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixBrowserMonitoring.webdriver.image.tag | string | `"127.0-chromedriver-127.0-grid-4.23.0-20240727"` | WebDriver container image tag, See https://hub.docker.com/r/selenium/standalone-chrome/tags |
 | zabbixBrowserMonitoring.webdriver.name | string | `"chrome"` | WebDriver container name |
 | zabbixBrowserMonitoring.webdriver.port | int | `4444` | WebDriver container port |
-| zabbixImageTag | string | `"ubuntu-7.0.6"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixImageTag | string | `"ubuntu-7.0.8"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixJavaGateway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. ZABBIX_OPTIONS: Java Gateway Service Name |
 | zabbixJavaGateway.ZBX_START_POLLERS | int | `5` | This variable is specified amount of pollers. By default, value is 5 |
 | zabbixJavaGateway.ZBX_TIMEOUT | int | `3` | This variable is used to specify timeout for outgoing connections. By default, value is 3. |
-| zabbixJavaGateway.containerAnnotations | object | `{}` | Annotations to add to the containers |
-| zabbixJavaGateway.containerLabels | object | `{}` | Labels to add to the containers |
-| zabbixJavaGateway.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
-| zabbixJavaGateway.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixJavaGateway.enabled | bool | `false` | Enables use of **Zabbix Java Gateway** |
 | zabbixJavaGateway.extraContainers | list | `[]` | Additional containers to start within the Zabbix Java Gateway pod |
+| zabbixJavaGateway.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixJavaGateway.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixJavaGateway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixJavaGateway.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Java Gateway pod |
+| zabbixJavaGateway.extraPodAnnotations | object | `{}` | Annotations to add to the pod |
+| zabbixJavaGateway.extraPodLabels | object | `{}` | Labels to add to the pod |
 | zabbixJavaGateway.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Java Gateway pod |
 | zabbixJavaGateway.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Java Gateway container |
 | zabbixJavaGateway.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Java Gateway pod |
@@ -485,13 +526,15 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixProxy.ZBX_TIMEOUT | int | `4` |  |
 | zabbixProxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
-| zabbixProxy.containerAnnotations | object | `{}` | Annotations to add to the containers |
-| zabbixProxy.containerLabels | object | `{}` | Labels to add to the containers |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixProxy.extraContainers | list | `[]` | Additional containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixProxy.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Proxy pod |
+| zabbixProxy.extraPodAnnotations | object | `{}` | Annotations to add to the pod |
+| zabbixProxy.extraPodLabels | object | `{}` | Labels to add to the pod |
 | zabbixProxy.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Proxy pod |
+| zabbixProxy.extraStatefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
+| zabbixProxy.extraStatefulSetLabels | object | `{}` | Labels to add to the statefulset |
 | zabbixProxy.extraVolumeClaimTemplate | list | `[]` | Extra volumeClaimTemplate for zabbixProxy statefulset |
 | zabbixProxy.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Proxy container |
 | zabbixProxy.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Proxy pod |
@@ -515,16 +558,14 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
 | zabbixProxy.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixProxy.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixProxy.statefulSetAnnotations | object | `{}` | Annotations to add to the statefulset |
-| zabbixProxy.statefulSetLabels | object | `{}` | Labels to add to the statefulset |
-| zabbixServer.containerAnnotations | object | `{}` | Annotations to add to the containers |
-| zabbixServer.containerLabels | object | `{}` | Labels to add to the containers |
-| zabbixServer.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
-| zabbixServer.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixServer.enabled | bool | `true` | Enables use of **Zabbix Server** |
 | zabbixServer.extraContainers | list | `[]` | Additional containers to start within the Zabbix Server pod |
+| zabbixServer.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixServer.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixServer.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Server pod |
+| zabbixServer.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
+| zabbixServer.extraPodLabels | object | `{}` | Labels to add to the pods |
 | zabbixServer.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Server pod |
 | zabbixServer.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Server container |
 | zabbixServer.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Server pod |
@@ -549,7 +590,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixServer.podAntiAffinity | bool | `true` | Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixServer.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module |
+| zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module. Will be forced to be 1 if ``zabbixServer.zabbixServerHA=false`` |
 | zabbixServer.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixServer.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | zabbixServer.service.annotations | object | `{}` | Annotations for the zabbix-server service |
@@ -563,28 +604,29 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
 | zabbixServer.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixServer.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixServer.zabbixServerHA | object | `{"dbCreateUpgradeJob":{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"resources":{},"securityContext":{}},"enabled":true,"haLabelsSidecar":{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}},"role":{"annotations":{}},"roleBinding":{"annotations":{}},"serviceAccount":{"annotations":{}}}` | Section responsible for native Zabbix Server High Availability support of this Helm Chart |
-| zabbixServer.zabbixServerHA.dbCreateUpgradeJob | object | `{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""},"resources":{},"securityContext":{}}` | Settings for the database initialization / upgrade job needed for HA enabled setups |
+| zabbixServer.zabbixServerHA | object | `{"dbCreateUpgradeJob":{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"ghcr.io/zabbix-community/zabbix-server-create-upgrade-db","tag":"","tagSuffix":"20241230222241"},"resources":{},"securityContext":{}},"enabled":false,"haLabelsSidecar":{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"ghcr.io/zabbix-community/zabbix-server-ha-label-manager","tag":"20241230230305"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}},"role":{"annotations":{}},"roleBinding":{"annotations":{}},"serviceAccount":{"annotations":{}}}` | Section responsible for native Zabbix Server High Availability support of this Helm Chart |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob | object | `{"extraContainers":[],"extraInitContainers":[],"extraPodSpecs":{},"extraVolumeMounts":[],"extraVolumes":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"ghcr.io/zabbix-community/zabbix-server-create-upgrade-db","tag":"","tagSuffix":"20241230222241"},"resources":{},"securityContext":{}}` | Settings for the database initialization / upgrade job needed for HA enabled setups |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers | list | `[]` | Additional containers to start within the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraInitContainers | list | `[]` | Additional init containers to start within the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraPodSpecs | object | `{}` | Additional specifications to the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraVolumeMounts | list | `[]` | Additional volumeMounts to the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraVolumes | list | `[]` | Additional volumes to make available to the dbCreateUpgradeJob pod |
-| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db","tag":""}` | Image settings for the database initialization / upgrade job |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"ghcr.io/zabbix-community/zabbix-server-create-upgrade-db","tag":"","tagSuffix":"20241230222241"}` | Image settings for the database initialization / upgrade job |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the db initialization / upgrade job |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullSecrets | list | `[]` | Pull secrets for the db initialization / upgrade job |
-| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.repository | string | `"registry.inqbeo.de/zabbix-dev/zabbix-server-create-upgrade-db"` | Image repository for the database initialization / upgrade job |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.repository | string | `"ghcr.io/zabbix-community/zabbix-server-create-upgrade-db"` | Image repository for the database initialization / upgrade job |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag | string | `""` | it is going to be chosen based of the zabbix_server pod container otherwise |
+| zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix | string | `"20241230222241"` | The tag suffix used for the dbCreateUpgradeJob's image when not explicitly specifying a tag for the image. The tag name will be concatenated with major release of zabbix_server image if specified |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.resources | object | `{}` | Resource requests and limits for the dbCreateUpgradeJob pod |
 | zabbixServer.zabbixServerHA.dbCreateUpgradeJob.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixServer.zabbixServerHA.enabled | bool | `true` | Enables Helm Chart support for Zabbix Server HA. If disabled, replicaCount will always be 1 |
-| zabbixServer.zabbixServerHA.haLabelsSidecar | object | `{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}}` | The HA labels sidecar checks for the current pod whether it is the active Zabbix Server HA node and sets labels on it, accordingly |
+| zabbixServer.zabbixServerHA.enabled | bool | `false` | Enables support for Zabbix Server High Availability. If disabled, replicaCount will always be 1. Can not be combined with ``postgresql.enabled=true`` |
+| zabbixServer.zabbixServerHA.haLabelsSidecar | object | `{"extraVolumeMounts":[],"image":{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"ghcr.io/zabbix-community/zabbix-server-ha-label-manager","tag":"20241230230305"},"labelName":"zabbix.com/server-ha-role","resources":{},"securityContext":{}}` | The HA labels sidecar checks for the current pod whether it is the active Zabbix Server HA node and sets labels on it, accordingly |
 | zabbixServer.zabbixServerHA.haLabelsSidecar.extraVolumeMounts | list | `[]` | Extra VolumeMounts for the HA labels sidecar |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager","tag":"latest"}` | Image settings for the HA labels sidecar |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"ghcr.io/zabbix-community/zabbix-server-ha-label-manager","tag":"20241230230305"}` | Image settings for the HA labels sidecar |
 | zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the HA labels sidecar image |
 | zabbixServer.zabbixServerHA.haLabelsSidecar.image.pullSecrets | list | `[]` | Pull secrets for the HA labels sidecar image |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.image.repository | string | `"registry.inqbeo.de/zabbix-dev/zabbix-server-ha-label-manager"` | Repository where to get the image for the HA labels sidecar container |
-| zabbixServer.zabbixServerHA.haLabelsSidecar.image.tag | string | `"latest"` | Tag of the HA labels sidecar container image |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image.repository | string | `"ghcr.io/zabbix-community/zabbix-server-ha-label-manager"` | Repository where to get the image for the HA labels sidecar container |
+| zabbixServer.zabbixServerHA.haLabelsSidecar.image.tag | string | `"20241230230305"` | Tag of the HA labels sidecar container image |
 | zabbixServer.zabbixServerHA.haLabelsSidecar.labelName | string | `"zabbix.com/server-ha-role"` | Label name for the sidecar to set on the zabbix server pods, will be used in the zabbix server Service as an additional selector to point to the active Zabbix Server pod |
 | zabbixServer.zabbixServerHA.haLabelsSidecar.resources | object | `{}` | Resource requests and limits for the HA labels sidecar |
 | zabbixServer.zabbixServerHA.haLabelsSidecar.securityContext | object | `{}` | Security context for the HA labels sidecar |
@@ -594,14 +636,14 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.zabbixServerHA.roleBinding.annotations | object | `{}` | Extra annotations for the roleBinding needed to give the HA related DB init and upgrade job |
 | zabbixServer.zabbixServerHA.serviceAccount | object | `{"annotations":{}}` | Serviceaccount for the database initialization and upgrade job |
 | zabbixServer.zabbixServerHA.serviceAccount.annotations | object | `{}` | Extra annotations for the serviceAccount needed to give the DB job API permissions |
-| zabbixWeb.containerAnnotations | object | `{}` | Annotations to add to the containers |
-| zabbixWeb.containerLabels | object | `{}` | Labels to add to the containers |
-| zabbixWeb.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
-| zabbixWeb.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWeb.enabled | bool | `true` | Enables use of **Zabbix Web** |
 | zabbixWeb.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web pod |
+| zabbixWeb.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixWeb.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWeb.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web pod |
+| zabbixWeb.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
+| zabbixWeb.extraPodLabels | object | `{}` | Labels to add to the pods |
 | zabbixWeb.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Web pod |
 | zabbixWeb.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Web container |
 | zabbixWeb.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Web pod |
@@ -638,14 +680,14 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
 | zabbixWeb.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixWeb.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
-| zabbixWebService.containerAnnotations | object | `{}` | Annotations to add to the containers |
-| zabbixWebService.containerLabels | object | `{}` | Labels to add to the containers |
-| zabbixWebService.deploymentAnnotations | object | `{}` | Annotations to add to the deployment |
-| zabbixWebService.deploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWebService.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixWebService.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web Service pod |
+| zabbixWebService.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixWebService.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
 | zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWebService.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web Service pod |
+| zabbixWebService.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
+| zabbixWebService.extraPodLabels | object | `{}` | Labels to add to the pods |
 | zabbixWebService.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix Web Service pod |
 | zabbixWebService.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix Web Service container |
 | zabbixWebService.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix Web Service pod |
@@ -666,7 +708,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixWebService.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 
-## Configure central database access related settings
+## Database access settings
 
 All settings referring to how the different components that this Chart installs access the
 Zabbix PostgreSQL Database (either an external, already existing database or one deployed within
@@ -674,27 +716,19 @@ this Helm chart) are being configured centrally under the ``postgresAccess`` sec
 ``values.yaml`` file.
 
 By default, this Chart will deploy it's own very simple PostgreSQL database. All settings
-relevant to how to access this database will be held in one central unified secret with the
-name configured with the ``postgresAccess.unifiedSecretName`` setting.
+relevant to how to access this database will be held in one central *Secret* with the
+name of the *Helm Release*, suffixed with *-db-access* and values defined in ``values.yaml``.
 
-Instead of letting the Chart automatically generate such a secret with a random password
-(which will NOT be recreated on upgrade/redeploy), you can supply such a secret yourself.
-Use ``postgresAccess.unifiedSecretAutoCreate=false`` in such a case and read the comments
-in ``values.yaml`` for how the values inside the secret should be set.
+Instead of letting the Chart automatically generate such a secret, you can use an existing Secret.
+Use ``postgresAccess.externalSecretName`` in such a case and read the comments
+in ``values.yaml`` for how the keys inside the Secret holding the relevant values can be set.
 
 If you want to connect your Zabbix installation to a Postgres database deployed using the
 [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/),
-you can use the secret that PGO generates for your DB automatically directly to connect Zabbix to it,
-by just referring to its name with the ``postgresAccess.unifiedSecretName`` setting to it.
+you can use the secret that PGO/CNPG generates for your database directly to connect Zabbix to it,
+by just referring to its name with the ``postgresAccess.externalSecretName`` setting to it.
 
-There is also the possibility to set all DB relevant settings directly inside the ``postgresAccess``
-section of the ``values.yaml`` file by using the settings noted there
-(``postgres_host``, ``postgres_user``, etc). If doing so, you still can use one single secret
-to told just and only the database password. If you want to do so, supply the
-``postgresAccess.passwordSecret`` and ``postgresAccess.passwordSecretKey``
-settings, accordingly.
-
-## Configure Postgresql database to match with your performance expectations
+## Postgresql database
 
 While the default database configuration shipped with this Chart is fine for most (very small,
 for testing only) Zabbix installations, you will want to set some specific settings to better
@@ -731,7 +765,37 @@ postgresql:
     config.file: /path/to/your/config.file
 ```
 
-## Configure the way how to expose Zabbix service
+Much more than using the database deployment done by this Helm Chart, it is highly recommended, and for usage of the [Zabbix Server High Availability](#native-zabbix-server-high-availability) even necessary, is the usage of an external database employing proper Backup, Restore, and High Availability functionalities. A good, and probably the best, way to do this inside Kubernetes is using one of the Postgresql database operators [CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/) or [CNPG](https://cloudnative-pg.io) See [Examples](/docs/examples/). For CNPG, a simple database manifest could look as follows:
+
+```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: zabbix-db
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+  storage:
+    size: 5Gi
+```
+
+## Native Zabbix Server High Availability
+
+Since version 6.0, Zabbix has its own implementation of [High Availability](https://www.zabbix.com/documentation/current/en/manual/concepts/server/ha), which is a simple approach to realize a Hot-Standby high availability setup with Zabbix Server. This feature applies only to the Zabbix Server component, not Zabbix Proxy, Webdriver, Web Frontend or such. In a Zabbix monitoring environment, by design, there can only be one central active Zabbix Server taking over the responsibility of storing data into database, calculating triggers, sending alerts, evt. The native High Availability concept does not change that, it just implements a way to have additional Zabbix Server processes being "standby" and "jumping in" as soon as the active one does not report it's availability (updating a table in the database), anymore. As such, the Zabbix Server High Availability works well together (and somewhat requires, to be an entirely high available setup), an also high available database setup. High availability of Postgres Database is not covered by this Helm Chart, but can rather easily be achieved by using one of the well-known Postgresql database operators [PGO](https://github.com/CrunchyData/postgres-operator) and [CNPG](https://cloudnative-pg.io), which are supported to be used with this Helm Chart.
+
+> [!IMPORTANT]
+> In order to deploy Zabbix Server in High Available mode using this Helm Chart, you need to bring your own (external) database. Recommended is to supply a highly available Postgresql setup using one of the well-known Postgresql operators [PGO](https://github.com/CrunchyData/postgres-operator) or [CNPG](https://cloudnative-pg.io) See [Examples](/docs/examples/).
+
+For the HA feature, which has not been designed for usage in Kubernetes by Zabbix SIA, to work in K8S, there have been some challenges to overcome, primarily the fact that Zabbix Server does not allow to upgrade or to initialize database schema when running in HA mode enabled. Intention by Zabbix is to turn HA mode off, issue Major Release Upgrade, turn HA mode back on. This doesn't conclude with Kubernetes concepts. Beside of that, some additional circumstances led us to an implementation as follows:
+
+* added a portion in values.yaml generally switching *Zabbix Server HA* on or off. If turned off, the Zabbix Server deployment will always be started with 1 replica and without the ZBX_HANODENAME env variable. This is an easy-to-use setup with no additional job pods, but it's not possible to just scale up zabbix server pods from here
+* when `.Values.zabbixServer.zabbixServerHA.enabled` is set to `true`, a Kubernetes Job, marked as Helm *pre-install,pre-upgrade* hook, is being deployed used to prepare the database and the database's schema version (by "schema", we refer to the tables, their structure, etc.) prior to any Zabbix Server pods trying to access the database. This job also handles major release upgrades. In case the job is being started in a `helm upgrade` situation, it scales down zabbix server deployment before upgrading database schema, manages entries in the DBs `ha_node` table, etc. Additionally, this job figures out whether a migration from a non-HA enabled setup to a HA-enabled one has been done, and handles necessary actions (scale down pods, delete entries in database) accordingly. The image bases off the zabbix_server image and its source code can be found [here](https://github.com/zabbix-community/helm-zabbix-image-db-init-upgrade-job).
+
+Due to the way Helm works (not offering a possibility to deploy manifests BEFORE a pre-install/pre-upgrade job) and the need to implement the database preparation as such (Helm never finishing an installation when using `--wait` flag when using post-install/post-upgrade job instead, and ArgoCD suffering the same issue), it is **not supported** to have this Helm Chart deploying the database Pod itself (`postgresql.enabled`) and enabling the Zabbix Server HA mode. `postgresql.enabled` is meant for non-production / test use cases, when for production an external database or one managed by an operator, set up in a high available manner, is strongly recommended anyway.
+
+In order to make it possible to use **Active checks** and **Active Zabbix Proxies** with a Zabbix Server setup having High Availability enabled, a **HA Labels sidecar** has been introduced, continuously monitoring the Zabbix server pod for amount of running Zabbix server processes to figure out whether the Pod is being "active" or "standby" Zabbix Server node, and updating HA-related labels on the pod, accordingly. The image for these sidecar containers is been contained [here within this Github organization](https://github.com/zabbix-community/helm-zabbix-image-ha-labels-sidecar). The reason to implement it this way and not by probing the port number, which was my initial approach, is that probing the port of Zabbix Server will make it generate a message in the log, stating that a connection without a proper payload has been initiated towards the Zabbix Server. More info: #115
+
+## Expose Zabbix service
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
 - **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the
