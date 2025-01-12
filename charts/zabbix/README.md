@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.0](https://img.shields.io/badge/Version-7.0.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.1](https://img.shields.io/badge/Version-7.0.1-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -8,21 +8,21 @@ Zabbix is a mature and effortless enterprise-class open source monitoring soluti
 This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster. It supports only Postgresql/TimescaleDB as a database backend at this point in time, without any plans to extend database support towards MySQL, MariaDB, etc. Also, this Helm Chart supports [Zabbix Server High Availability](#native-zabbix-server-high-availability)
 
 # Table of Contents
-* [Prerequisites](#prerequisites)
-* [Installation](#installation)
-* [How to access Zabbix](#how-to-access-zabbix)
-* [Troubleshooting](#troubleshooting)
-* [Uninstallation](#uninstallation)
-* [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart)
-* [Zabbix components](#zabbix-components)
-* [Thanks](#thanks)
-* [License](#license)
-* [Configuration](#configuration)
-  * [Helm Values](#helm-values)
-  * [Database access settings](#database-access-settings)
-  * [Postgresql database](#postgresql-database)
-  * [Native Zabbix Server High Availability](#native-zabbix-server-high-availability)
-  * [Expose Zabbix service](#expose-zabbix-service)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [How to access Zabbix](#how-to-access-zabbix)
+- [Troubleshooting](#troubleshooting)
+- [Uninstallation](#uninstallation)
+- [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart)
+- [Zabbix components](#zabbix-components)
+- [Thanks](#thanks)
+- [License](#license)
+- [Configuration](#configuration)
+  - [Helm Values](#helm-values)
+  - [Database access settings](#database-access-settings)
+  - [Postgresql database](#postgresql-database)
+  - [Native Zabbix Server High Availability](#native-zabbix-server-high-availability)
+  - [Expose Zabbix service](#expose-zabbix-service)
 
 # Prerequisites
 
@@ -61,7 +61,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.0'
+export ZABBIX_CHART_VERSION='7.0.1'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -105,9 +105,9 @@ kubectl port-forward service/zabbix-zabbix-web 8888:80 -n monitoring
 
 Login to Zabbix:
 
-* URL: http://localhost:8888
-* Login: **Admin**
-* Password: **zabbix**
+- URL: http://localhost:8888
+- Login: **Admin**
+- Password: **zabbix**
 
 # Troubleshooting
 
@@ -164,118 +164,118 @@ helm uninstall zabbix -n monitoring
 > [!CAUTION]
 > Re-installation of your Release will be necessary. Make sure you do not lose any data!
 
-* Changed values under `postgresAccess`, partially made necessary by changing *db-create-upgrade-job* for [Native Zabbix Server High Availability](#native-zabbix-server-high-availability) to be a *pre-install/pre-upgrade* job:
-  * removed `postgresAccess.useUnifiedSecret`. It's now ALWAYS a unified secret containing DB connection relevant settings that is used by all components of this Chart requiring a DB connection
-  * `unifiedSecretName` now called `existingSecretName` to be more compliant with other Helm Charts
-  * `unifiedSecretAutoCreate` has been removed. Secret generation now depends on having set `existingSecretName`
-  * `unifiedSecretXXXKey` renamed to simpler `secretXXXKey` value names
-* Default settings in `values.yaml` are now `postgresql.enabled=true` (no change here) and `zabbixServer.zabbixServerHA=false` (changed, due to [Native Zabbix Server High Availability](#native-zabbix-server-high-availability))
-* All labels of all manifests have been unified to fulfill the best practices / standards of how a newly created helm chart (`helm create...`) would do it. This results in you having to **uninstall and install your Release again**, as `spec.selector` label matchers are *immutable* for *Deployments*, *Statefulsets* and such. If you use `postgresql.enabled=true` ("internal database"), be careful not to delete your Zabbix database when issuing uninstallation. By default, Helm does not remove *PersistentVolumeClaims* when uninstalling a release, but to be sure, you can [annotate your PVC additionally](https://github.com/helm/helm/issues/6261#issuecomment-523472128) to prevent its deletion
-* Removed all pre 1.21 Kubernetes compatibility switches (`v1beta1`, ...)
-* `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`
-* `deploymentLabels` have been renamed to `extraDeploymentLabels` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetLabels`, etc.
-* `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetAnnotations`, `daemonSetAnnotations`, etc.
-* `containerLabels` are now called `extraPodLabels` and `containerAnnotations` went to be `extraPodAnnotations`, as these names match better to what the values actually do
-* when using `zabbixAgent.runAsDaemonSet=true`, zabbix agent pods now default to use `hostNetwork: true`
+- Changed values under `postgresAccess`, partially made necessary by changing *db-create-upgrade-job* for [Native Zabbix Server High Availability](#native-zabbix-server-high-availability) to be a *pre-install/pre-upgrade* job:
+  - removed `postgresAccess.useUnifiedSecret`. It's now ALWAYS a unified secret containing DB connection relevant settings that is used by all components of this Chart requiring a DB connection
+  - `unifiedSecretName` now called `existingSecretName` to be more compliant with other Helm Charts
+  - `unifiedSecretAutoCreate` has been removed. Secret generation now depends on having set `existingSecretName`
+  - `unifiedSecretXXXKey` renamed to simpler `secretXXXKey` value names
+- Default settings in `values.yaml` are now `postgresql.enabled=true` (no change here) and `zabbixServer.zabbixServerHA=false` (changed, due to [Native Zabbix Server High Availability](#native-zabbix-server-high-availability))
+- All labels of all manifests have been unified to fulfill the best practices / standards of how a newly created helm chart (`helm create...`) would do it. This results in you having to **uninstall and install your Release again**, as `spec.selector` label matchers are *immutable* for *Deployments*, *Statefulsets* and such. If you use `postgresql.enabled=true` ("internal database"), be careful not to delete your Zabbix database when issuing uninstallation. By default, Helm does not remove *PersistentVolumeClaims* when uninstalling a release, but to be sure, you can [annotate your PVC additionally](https://github.com/helm/helm/issues/6261#issuecomment-523472128) to prevent its deletion
+- Removed all pre 1.21 Kubernetes compatibility switches (`v1beta1`, ...)
+- `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`
+- `deploymentLabels` have been renamed to `extraDeploymentLabels` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetLabels`, etc.
+- `deploymentAnnotations` have been renamed to `extraDeploymentAnnotations` for every of the components of this helm chart in `values.yaml`. The same counts for `statefulSetAnnotations`, `daemonSetAnnotations`, etc.
+- `containerLabels` are now called `extraPodLabels` and `containerAnnotations` went to be `extraPodAnnotations`, as these names match better to what the values actually do
+- when using `zabbixAgent.runAsDaemonSet=true`, zabbix agent pods now default to use `hostNetwork: true`
 
 ## Version 6.1.0
 
-* Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: #123
-* Removing support for [karpenter](https://karpenter.sh) due to the more generalistic approach: #121
-* Adding support to deploy any arbitrary manifests together with this Helm Chart by embedding them in the `.Values.extraManifests` list (#121)
-* From now on, the keys to use for a *unifiedSecret* to configure postgresql access globally for all relevant components that this Helm Chart deploys, can be configured in values.yaml
-* It is now possible to use a different Schema other than "public" in Postgresql database, when using an external database
+- Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: #123
+- Removing support for [karpenter](https://karpenter.sh) due to the more generalistic approach: #121
+- Adding support to deploy any arbitrary manifests together with this Helm Chart by embedding them in the `.Values.extraManifests` list (#121)
+- From now on, the keys to use for a *unifiedSecret* to configure postgresql access globally for all relevant components that this Helm Chart deploys, can be configured in values.yaml
+- It is now possible to use a different Schema other than "public" in Postgresql database, when using an external database
 
 ## Version 6.0.0
 
-* New implementation of native Zabbix Server High Availability (see [Support of native Zabbix Server High Availability](#support-of-native-zabbix-server-high-availability) section)
-* No breaking changes in values.yaml, but nevertheless you might want to review your values.yaml's `zabbixServer.zabbixServerHA` section
+- New implementation of native Zabbix Server High Availability (see [Support of native Zabbix Server High Availability](#support-of-native-zabbix-server-high-availability) section)
+- No breaking changes in values.yaml, but nevertheless you might want to review your values.yaml's `zabbixServer.zabbixServerHA` section
 
 ## Version 5.0.0
 
-* Will be using Postgresql 16.x and Zabbix 7.x.
-* Adjust in extraEnv to add support in environment variables from configmap and secret. More info: #93
+- Will be using Postgresql 16.x and Zabbix 7.x.
+- Adjust in extraEnv to add support in environment variables from configmap and secret. More info: #93
 
 ## Version 4.0.0
 
-* Will be used Postgresql 15.x and Zabbix 6.x.
-* Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
-* This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
-  * ``db_access`` -> ``postgresAccess``
-  * ``db_access.use_unified_secret`` -> ``postgresAccess.useUnifiedSecret``
-  * ``db_access.unified_secret_name`` -> ``postgresAccess.unifiedSecretName``
-  * ``db_access.unified_secret_autocreate`` -> ``postgresAccess.unifiedSecretAutoCreate``
-  * ``db_access.db_server_host`` -> ``postgresAccess.host``
-  * ``db_access.db_server_port`` -> ``postgresAccess.port``
-  * ``db_access.postgres_user`` -> ``postgresAccess.user``
-  * ``db_access.postgres_password`` -> ``postgresAccess.password``
-  * ``db_access.postgres_db`` -> ``postgresAccess.database``
-  * ``db_access.postgres_password_secret`` -> ``postgresAccess.passwordSecret``
-  * ``db_access.postgres_password_secret_key`` -> ``postgresAccess.passwordSecretKey``
-  * ``ingressroute`` -> ``ingressRoute``
-  * ``postgresql.existing_claim_name`` -> ``postgresql.existingClaimName``
-  * ``postgresql.storage_size`` -> ``postgresql.storageSize``
-  * ``postgresql.storage_class`` -> ``postgresql.storageClass``
-  * ``zabbix_image_tag`` -> ``zabbixImageTag``
-  * ``zabbixagent`` -> ``zabbixAgent``
-  * ``zabbixproxy`` -> ``zabbixProxy``
-  * ``zabbixserver`` -> ``zabbixServer``
-  * ``zabbixserver.pod_anti_affinity`` -> ``zabbixServer.podAntiAffinity``
-  * ``zabbixserver.ha_nodes_autoclean`` -> ``zabbixServer.haNodesAutoClean``
-  * ``zabbixserver.ha_nodes_autoclean.delete_older_than_seconds`` -> ``zabbixServer.haNodesAutoClean.deleteOlderThanSeconds``
-  * ``zabbixweb`` -> ``zabbixWeb``
-  * ``zabbixweb.pod_anti_affinity`` -> ``zabbixWeb.podAntiAffinity``
-  * ``zabbixweb.saml_certs_secret_name`` -> ``zabbixWeb.samlCertsSecretName``
-  * ``zabbixwebservice`` -> ``zabbixWebService``
-  * ``zabbixwebservice.pod_anti_affinity`` -> ``zabbixWebService.podAntiAffinity``
-  * ``zabbixwebservice.ignore_url_cert_errors`` -> ``zabbixWebService.ignoreURLCertErrors``
+- Will be used Postgresql 15.x and Zabbix 6.x.
+- Allow install zabbix-agent2 as deployment and sidecar container. More info: https://github.com/zabbix-community/helm-zabbix/issues/20
+- This release changes parameter names in preparation for addressing these issues in the future and use [camelCase](https://en.wikipedia.org/wiki/Camel_case) pattern where is possible. More info: https://github.com/zabbix-community/helm-zabbix/issues/18 and https://github.com/zabbix-community/helm-zabbix/issues/21
+  - ``db_access`` -> ``postgresAccess``
+  - ``db_access.use_unified_secret`` -> ``postgresAccess.useUnifiedSecret``
+  - ``db_access.unified_secret_name`` -> ``postgresAccess.unifiedSecretName``
+  - ``db_access.unified_secret_autocreate`` -> ``postgresAccess.unifiedSecretAutoCreate``
+  - ``db_access.db_server_host`` -> ``postgresAccess.host``
+  - ``db_access.db_server_port`` -> ``postgresAccess.port``
+  - ``db_access.postgres_user`` -> ``postgresAccess.user``
+  - ``db_access.postgres_password`` -> ``postgresAccess.password``
+  - ``db_access.postgres_db`` -> ``postgresAccess.database``
+  - ``db_access.postgres_password_secret`` -> ``postgresAccess.passwordSecret``
+  - ``db_access.postgres_password_secret_key`` -> ``postgresAccess.passwordSecretKey``
+  - ``ingressroute`` -> ``ingressRoute``
+  - ``postgresql.existing_claim_name`` -> ``postgresql.existingClaimName``
+  - ``postgresql.storage_size`` -> ``postgresql.storageSize``
+  - ``postgresql.storage_class`` -> ``postgresql.storageClass``
+  - ``zabbix_image_tag`` -> ``zabbixImageTag``
+  - ``zabbixagent`` -> ``zabbixAgent``
+  - ``zabbixproxy`` -> ``zabbixProxy``
+  - ``zabbixserver`` -> ``zabbixServer``
+  - ``zabbixserver.pod_anti_affinity`` -> ``zabbixServer.podAntiAffinity``
+  - ``zabbixserver.ha_nodes_autoclean`` -> ``zabbixServer.haNodesAutoClean``
+  - ``zabbixserver.ha_nodes_autoclean.delete_older_than_seconds`` -> ``zabbixServer.haNodesAutoClean.deleteOlderThanSeconds``
+  - ``zabbixweb`` -> ``zabbixWeb``
+  - ``zabbixweb.pod_anti_affinity`` -> ``zabbixWeb.podAntiAffinity``
+  - ``zabbixweb.saml_certs_secret_name`` -> ``zabbixWeb.samlCertsSecretName``
+  - ``zabbixwebservice`` -> ``zabbixWebService``
+  - ``zabbixwebservice.pod_anti_affinity`` -> ``zabbixWebService.podAntiAffinity``
+  - ``zabbixwebservice.ignore_url_cert_errors`` -> ``zabbixWebService.ignoreURLCertErrors``
 
 ## Version 3.0.0
 
-* Will be used Postgresql 14.x and Zabbix 6.x.
-* This version removes the possibility to specify database username/password per
+- Will be used Postgresql 14.x and Zabbix 6.x.
+- This version removes the possibility to specify database username/password per
   subsection in favor of specifying all of them centrally at one place.
-* Also, the names of the values have changed from upper to lowercase.
-* It is now possible to start the Zabbix Server pods with replicas of more than 1.
+- Also, the names of the values have changed from upper to lowercase.
+- It is now possible to start the Zabbix Server pods with replicas of more than 1.
   HA functionality of Zabbix will automatically be enabled and it is made sure that
   the database schema publication will only happen once, and not by all of the Zabbix
   Server pods at the same time.
-* More info: https://github.com/cetic/helm-zabbix/pull/54
+- More info: https://github.com/cetic/helm-zabbix/pull/54
 
 ## Version 2.0.0
 
-* Will be used Postgresql 14.x and Zabbix 6.x.
-* This version implements a central way of managing database access credentials
+- Will be used Postgresql 14.x and Zabbix 6.x.
+- This version implements a central way of managing database access credentials
 using a secret, which then will be respected by all the components
 installed by this chart: zabbixServer, zabbixWeb and postgresql.
-* The secret must contain a number of keys indicating DB host, DB name,
+- The secret must contain a number of keys indicating DB host, DB name,
 user and password and can direct towards a database installed within
 this chart, or an external database.
-* The benefit of this is that now the database can respect the values
+- The benefit of this is that now the database can respect the values
 in the central DB access secret and initialize accordingly.
-* Last but not least, the credential secret can be chosen to be
+- Last but not least, the credential secret can be chosen to be
 auto-generated (password will be set to a random string) at chart
 installation, if postgresql.enabled is set to true. With this, an easy
 to use "out-of-the-box" installation with as little customizations as
 possible is possible, while still obtaining a good level of security.
-* More info: https://github.com/cetic/helm-zabbix/pull/53
+- More info: https://github.com/cetic/helm-zabbix/pull/53
 
 ## Version 1.0.0
 
-* Will be used Postgresql 14.x and Zabbix 6.x.
-* The installation of any component of chart is optional for easy integration with the official
+- Will be used Postgresql 14.x and Zabbix 6.x.
+- The installation of any component of chart is optional for easy integration with the official
  chart: https://git.zabbix.com/projects/ZT/repos/kubernetes-helm/
-* More info: https://github.com/cetic/helm-zabbix/issues/42
+- More info: https://github.com/cetic/helm-zabbix/issues/42
 
 # Zabbix components
 
 > [!NOTE]
 > About the Zabbix version supported
 
-* This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
-* But by default this helm chart will install the latest LTS version (example: 7.0.x).
+- This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
+- But by default this helm chart will install the latest LTS version (example: 7.0.x).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-* When you want use a non-LTS version (example: 7.2.x), you have to set this in ``values.yaml`` yourself. This Helm Chart is actively being tested with the current non-LTS major releases, so it will be most probably working without any problem just setting `zabbixImageTag`, for example to the value of `ubuntu-7.2.1` or `alpine-7.2-latest`.
+- When you want use a non-LTS version (example: 7.2.x), you have to set this in ``values.yaml`` yourself. This Helm Chart is actively being tested with the current non-LTS major releases, so it will be most probably working without any problem just setting `zabbixImageTag`, for example to the value of `ubuntu-7.2.1` or `alpine-7.2-latest`.
 
 ## Zabbix Server
 
@@ -337,11 +337,11 @@ would like to use TimescaleDB instead, check the comments in the ``values.yaml``
 # Thanks
 
 > **About the new home of helm chart**
-* The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
+- The new home of the Zabbix helm chart is: https://github.com/zabbix-community/helm-zabbix.
 It is a fork from the [cetic/helm-zabbix](https://github.com/cetic/helm-zabbix).
-* In this [issue](https://github.com/cetic/helm-zabbix/issues/68) it was agreed with [Sebastien Dupont](https://github.com/banzothat) that the repository would get a new home.
-* We are grateful to [Cetic](https://www.cetic.be/) for making the infrastructure available on CircleCI to host the helm chart from the start. Now, the new versions will be hosted on Github.
-* We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) and [Amen Ayadi](https://github.com/AyadiAmen), who were the first developers of the helm chart and who worked at Cetic. Your dedication and effort made it possible to install Zabbix on a Kubernetes cluster.
+- In this [issue](https://github.com/cetic/helm-zabbix/issues/68) it was agreed with [Sebastien Dupont](https://github.com/banzothat) that the repository would get a new home.
+- We are grateful to [Cetic](https://www.cetic.be/) for making the infrastructure available on CircleCI to host the helm chart from the start. Now, the new versions will be hosted on Github.
+- We are very grateful to [Alexandre Nuttinck](https://github.com/alexnuttinck) and [Amen Ayadi](https://github.com/AyadiAmen), who were the first developers of the helm chart and who worked at Cetic. Your dedication and effort made it possible to install Zabbix on a Kubernetes cluster.
 
 # License
 
@@ -788,8 +788,8 @@ Since version 6.0, Zabbix has its own implementation of [High Availability](http
 
 For the HA feature, which has not been designed for usage in Kubernetes by Zabbix SIA, to work in K8S, there have been some challenges to overcome, primarily the fact that Zabbix Server does not allow to upgrade or to initialize database schema when running in HA mode enabled. Intention by Zabbix is to turn HA mode off, issue Major Release Upgrade, turn HA mode back on. This doesn't conclude with Kubernetes concepts. Beside of that, some additional circumstances led us to an implementation as follows:
 
-* added a portion in values.yaml generally switching *Zabbix Server HA* on or off. If turned off, the Zabbix Server deployment will always be started with 1 replica and without the ZBX_HANODENAME env variable. This is an easy-to-use setup with no additional job pods, but it's not possible to just scale up zabbix server pods from here
-* when `.Values.zabbixServer.zabbixServerHA.enabled` is set to `true`, a Kubernetes Job, marked as Helm *pre-install,pre-upgrade* hook, is being deployed used to prepare the database and the database's schema version (by "schema", we refer to the tables, their structure, etc.) prior to any Zabbix Server pods trying to access the database. This job also handles major release upgrades. In case the job is being started in a `helm upgrade` situation, it scales down zabbix server deployment before upgrading database schema, manages entries in the DBs `ha_node` table, etc. Additionally, this job figures out whether a migration from a non-HA enabled setup to a HA-enabled one has been done, and handles necessary actions (scale down pods, delete entries in database) accordingly. The image bases off the zabbix_server image and its source code can be found [here](https://github.com/zabbix-community/helm-zabbix-image-db-init-upgrade-job).
+- added a portion in values.yaml generally switching *Zabbix Server HA* on or off. If turned off, the Zabbix Server deployment will always be started with 1 replica and without the ZBX_HANODENAME env variable. This is an easy-to-use setup with no additional job pods, but it's not possible to just scale up zabbix server pods from here
+- when `.Values.zabbixServer.zabbixServerHA.enabled` is set to `true`, a Kubernetes Job, marked as Helm *pre-install,pre-upgrade* hook, is being deployed used to prepare the database and the database's schema version (by "schema", we refer to the tables, their structure, etc.) prior to any Zabbix Server pods trying to access the database. This job also handles major release upgrades. In case the job is being started in a `helm upgrade` situation, it scales down zabbix server deployment before upgrading database schema, manages entries in the DBs `ha_node` table, etc. Additionally, this job figures out whether a migration from a non-HA enabled setup to a HA-enabled one has been done, and handles necessary actions (scale down pods, delete entries in database) accordingly. The image bases off the zabbix_server image and its source code can be found [here](https://github.com/zabbix-community/helm-zabbix-image-db-init-upgrade-job).
 
 Due to the way Helm works (not offering a possibility to deploy manifests BEFORE a pre-install/pre-upgrade job) and the need to implement the database preparation as such (Helm never finishing an installation when using `--wait` flag when using post-install/post-upgrade job instead, and ArgoCD suffering the same issue), it is **not supported** to have this Helm Chart deploying the database Pod itself (`postgresql.enabled`) and enabling the Zabbix Server HA mode. `postgresql.enabled` is meant for non-production / test use cases, when for production an external database or one managed by an operator, set up in a high available manner, is strongly recommended anyway.
 

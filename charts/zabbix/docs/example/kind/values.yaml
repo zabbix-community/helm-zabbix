@@ -1,11 +1,5 @@
 # Custom values for zabbix.
-
-zabbixImageTag: alpine-7.2.0
-
-postgresAccess:
-  useUnifiedSecret: true
-  unifiedSecretName: zabbixdb-pguser-zabbix
-  unifiedSecretAutoCreate: true
+zabbixImageTag: alpine-7.2.2
 
 zabbixServer:
   enabled: true
@@ -163,25 +157,3 @@ zabbixWeb:
 #        secretKeyRef:
 #          name: my-envs
 #          key: password
-
-ingress:
-  enabled: true
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  # Ingress extra labels
-  extraLabels: {}
-  hosts:
-  - host: zabbix.local
-    paths:
-    - path: /
-      pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
-  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
-  ingressClassName: nginx
-  # pathType is only for k8s >= 1.1=
-  pathType: Prefix
