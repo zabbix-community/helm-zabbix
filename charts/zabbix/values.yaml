@@ -307,9 +307,9 @@ postgresql:
   extraStatefulSetAnnotations: {}
   # -- Labels to add to the statefulset
   extraStatefulSetLabels: {}
-  # -- Annotations to add to the containers
+  # -- Annotations to add to the pod
   extraPodAnnotations: {}
-  # -- Labels to add to the containers
+  # -- Labels to add to the pod
   extraPodLabels: {}
   # -- Additional volumeMounts to the postgresql container
   extraVolumeMounts: []
@@ -411,9 +411,9 @@ zabbixProxy:
   extraStatefulSetAnnotations: {}
   # -- Labels to add to the statefulset
   extraStatefulSetLabels: {}
-  # -- Annotations to add to the containers
+  # -- Annotations to add to the pod
   extraPodAnnotations: {}
-  # -- Labels to add to the containers
+  # -- Labels to add to the pod
   extraPodLabels: {}
   # -- Additional volumeMounts to the Zabbix Proxy container
   extraVolumeMounts: []
@@ -525,9 +525,9 @@ zabbixAgent:
   extraDaemonSetLabels: {}
   # -- Labels to add to the deployment
   extraDeploymentLabels: {}
-  # -- Annotations to add to the containers
+  # -- Annotations to add to the pods
   extraPodAnnotations: {}
-  # -- Labels to add to the containers
+  # -- Labels to add to the pods
   extraPodLabels: {}
   # -- Additional containers to start within the Zabbix Agent pod
   extraContainers: []
@@ -631,9 +631,9 @@ zabbixWeb:
   extraDeploymentAnnotations: {}
   # -- Labels to add to the deployment
   extraDeploymentLabels: {}
-  # -- Annotations to add to the containers
+  # -- Annotations to add to the pods
   extraPodAnnotations: {}
-  # -- Labels to add to the containers
+  # -- Labels to add to the pods
   extraPodLabels: {}
   # -- Additional volumeMounts to the Zabbix Web container
   extraVolumeMounts: []
@@ -711,9 +711,9 @@ zabbixWebService:
   extraDeploymentAnnotations: {}
   # -- Labels to add to the deployment
   extraDeploymentLabels: {}
-  # -- Annotations to add to the containers
+  # -- Annotations to add to the pods
   extraPodAnnotations: {}
-  # -- Labels to add to the containers
+  # -- Labels to add to the pods
   extraPodLabels: {}
   # -- Additional volumeMounts to the Zabbix Web Service container
   extraVolumeMounts: []
@@ -811,9 +811,9 @@ zabbixJavaGateway:
   extraDeploymentAnnotations: {}
   # -- Labels to add to the deployment
   extraDeploymentLabels: {}
-  # -- Annotations to add to the containers
+  # -- Annotations to add to the pod
   extraPodAnnotations: {}
-  # -- Labels to add to the containers
+  # -- Labels to add to the pod
   extraPodLabels: {}
   # -- Additional containers to start within the Zabbix Java Gateway pod
   extraContainers: []
