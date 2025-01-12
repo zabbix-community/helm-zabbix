@@ -4,37 +4,32 @@ kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
   labels:
-    app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-    app.kubernetes.io/name: {{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-    {{- if .Values.zabbixJavaGateway.deploymentLabels }}
-    {{- toYaml .Values.zabbixJavaGateway.deploymentLabels | nindent 4 }}
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: java-gateway
+    {{- if .Values.zabbixJavaGateway.extraDeploymentLabels }}
+    {{- toYaml .Values.zabbixJavaGateway.extraDeploymentLabels | nindent 4 }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.zabbixJavaGateway.deploymentAnnotations }}
+    {{- range $key,$value := .Values.zabbixJavaGateway.extraDeploymentAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   replicas: {{ .Values.zabbixJavaGateway.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: java-gateway
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixJavaGateway.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixJavaGateway.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-        app.kubernetes.io/name: {{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-        {{- if .Values.zabbixJavaGateway.containerLabels }}
-        {{- toYaml .Values.zabbixJavaGateway.containerLabels | nindent 8 }}
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: java-gateway
+        {{- if .Values.zabbixJavaGateway.extraPodLabels }}
+        {{- toYaml .Values.zabbixJavaGateway.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}

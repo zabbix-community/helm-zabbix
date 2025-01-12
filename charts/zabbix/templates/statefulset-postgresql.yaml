@@ -5,16 +5,13 @@ kind: StatefulSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-postgresql
   labels:
-    app: {{ template "zabbix.fullname" . }}-postgresql
-    app.kubernetes.io/name: postgresql
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
-    {{- if .Values.postgresql.statefulSetLabels }}
-    {{- toYaml .Values.postgresql.statefulSetLabels | nindent 4 }}
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+    {{- if .Values.postgresql.extraStatefulSetLabels }}
+    {{- toYaml .Values.postgresql.extraStatefulSetLabels | nindent 4 }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.postgresql.statefulSetAnnotations }}
+    {{- range $key,$value := .Values.postgresql.extraStatefulSetAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
@@ -42,21 +39,19 @@ spec:
   serviceName: {{ template "zabbix.fullname" . }}
   selector:
     matchLabels:
-      app: {{ template "zabbix.fullname" . }}-postgresql
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgresql
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.postgresql.containerAnnotations }}
+        {{- range $key,$value := .Values.postgresql.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-postgresql
-        app.kubernetes.io/name: postgresql
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
-        {{- if .Values.postgresql.containerLabels }}
-        {{- toYaml .Values.postgresql.containerLabels | nindent 8 }}
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: postgresql
+        {{- if .Values.postgresql.extraPodLabels }}
+        {{- toYaml .Values.postgresql.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}

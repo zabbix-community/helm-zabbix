@@ -4,37 +4,32 @@ kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-webservice
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-webservice
-    app.kubernetes.io/name: zabbix-webservice
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
-    {{- if .Values.zabbixWebService.deploymentLabels }}
-    {{- toYaml .Values.zabbixWebService.deploymentLabels | nindent 4 }}
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webservice
+    {{- if .Values.zabbixWebService.extraDeploymentLabels }}
+    {{- toYaml .Values.zabbixWebService.extraDeploymentLabels | nindent 4 }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.zabbixWebService.deploymentAnnotations }}
+    {{- range $key,$value := .Values.zabbixWebService.extraDeploymentAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   replicas: {{ .Values.zabbixWebService.replicaCount }}
   selector:
     matchLabels:
-      app:  {{ template "zabbix.fullname" . }}-zabbix-webservice
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webservice
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixWebService.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixWebService.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-zabbix-webservice
-        app.kubernetes.io/name: zabbix-webservice
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
-        {{- if .Values.zabbixWebService.containerLabels }}
-        {{- toYaml .Values.zabbixWebService.containerLabels | nindent 8 }}
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: webservice
+        {{- if .Values.zabbixWebService.extraPodLabels }}
+        {{- toYaml .Values.zabbixWebService.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}

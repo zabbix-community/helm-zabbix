@@ -5,11 +5,7 @@ kind: RoleBinding
 metadata:
   name: {{ template "zabbix.fullname" . }}-ha-helper
   labels:
-    app: {{ template "zabbix.fullname" . }}-ha-helper
-    app.kubernetes.io/name: zabbix-server
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+    {{- include "zabbix.labels" . | nindent 4 }}
   {{- if .Values.zabbixServer.zabbixServerHA.roleBinding.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixServer.zabbixServerHA.roleBinding.annotations }}

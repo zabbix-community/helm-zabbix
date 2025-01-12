@@ -4,38 +4,37 @@ kind: DaemonSet
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-agent
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-agent
-    app.kubernetes.io/name: zabbix-agent
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-agent
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
-    {{- if .Values.zabbixAgent.daemonSetLabels }}
-    {{- toYaml .Values.zabbixAgent.daemonSetLabels | nindent 4 }}
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: agent
+    {{- if .Values.zabbixAgent.extraDaemonSetLabels }}
+    {{- toYaml .Values.zabbixAgent.extraDaemonSetLabels | nindent 4 }}
     {{- end }}
   annotations:
-    {{- range $key,$value := .Values.zabbixAgent.daemonSetAnnotations }}
+    {{- range $key,$value := .Values.zabbixAgent.extraDaemonSetAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   selector:
     matchLabels:
-      app: {{ template "zabbix.fullname" . }}-zabbix-agent
+      {{- include "zabbix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: agent
   template:
     metadata:
       annotations:
-        {{- range $key,$value := .Values.zabbixAgent.containerAnnotations }}
+        {{- range $key,$value := .Values.zabbixAgent.extraPodAnnotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
-        app: {{ template "zabbix.fullname" . }}-zabbix-agent
-        app.kubernetes.io/name: zabbix-agent
-        helm.sh/chart: {{ include "zabbix.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-agent
-        app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
-        {{- if .Values.zabbixAgent.containerLabels }}
-        {{- toYaml .Values.zabbixAgent.containerLabels | nindent 8 }}
+        {{- include "zabbix.labels" . | nindent 8 }}
+        app.kubernetes.io/component: agent
+        {{- if .Values.zabbixAgent.extraPodLabels }}
+        {{- toYaml .Values.zabbixAgent.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.zabbixAgent.hostNetwork }}
+      hostNetwork: {{ .Values.zabbixAgent.hostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
       serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
       {{- with .Values.zabbixAgent.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}

@@ -5,11 +5,8 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-server
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-server
-    app.kubernetes.io/name: zabbix-server
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-server
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
   {{- if .Values.zabbixServer.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixServer.service.annotations }}
@@ -52,7 +49,8 @@ spec:
       targetPort: 10052
       protocol: TCP
   selector:
-    app: {{ template "zabbix.fullname" . }}-zabbix-server
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: server
     {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
     {{ .Values.zabbixServer.zabbixServerHA.haLabelsSidecar.labelName }}: "active"
     {{- end }}
@@ -66,11 +64,8 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-agent
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-agent
-    app.kubernetes.io/name: zabbix-agent
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-agent
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-agent
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: agent
   {{- if .Values.zabbixAgent.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixAgent.service.annotations }}
@@ -109,7 +104,8 @@ spec:
       nodePort: {{ .Values.zabbixAgent.service.nodePort }}
       {{- end }}
   selector:
-    app: {{ template "zabbix.fullname" . }}-zabbix-agent
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: agent
 {{- end }}
 
 
@@ -120,11 +116,8 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-web
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-web
-    app.kubernetes.io/name: zabbix-web
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-web
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
   {{- if .Values.zabbixWeb.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixWeb.service.annotations }}
@@ -163,8 +156,9 @@ spec:
       nodePort: {{ .Values.zabbixWeb.service.nodePort }}
       {{- end }}
   selector:
-    app: {{ template "zabbix.fullname" . }}-zabbix-web
-  {{- end }}
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+{{- end }}
 
 
 {{- if .Values.zabbixWebService.enabled }}
@@ -174,11 +168,8 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-webservice
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-webservice
-    app.kubernetes.io/name: zabbix-webservice
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-webservice
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webservice
   {{- if .Values.zabbixWebService.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixWebService.service.annotations }}
@@ -196,8 +187,9 @@ spec:
       targetPort: 10053
       protocol: TCP
   selector:
-    app: {{ template "zabbix.fullname" . }}-zabbix-webservice
-  {{- end }}
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: webservice
+{{- end }}
 
 
 {{- if .Values.zabbixProxy.enabled }}
@@ -207,11 +199,8 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-proxy
   labels:
-    app: {{ template "zabbix.fullname" . }}-zabbix-proxy
-    app.kubernetes.io/name: zabbix-proxy
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-proxy
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-zabbix-proxy
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: proxy
   {{- if .Values.zabbixProxy.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixProxy.service.annotations }}
@@ -250,8 +239,10 @@ spec:
       nodePort: {{ .Values.zabbixProxy.service.nodePort }}
       {{- end }}
   selector:
-    app: {{ template "zabbix.fullname" . }}-zabbix-proxy
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: proxy
 {{- end }}
+
 
 {{- if .Values.postgresql.enabled }}
 ---
@@ -260,11 +251,8 @@ kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-postgresql
   labels:
-    app: {{ template "zabbix.fullname" . }}-postgresql
-    app.kubernetes.io/name: postgresql
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-postgresql
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
   {{- if .Values.postgresql.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.postgresql.service.annotations }}
@@ -282,21 +270,20 @@ spec:
       targetPort: 5432
       protocol: TCP
   selector:
-    app: {{ template "zabbix.fullname" . }}-postgresql
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
 {{- end }}
+
 
 {{- if .Values.zabbixJavaGateway.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+  name: {{ template "zabbix.fullname" . }}-java-gateway
   labels:
-    app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-    app.kubernetes.io/name: {{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-    helm.sh/chart: {{ include "zabbix.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: java-gateway
   {{- if .Values.zabbixJavaGateway.service.annotations }}
   annotations:
     {{- range $key,$value := .Values.zabbixJavaGateway.service.annotations }}
@@ -335,25 +322,27 @@ spec:
       nodePort: {{ .Values.zabbixJavaGateway.service.nodePort }}
       {{- end }}
   selector:
-    app: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: java-gateway
 {{- end }}
----
+
+
 {{- if and .Values.zabbixBrowserMonitoring.enabled .Values.zabbixBrowserMonitoring.webdriver.enabled }}
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
   labels:
-    app: {{ template "zabbix.name" . }}
-    release: {{ .Release.Name }}
-    component: webdriver
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webdriver
 spec:
   ports:
     - port: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
       targetPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
       protocol: TCP
   selector:
-    app: {{ template "zabbix.name" . }}
-    component: webdriver
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: webdriver
   type: ClusterIP
 {{- end }}

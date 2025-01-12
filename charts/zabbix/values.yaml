@@ -20,7 +20,7 @@ global:
 # See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 # When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version
 # here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbixImageTag: ubuntu-7.0.6
+zabbixImageTag: ubuntu-7.0.8
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
@@ -233,13 +233,13 @@ zabbixServer:
   # - name: ENABLE_TIMESCALEDB
   #   value: "true"
   # -- Annotations to add to the deployment
-  deploymentAnnotations: {}
+  extraDeploymentAnnotations: {}
   # -- Labels to add to the deployment
-  deploymentLabels: {}
-  # -- Annotations to add to the containers
-  containerAnnotations: {}
-  # -- Labels to add to the containers
-  containerLabels: {}
+  extraDeploymentLabels: {}
+  # -- Annotations to add to the pods
+  extraPodAnnotations: {}
+  # -- Labels to add to the pods
+  extraPodLabels: {}
   # -- Additional volumeMounts to the Zabbix Server container
   extraVolumeMounts: []
   # -- Additional containers to start within the Zabbix Server pod
@@ -304,13 +304,13 @@ postgresql:
   # -- Extra environment variables. A list of additional environment variables.
   extraEnv: []
   # -- Annotations to add to the statefulset
-  statefulSetAnnotations: {}
+  extraStatefulSetAnnotations: {}
   # -- Labels to add to the statefulset
-  statefulSetLabels: {}
-  # -- Annotations to add to the containers
-  containerAnnotations: {}
-  # -- Labels to add to the containers
-  containerLabels: {}
+  extraStatefulSetLabels: {}
+  # -- Annotations to add to the pod
+  extraPodAnnotations: {}
+  # -- Labels to add to the pod
+  extraPodLabels: {}
   # -- Additional volumeMounts to the postgresql container
   extraVolumeMounts: []
   # -- Additional containers to start within the postgresql pod
@@ -408,13 +408,13 @@ zabbixProxy:
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the statefulset
-  statefulSetAnnotations: {}
+  extraStatefulSetAnnotations: {}
   # -- Labels to add to the statefulset
-  statefulSetLabels: {}
-  # -- Annotations to add to the containers
-  containerAnnotations: {}
-  # -- Labels to add to the containers
-  containerLabels: {}
+  extraStatefulSetLabels: {}
+  # -- Annotations to add to the pod
+  extraPodAnnotations: {}
+  # -- Labels to add to the pod
+  extraPodLabels: {}
   # -- Additional volumeMounts to the Zabbix Proxy container
   extraVolumeMounts: []
   # -- Additional containers to start within the Zabbix Proxy pod
@@ -513,6 +513,8 @@ zabbixAgent:
     # -- Annotations for the zabbix-agent service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
+  # -- set whether zabbix agent / agent2 in DaemonSet mode should use hostNetwork. Usually the right option if using zabbix agent for node monitoring. Only applies if `zabbixAgent.runAsDaemonSet=true`
+  hostNetwork: true
   # -- If true, agent pods mounts host / at /host/root
   hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml
@@ -520,15 +522,15 @@ zabbixAgent:
   # -- Additional volumeMounts to the zabbix Agent container
   extraVolumeMounts: []
   # -- Annotations to add to the daemonSet
-  daemonSetAnnotations: {}
+  extraDaemonSetAnnotations: {}
   # -- Labels to add to the daemonSet
-  daemonSetLabels: {}
+  extraDaemonSetLabels: {}
   # -- Labels to add to the deployment
-  deploymentLabels: {}
-  # -- Annotations to add to the containers
-  containerAnnotations: {}
-  # -- Labels to add to the containers
-  containerLabels: {}
+  extraDeploymentLabels: {}
+  # -- Annotations to add to the pods
+  extraPodAnnotations: {}
+  # -- Labels to add to the pods
+  extraPodLabels: {}
   # -- Additional containers to start within the Zabbix Agent pod
   extraContainers: []
   # -- Additional init containers to start within the Zabbix Agent pod
@@ -628,13 +630,13 @@ zabbixWeb:
   #  - name: ZBX_SERVER_NAME
   #    value: Demo Zabbix
   # -- Annotations to add to the deployment
-  deploymentAnnotations: {}
+  extraDeploymentAnnotations: {}
   # -- Labels to add to the deployment
-  deploymentLabels: {}
-  # -- Annotations to add to the containers
-  containerAnnotations: {}
-  # -- Labels to add to the containers
-  containerLabels: {}
+  extraDeploymentLabels: {}
+  # -- Annotations to add to the pods
+  extraPodAnnotations: {}
+  # -- Labels to add to the pods
+  extraPodLabels: {}
   # -- Additional volumeMounts to the Zabbix Web container
   extraVolumeMounts: []
   # -- Additional containers to start within the Zabbix Web pod
@@ -708,13 +710,13 @@ zabbixWebService:
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml
   extraEnv: []
   # -- Annotations to add to the deployment
-  deploymentAnnotations: {}
+  extraDeploymentAnnotations: {}
   # -- Labels to add to the deployment
-  deploymentLabels: {}
-  # -- Annotations to add to the containers
-  containerAnnotations: {}
-  # -- Labels to add to the containers
-  containerLabels: {}
+  extraDeploymentLabels: {}
+  # -- Annotations to add to the pods
+  extraPodAnnotations: {}
+  # -- Labels to add to the pods
+  extraPodLabels: {}
   # -- Additional volumeMounts to the Zabbix Web Service container
   extraVolumeMounts: []
   # -- Additional containers to start within the Zabbix Web Service pod
@@ -808,13 +810,13 @@ zabbixJavaGateway:
   # -- Additional volumeMounts to the Zabbix Java Gateway container
   extraVolumeMounts: []
   # -- Annotations to add to the deployment
-  deploymentAnnotations: {}
+  extraDeploymentAnnotations: {}
   # -- Labels to add to the deployment
-  deploymentLabels: {}
-  # -- Annotations to add to the containers
-  containerAnnotations: {}
-  # -- Labels to add to the containers
-  containerLabels: {}
+  extraDeploymentLabels: {}
+  # -- Annotations to add to the pod
+  extraPodAnnotations: {}
+  # -- Labels to add to the pod
+  extraPodLabels: {}
   # -- Additional containers to start within the Zabbix Java Gateway pod
   extraContainers: []
   # -- Additional init containers to start within the Zabbix Java Gateway pod
