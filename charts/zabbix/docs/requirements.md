@@ -17,8 +17,8 @@
 
 Install the follow packages in your operating system:
 
-* ``git``
-* ``make``
+- ``git``
+- ``make``
 
 # Kubernetes cluster
 
@@ -30,10 +30,10 @@ Or use Kubernetes cluster in [EKS](https://aws.amazon.com/eks), [GKE](https://cl
 
 Follow instructions of page for install Docker-CE.
 
-* Ubuntu: https://docs.docker.com/engine/install/ubuntu/
-* Debian: https://docs.docker.com/engine/install/debian/
-* CentOS: https://docs.docker.com/engine/install/centos/
-* MacOS: https://docs.docker.com/desktop/mac/install/
+- Ubuntu: https://docs.docker.com/engine/install/ubuntu/
+- Debian: https://docs.docker.com/engine/install/debian/
+- CentOS: https://docs.docker.com/engine/install/centos/
+- MacOS: https://docs.docker.com/desktop/mac/install/
 
 Start the Docker service, configure Docker to boot up with the OS and add your user to the Docker group.
 
