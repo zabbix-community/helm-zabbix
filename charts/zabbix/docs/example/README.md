@@ -66,21 +66,21 @@ In the **production** environment to allow external access to Zabbix installed o
 
 More information about ``nginx-ingress`` can be found in the following tutorials.
 
-* https://github.com/helm/charts/tree/master/stable/nginx-ingress
-* https://github.com/kubernetes/ingress-nginx
-* https://kubernetes.github.io/ingress-nginx/
-* https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
-* https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes
-* https://asilearn.org/install-nginx-ingress-controller-on-kubernetes-9efb9765cc7a
-* https://docs.nginx.com/nginx-ingress-controller/configuration/virtualserver-and-virtualserverroute-resources/
-* https://github.com/nginxinc/kubernetes-ingress
-* https://stackoverflow.com/questions/51597410/aws-eks-is-not-authorized-to-perform-iamcreateservicelinkedrole
-* https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
-* https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/
-* https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/advanced-configuration-with-annotations/
-* https://docs.giantswarm.io/guides/advanced-ingress-configuration/
-* https://stackoverflow.com/questions/51874503/kubernetes-ingress-network-deny-some-paths
-* https://www.edureka.co/community/19277/access-some-specific-paths-while-using-kubernetes-ingress
-* https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
-* https://imti.co/kubernetes-ingress-nginx-cors/
-* https://stackoverflow.com/questions/54083179/how-can-i-correctly-setup-custom-headers-with-nginx-ingress
+- https://github.com/helm/charts/tree/master/stable/nginx-ingress
+- https://github.com/kubernetes/ingress-nginx
+- https://kubernetes.github.io/ingress-nginx/
+- https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
+- https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes
+- https://asilearn.org/install-nginx-ingress-controller-on-kubernetes-9efb9765cc7a
+- https://docs.nginx.com/nginx-ingress-controller/configuration/virtualserver-and-virtualserverroute-resources/
+- https://github.com/nginxinc/kubernetes-ingress
+- https://stackoverflow.com/questions/51597410/aws-eks-is-not-authorized-to-perform-iamcreateservicelinkedrole
+- https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
+- https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/
+- https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/advanced-configuration-with-annotations/
+- https://docs.giantswarm.io/guides/advanced-ingress-configuration/
+- https://stackoverflow.com/questions/51874503/kubernetes-ingress-network-deny-some-paths
+- https://www.edureka.co/community/19277/access-some-specific-paths-while-using-kubernetes-ingress
+- https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
+- https://imti.co/kubernetes-ingress-nginx-cors/
+- https://stackoverflow.com/questions/54083179/how-can-i-correctly-setup-custom-headers-with-nginx-ingress

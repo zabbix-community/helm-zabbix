@@ -18,7 +18,7 @@ The structure of files and directories had to be changed to make the automatic p
 
 References:
 
-* <https://blog.bradmccoy.io/linking-helm-charts-in-github-pages-to-artifacthub-46e02e19abfe>
-* <https://github.com/helm/chart-releaser-action>
-* <https://helm.sh/docs/howto/chart_releaser_action/>
-* <https://github.com/helm/chart-releaser-action/issues/36>
+- <https://blog.bradmccoy.io/linking-helm-charts-in-github-pages-to-artifacthub-46e02e19abfe>
+- <https://github.com/helm/chart-releaser-action>
+- <https://helm.sh/docs/howto/chart_releaser_action/>
+- <https://github.com/helm/chart-releaser-action/issues/36>
