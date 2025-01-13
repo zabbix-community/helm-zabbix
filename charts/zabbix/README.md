@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.1](https://img.shields.io/badge/Version-7.0.1-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.2](https://img.shields.io/badge/Version-7.0.2-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -61,7 +61,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.1'
+export ZABBIX_CHART_VERSION='7.0.2'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -180,11 +180,11 @@ helm uninstall zabbix -n monitoring
 
 ## Version 6.1.0
 
-- Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: #123
-- Removing support for [karpenter](https://karpenter.sh) due to the more generalistic approach: #121
-- Adding support to deploy any arbitrary manifests together with this Helm Chart by embedding them in the `.Values.extraManifests` list (#121)
-- From now on, the keys to use for a *unifiedSecret* to configure postgresql access globally for all relevant components that this Helm Chart deploys, can be configured in values.yaml
-- It is now possible to use a different Schema other than "public" in Postgresql database, when using an external database
+- Removing support for non-default Kubernetes features and Custom Resource objects: `IngressRoute`, `Route`, more info: [#123](https://github.com/zabbix-community/helm-zabbix/pull/123)
+- Removing support for [karpenter](https://karpenter.sh) due to the more generalistic approach: [#121](https://github.com/zabbix-community/helm-zabbix/pull/121)
+- Adding support to deploy any arbitrary manifests together with this Helm Chart by embedding them in the `.Values.extraManifests` list [#121](https://github.com/zabbix-community/helm-zabbix/pull/121)
+- From now on, the keys to use for a `unifiedSecret` to configure postgresql access globally for all relevant components that this Helm Chart deploys, can be configured in `values.yaml` file
+- It is now possible to use a different Schema other than `public` in Postgresql database, when using an external database
 
 ## Version 6.0.0
 
