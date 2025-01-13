@@ -29,7 +29,7 @@ jobs:
       COLUMN_OPTIONS: 'custom-columns="NAME:.metadata.name,READY:.status.containerStatuses[*].ready,STATUS:.status.phase,RESTARTS:.status.containerStatuses[*].restartCount,IP:.status.podIP,IMAGE:.spec.containers[*].image"'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Kind
         uses: helm/kind-action@v1
@@ -94,7 +94,7 @@ jobs:
       VALUES_SET: '--set postgresAccess.existingSecretName=db-access --set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=2'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Kind
         uses: helm/kind-action@v1
@@ -172,7 +172,7 @@ jobs:
       VALUES_SET: '--set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=1 --set postgresAccess.host=postgres --set postgresAccess.password=zabbix123'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Kind
         uses: helm/kind-action@v1
