@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: java-gateway

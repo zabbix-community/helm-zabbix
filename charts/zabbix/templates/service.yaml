@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-server
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: server
@@ -63,6 +64,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-agent
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: agent
@@ -115,6 +117,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-web
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: web
@@ -167,6 +170,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-webservice
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: webservice
@@ -198,6 +202,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-zabbix-proxy
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: proxy
@@ -250,6 +255,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-postgresql
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: postgresql
@@ -281,6 +287,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-java-gateway
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: java-gateway
@@ -333,6 +340,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: webdriver

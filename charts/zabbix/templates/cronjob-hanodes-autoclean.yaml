@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ template "zabbix.fullname" . }}-nodesclean
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     {{- if .Values.zabbixServer.haNodesAutoClean.cronjobLabels }}
