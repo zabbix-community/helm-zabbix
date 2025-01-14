@@ -16,7 +16,7 @@ metadata:
 spec:
   template:
     spec:
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.helmTestJobs.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

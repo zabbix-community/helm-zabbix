@@ -37,7 +37,7 @@ spec:
       {{- with .Values.zabbixWebService.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.zabbixWebService.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
