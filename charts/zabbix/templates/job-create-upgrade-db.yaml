@@ -28,7 +28,7 @@ spec:
       {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraPodSpecs }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.zabbixServer.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

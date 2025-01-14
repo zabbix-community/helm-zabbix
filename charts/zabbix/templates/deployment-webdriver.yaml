@@ -19,6 +19,10 @@ spec:
         {{- include "zabbix.labels" . | nindent 8 }}
         app.kubernetes.io/component: webdriver
     spec:
+      {{- with .Values.zabbixBrowserMonitoring.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: {{ .Values.zabbixBrowserMonitoring.webdriver.name }}
         imagePullPolicy: {{ .Values.zabbixBrowserMonitoring.webdriver.image.pullPolicy }}
