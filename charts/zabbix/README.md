@@ -1,6 +1,6 @@
 # Helm chart for Zabbix.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.2](https://img.shields.io/badge/Version-7.0.2-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.3](https://img.shields.io/badge/Version-7.0.3-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -61,7 +61,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.2'
+export ZABBIX_CHART_VERSION='7.0.3'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -359,6 +359,7 @@ The following tables lists the configurable parameters of the chart and their de
 | extraManifests | list | `[]` | Extra arbitrary Kubernetes manifests to deploy within the release |
 | global.commonLabels | object | `{}` | Labels to apply to all resources. |
 | global.imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images.  For example:  imagePullSecrets:    - name: "image-pull-secret" |
+| helmTestJobs.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | helmTestJobs.serverConnection.image.pullPolicy | string | `"IfNotPresent"` | Pull Policy for Helm test job testing connection to Zabbix server |
 | helmTestJobs.serverConnection.image.pullSecrets | list | `[]` | Pull Secrets for Helm test job testing connection to Zabbix server |
 | helmTestJobs.serverConnection.image.repository | string | `"busybox"` | Image repository for Helm test job testing connection to Zabbix server |
@@ -376,7 +377,6 @@ The following tables lists the configurable parameters of the chart and their de
 | ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Ingress hosts |
 | ingress.pathType | string | `"Prefix"` | pathType is only for k8s >= 1.1= |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
-| nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | postgresAccess.database | string | `"zabbix"` | Name of database, eignored if existingSecretName is set |
 | postgresAccess.existingSecretName | string | `""` | Name of an existing secret to use for database access. This could be one created by a Postgres operator such as CNPG or PGO |
 | postgresAccess.host | string | `"zabbix-postgresql"` | Address of database host - ignored if postgresql.enabled=true |
@@ -407,6 +407,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresql.image.repository | string | `"postgres"` | Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb" |
 | postgresql.image.tag | int | `16` | Tag of Docker image of Postgresql server, choice "16" for postgres "2.17.2-pg16" for timescaledb (Zabbix supports TimescaleDB. More info: https://www.zabbix.com/documentation/7.0/en/manual/installation/requirements) |
 | postgresql.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| postgresql.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | postgresql.persistence.enabled | bool | `false` | Whether to enable persistent storage for the postgres container or not |
 | postgresql.persistence.existingClaimName | bool | `false` | Existing persistent volume claim name to be used to store postgres data |
 | postgresql.persistence.storageSize | string | `"5Gi"` | Size of the PVC to be automatically generated |
@@ -453,6 +454,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.image.tag | string | `nil` | Zabbix Agent Docker image tag, if you want to override zabbixImageTag |
 | zabbixAgent.livenessProbe | object | `{"failureThreshold":3,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":"zabbix-agent"},"timeoutSeconds":3}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixAgent.livenessProbe.tcpSocket.port | string | `"zabbix-agent"` | Port number/alias name of the container |
+| zabbixAgent.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixAgent.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixAgent.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixAgent.runAsDaemonSet | bool | `false` | Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false. |
@@ -472,6 +474,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.startupProbe.tcpSocket.port | string | `"zabbix-agent"` | Port number/alias name of the container |
 | zabbixBrowserMonitoring.customWebDriverURL | string | `""` | Custom WebDriver URL. If set, it overrides the default internal WebDriver service URL. Set zabbixBrowserMonitoring.webdriver.enabled to false when setting this. |
 | zabbixBrowserMonitoring.enabled | bool | `false` | Enable browser pollers |
+| zabbixBrowserMonitoring.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixBrowserMonitoring.pollers | int | `1` | Number of browser pollers to start |
 | zabbixBrowserMonitoring.webdriver.enabled | bool | `true` | Enable webdriver |
 | zabbixBrowserMonitoring.webdriver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
@@ -502,6 +505,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.image.tag | string | `nil` | Zabbix Java Gateway Docker image tag, if you want to override zabbixImageTag |
 | zabbixJavaGateway.livenessProbe | object | `{"failureThreshold":3,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":"zabbix-java-gw"},"timeoutSeconds":3}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixJavaGateway.livenessProbe.tcpSocket.port | string | `"zabbix-java-gw"` | Port number/alias name of the container |
+| zabbixJavaGateway.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixJavaGateway.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixJavaGateway.replicaCount | int | `1` | Number of replicas of ``Zabbix Java Gateway`` module |
 | zabbixJavaGateway.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
@@ -543,6 +547,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.image.repository | string | `"zabbix/zabbix-proxy-sqlite3"` | Zabbix Proxy Docker image name |
 | zabbixProxy.image.tag | string | `nil` | Zabbix Proxy Docker image tag, if you want to override zabbixImageTag |
 | zabbixProxy.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| zabbixProxy.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixProxy.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixProxy.replicaCount | int | `1` | Number of replicas of ``zabbixProxy`` module |
 | zabbixProxy.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
@@ -588,6 +593,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.image.repository | string | `"zabbix/zabbix-server-pgsql"` | Zabbix Server Docker image name |
 | zabbixServer.image.tag | string | `nil` | Zabbix Server Docker image tag, if you want to override zabbixImageTag |
 | zabbixServer.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| zabbixServer.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixServer.podAntiAffinity | bool | `true` | Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixServer.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixServer.replicaCount | int | `1` | Number of replicas of ``zabbixServer`` module. Will be forced to be 1 if ``zabbixServer.zabbixServerHA=false`` |
@@ -658,6 +664,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.livenessProbe.periodSeconds | int | `10` |  |
 | zabbixWeb.livenessProbe.successThreshold | int | `1` |  |
 | zabbixWeb.livenessProbe.timeoutSeconds | int | `5` |  |
+| zabbixWeb.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixWeb.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixWeb.readinessProbe.failureThreshold | int | `6` |  |
 | zabbixWeb.readinessProbe.httpGet.path | string | `"/"` | Path of health check of application |
@@ -696,6 +703,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.image.repository | string | `"zabbix/zabbix-web-service"` | Zabbix Webservice Docker image name |
 | zabbixWebService.image.tag | string | `nil` | Zabbix Webservice Docker image tag, if you want to override zabbixImageTag |
 | zabbixWebService.livenessProbe | object | `{}` | The kubelet uses liveness probes to know when to restart a container. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| zabbixWebService.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixWebService.podAntiAffinity | bool | `true` | Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixWebService.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixWebService.replicaCount | int | `1` | Number of replicas of ``zabbixWebService`` module |
