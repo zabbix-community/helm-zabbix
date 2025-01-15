@@ -43,7 +43,7 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 
 ### About Zabbix
 
-- Oficial page: https://www.zabbix.com
+- Official page: https://www.zabbix.com
 - Documentation: https://www.zabbix.com/manuals
 - Community support: https://www.zabbix.com/forum
 - Open issues: https://support.zabbix.com/projects/ZBX/issues/ZBX-25876?filter=allopenissues
