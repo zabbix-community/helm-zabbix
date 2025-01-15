@@ -10,7 +10,7 @@
   - [Examples](#examples)
   - [Important links](#important-links)
     - [Related to this helm chart](#related-to-this-helm-chart)
-    - [About Zabbix](#about-zabbix)
+    - [Related to Zabbix](#related-to-zabbix)
   - [Contributors](#contributors)
   - [History](#history)
   - [License](#license)
@@ -41,7 +41,7 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 - Closed PRs: https://github.com/zabbix-community/helm-zabbix/pulls?q=is%3Apr+is%3Aclosed
 - Download statistics: https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix
 
-### About Zabbix
+### Related to Zabbix
 
 - Official page: https://www.zabbix.com
 - Documentation: https://www.zabbix.com/manuals
