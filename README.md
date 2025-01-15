@@ -12,6 +12,7 @@
     - [Related to this helm chart](#related-to-this-helm-chart)
     - [Related to Zabbix](#related-to-zabbix)
   - [Contributors](#contributors)
+    - [Maintainers](#maintainers)
   - [History](#history)
   - [License](#license)
 
@@ -40,6 +41,9 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 - Closed issues: https://github.com/zabbix-community/helm-zabbix/issues?q=is%3Aissue+is%3Aclosed
 - Closed PRs: https://github.com/zabbix-community/helm-zabbix/pulls?q=is%3Apr+is%3Aclosed
 - Download statistics: https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix
+- Presentations:
+  - Video: [Install and operate Zabbix in Kubernetes and OpenShift by Christian Anton / Zabbix Summit 2022](https://youtu.be/NU3FsXQp_rE?si=LjXsxjjrZd_VDEDU&t=150)
+  - Slides: [Install and operate Zabbix in Kubernetes and OpenShift by Christian Anton / Zabbix Summit 2022](https://assets.zabbix.com/files/events/2022/zabbix_summit_2022/Christian_Anton_Install_and_operate_Zabbix_in_Kubernetes_and_OpenShift.pdf)
 
 ### Related to Zabbix
 
@@ -58,6 +62,11 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 Made with [contributors-img](https://contrib.rocks).
 
 <!-- Reference: https://github.com/Tanu-N-Prabhu/myWebsite.io/blob/master/Docs/Displaying%20Contributors%20Image%20on%20README%20files%20with%20no%20Pain!.md#contributors-displayed-by-using-contributors-img-on-the-readmemd-file -->
+
+### Maintainers
+
+- [Aecio dos Santos Pires](https://www.linkedin.com/in/aeciopires/)
+- [Christian Anton](https://www.linkedin.com/in/christiananton1/)
 
 ## History
 
