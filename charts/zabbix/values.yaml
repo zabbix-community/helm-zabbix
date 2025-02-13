@@ -20,7 +20,7 @@ global:
 # See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 # When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version
 # here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbixImageTag: ubuntu-7.0.8
+zabbixImageTag: ubuntu-7.0.9
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
@@ -590,8 +590,8 @@ zabbixWeb:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
-  # -- Certificate containing certificates for SAML configuration
-  # samlCertsSecretName: zabbix-web-samlcerts
+  # -- Secret name containing certificates for SAML configuration. Example: zabbix-web-samlcerts
+  samlCertsSecretName: ""
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -754,6 +754,8 @@ zabbixJavaGateway:
   enabled: false
   # -- Number of replicas of ``Zabbix Java Gateway`` module
   replicaCount: 1
+  # -- Set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1
+  podAntiAffinity: true
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
@@ -768,13 +770,13 @@ zabbixJavaGateway:
   # -- This variable is specified amount of pollers. By default, value is 5
   ZBX_START_POLLERS: 5
   # -- Name of properties file. Can be used to set additional properties using a key-value format in such a way that they are not visible on a command line or to overwrite existing ones.
-  # ZBX_PROPERTIES_FILE:
+  ZBX_PROPERTIES_FILE: ""
   # -- The variable is used to specify debug level, from 0 to 5
   ZBX_DEBUGLEVEL: 3
   # -- This variable is used to specify timeout for outgoing connections. By default, value is 3.
   ZBX_TIMEOUT: 3
   # -- Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features.
-  # ZABBIX_OPTIONS:
+  ZABBIX_OPTIONS: ""
   # Java Gateway Service Name
   ZBX_JAVAGATEWAY: zabbix-java-gateway
   service:

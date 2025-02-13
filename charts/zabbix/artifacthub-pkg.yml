@@ -5,13 +5,13 @@
 # https://github.com/kedacore/external-scalers/blob/main/artifacthub/azure-cosmos-db/0.1.0/artifacthub-pkg.yml
 # https://artifacthub.io/packages/keda-scaler/keda-official-external-scalers/external-scaler-azure-cosmos-db?modal=install
 
-version: 7.0.3  # helm chart version
+version: 7.0.4  # helm chart version
 # LTS Zabbix version by default due to stability. See: https://www.zabbix.com/life_cycle_and_release_policy
-appVersion: 7.0.8  # zabbix version
+appVersion: 7.0.9  # zabbix version
 name: zabbix
 category: monitoring, networking, metrics
 displayName: Zabbix - The Enterprise-Class Open Source Network Monitoring Solution
-createdAt: 2025-01-14T17:17:11Z # Command Linux: date +%Y-%m-%dT%TZ
+createdAt: 2025-02-13T06:54:45Z # Command Linux: date +%Y-%m-%dT%TZ
 description: Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 logoURL: https://assets.zabbix.com/img/logo/zabbix_logo_500x131.png
 license: Apache-2.0
@@ -53,7 +53,7 @@ install: |
   Set the helm chart version you want to use. Example:
 
   ```bash
-  export ZABBIX_CHART_VERSION='7.0.3'
+  export ZABBIX_CHART_VERSION='7.0.4'
   ```
 
   Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
