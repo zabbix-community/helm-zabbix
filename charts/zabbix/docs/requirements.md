@@ -78,7 +78,7 @@ Reference: https://asdf-vm.com/guide/introduction.html
 Execute these commands to install helm.
 
 ```bash
-VERSION="3.16.4"
+VERSION="3.17.0"
 
 asdf plugin list all | grep helm
 asdf plugin add helm https://github.com/Antiarchitect/asdf-helm.git

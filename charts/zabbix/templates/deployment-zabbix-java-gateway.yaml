@@ -44,7 +44,7 @@ spec:
       {{- if gt (len .Values.affinity) 0 }}
       affinity:
         {{- toYaml .Values.affinity | nindent 8 }}
-      {{- else if .Values.zabbixWebService.podAntiAffinity }}
+      {{- else if .Values.zabbixJavaGateway.podAntiAffinity }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -114,10 +114,6 @@ spec:
         {{- with .Values.zabbixJavaGateway.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- if .Values.affinity }}
-      affinity:
-        {{ toYaml .Values.affinity | indent 8 }}
-      {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixJavaGateway.image.pullSecrets }}
         - name: {{ . | quote }}
