@@ -440,6 +440,8 @@ zabbixProxy:
   # -- The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   startupProbe: {}
   # -- nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  lifecycle: {}
+  # -- Container Lifecycle Hooks. Reference: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
   nodeSelector: {}
 
 # **Zabbix Agent** configurations

@@ -178,6 +178,10 @@ spec:
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.zabbixProxy.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         {{- with .Values.zabbixProxy.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
