@@ -140,7 +140,9 @@ spec:
             - name: ZBX_PROXYMODE
               value: {{ .Values.zabbixProxy.ZBX_PROXYMODE | quote }}
             - name: ZBX_HOSTNAME
-              value: {{ .Values.zabbixProxy.ZBX_HOSTNAME | quote }}
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: ZBX_SERVER_HOST
               value: {{ .Values.zabbixProxy.ZBX_SERVER_HOST | quote }}
             - name: ZBX_SERVER_PORT
