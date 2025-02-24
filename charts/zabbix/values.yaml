@@ -354,8 +354,8 @@ zabbixProxy:
   # -- The variable allows to switch Zabbix Proxy mode. By default, value is 0 - active proxy. Allowed values are 0 and 1.
   ZBX_PROXYMODE: 0
   # -- Zabbix Proxy hostname
-  # Case sensitive hostname
-  # If not defined the pod name will be used.
+  # Case sensitive hostname.
+  # If not defined the pod name will be used
   ZBX_HOSTNAME: zabbix-proxy  # This variable is unique, case sensitive hostname.
   # -- Zabbix Server host
   ZBX_SERVER_HOST: zabbix-zabbix-server
