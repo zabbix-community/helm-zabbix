@@ -79,15 +79,10 @@ spec:
           {{- end }}
           imagePullPolicy: {{ .Values.zabbixAgent.image.pullPolicy }}
           env:
-            {{- if .Values.zabbixAgent.ZBX_HOSTNAME }}
-            - name: ZBX_SERVER_HOST
-              value: {{ .Values.zabbixAgent.ZBX_HOSTNAMET | quote }}
-            {{- else }}
             - name: ZBX_HOSTNAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            {{- end }}
             - name: ZBX_SERVER_HOST
               value: {{ .Values.zabbixAgent.ZBX_SERVER_HOST | quote }}
             - name: ZBX_SERVER_PORT
