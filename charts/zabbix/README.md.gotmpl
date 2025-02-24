@@ -454,3 +454,16 @@ service only reachable from within the cluster.
 You'll be able to contact the NodePort service, from outside the cluster, by requesting 
 ``NodeIP:NodePort``.
 - **LoadBalancer**: Exposes the service externally using a cloud provider's load balancer.
+
+## Multiple replicas for Zabbix Proxy statefulset
+
+In case you use proxy groups, it may be necessary to have several zabbix proxy replicas.
+you can then no longer set the ZBX_HOSTNAME value.
+This value will then take the name of each pod.
+Name that you can then give to your zabbix proxies on the zabbix server side.
+
+> [!IMPORTANT]
+> You will need to deploy proxy service per replica if you want the Active Agent checks to work.
+
+
+# If not defined the pod name will be used.
