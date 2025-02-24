@@ -1,6 +1,6 @@
-# Helm chart for Zabbix.
+# Helm chart for Zabbix
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.5](https://img.shields.io/badge/Version-7.0.5-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.6](https://img.shields.io/badge/Version-7.0.6-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -8,13 +8,31 @@ Zabbix is a mature and effortless enterprise-class open source monitoring soluti
 This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster. It supports only Postgresql/TimescaleDB as a database backend at this point in time, without any plans to extend database support towards MySQL, MariaDB, etc. Also, this Helm Chart supports [Zabbix Server High Availability](#native-zabbix-server-high-availability)
 
 # Table of Contents
+<!-- TOC -->
+
+- [Helm chart for Zabbix](#helm-chart-for-zabbix)
+- [Table of Contents](#table-of-contents)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [How to access Zabbix](#how-to-access-zabbix)
 - [Troubleshooting](#troubleshooting)
 - [Uninstallation](#uninstallation)
 - [Breaking changes of this helm chart](#breaking-changes-of-this-helm-chart)
+  - [Version 7.0.0](#version-700)
+  - [Version 6.1.0](#version-610)
+  - [Version 6.0.0](#version-600)
+  - [Version 5.0.0](#version-500)
+  - [Version 4.0.0](#version-400)
+  - [Version 3.0.0](#version-300)
+  - [Version 2.0.0](#version-200)
+  - [Version 1.0.0](#version-100)
 - [Zabbix components](#zabbix-components)
+  - [Zabbix Server](#zabbix-server)
+  - [Zabbix Agent](#zabbix-agent)
+  - [Zabbix Web (frontend)](#zabbix-web-frontend)
+  - [Zabbix Web Service](#zabbix-web-service)
+  - [Zabbix Proxy](#zabbix-proxy)
+  - [PostgreSQL](#postgresql)
 - [Thanks](#thanks)
 - [License](#license)
 - [Configuration](#configuration)
@@ -23,6 +41,9 @@ This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluste
   - [Postgresql database](#postgresql-database)
   - [Native Zabbix Server High Availability](#native-zabbix-server-high-availability)
   - [Expose Zabbix service](#expose-zabbix-service)
+  - [Multiple replicas for Zabbix Proxy statefulset](#multiple-replicas-for-zabbix-proxy-statefulset)
+
+<!-- TOC -->
 
 # Prerequisites
 
@@ -61,7 +82,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.5'
+export ZABBIX_CHART_VERSION='7.0.6'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -526,7 +547,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.startupProbe | object | `{"failureThreshold":5,"initialDelaySeconds":15,"periodSeconds":5,"successThreshold":1,"tcpSocket":{"port":"zabbix-java-gw"},"timeoutSeconds":3}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixJavaGateway.startupProbe.tcpSocket.port | string | `"zabbix-java-gw"` | Port number/alias name of the container |
 | zabbixProxy.ZBX_DEBUGLEVEL | int | `4` |  |
-| zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname Case sensitive hostname. If not defined the pod name will be used |
+| zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname. Case sensitive hostname. If not defined the pod name will be used |
 | zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixProxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix Proxy mode. By default, value is 0 - active proxy. Allowed values are 0 and 1. |
 | zabbixProxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix Server host |
@@ -827,5 +848,4 @@ Name that you can then give to your zabbix proxies on the zabbix server side.
 
 > [!IMPORTANT]
 > You will need to deploy proxy service per replica if you want the Active Agent checks to work.
-
-# If not defined the pod name will be used.
+> **If not defined the pod name will be used.**

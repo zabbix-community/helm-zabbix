@@ -71,7 +71,7 @@ zabbixProxy:
   enabled: true
   replicaCount: 1
   ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. By default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
-  ZBX_HOSTNAME: zabbix-proxy # This variable is unique, case sensitive hostname.
+  ZBX_HOSTNAME: zabbix-proxy # Case sensitive hostname. If not defined the pod name will be used
   ZBX_SERVER_HOST: zabbix-zabbix-server
   ZBX_SERVER_PORT: 10051
   # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
