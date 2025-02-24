@@ -71,7 +71,7 @@ Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
 helm show values zabbix-community/zabbix --version $ZABBIX_CHART_VERSION > $HOME/zabbix_values.yaml
 ```
 
-Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of [Configuration](#configuration) section can be set via ``--set`` flag in 
+Change the values according to the environment in the ``$HOME/zabbix_values.yaml`` file. The items of [Configuration](#configuration) section can be set via ``--set`` flag in
 installation command or change the values according to the need of the environment in ``$HOME/zabbix_values.yaml`` file.
 
 Test the installation/upgrade with the command:
@@ -238,7 +238,7 @@ helm uninstall zabbix -n monitoring
   subsection in favor of specifying all of them centrally at one place.
 - Also, the names of the values have changed from upper to lowercase.
 - It is now possible to start the Zabbix Server pods with replicas of more than 1.
-  HA functionality of Zabbix will automatically be enabled and it is made sure that 
+  HA functionality of Zabbix will automatically be enabled and it is made sure that
   the database schema publication will only happen once, and not by all of the Zabbix
   Server pods at the same time.
 - More info: https://github.com/cetic/helm-zabbix/pull/54
@@ -246,13 +246,13 @@ helm uninstall zabbix -n monitoring
 ## Version 2.0.0
 
 - Will be used Postgresql 14.x and Zabbix 6.x.
-- This version implements a central way of managing database access credentials 
+- This version implements a central way of managing database access credentials
 using a secret, which then will be respected by all the components
 installed by this chart: zabbixServer, zabbixWeb and postgresql.
 - The secret must contain a number of keys indicating DB host, DB name,
 user and password and can direct towards a database installed within
 this chart, or an external database.
-- The benefit of this is that now the database can respect the values 
+- The benefit of this is that now the database can respect the values
 in the central DB access secret and initialize accordingly.
 - Last but not least, the credential secret can be chosen to be
 auto-generated (password will be set to a random string) at chart
@@ -273,8 +273,8 @@ possible is possible, while still obtaining a good level of security.
 > [!NOTE]
 > About the Zabbix version supported
 
-- This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. 
-- But by default this helm chart will install the latest LTS version (example: 7.0.x). 
+- This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
+- But by default this helm chart will install the latest LTS version (example: 7.0.x).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 - When you want use a non-LTS version (example: 7.2.x), you have to set this in ``values.yaml`` yourself. This Helm Chart is actively being tested with the current non-LTS major releases, so it will be most probably working without any problem just setting `zabbixImageTag`, for example to the value of `ubuntu-7.2.1` or `alpine-7.2-latest`.
 
@@ -282,17 +282,17 @@ See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/lif
 
 **Zabbix Server** is the central process of Zabbix software.
 
-The server performs the polling and trapping of data, it calculates triggers, sends notifications 
-to users. It is the central component to which Zabbix agents and proxies report data on availability 
-and integrity of systems. The server can itself remotely check networked services (such as web servers 
-and mail servers) using simple service checks 
+The server performs the polling and trapping of data, it calculates triggers, sends notifications
+to users. It is the central component to which Zabbix agents and proxies report data on availability
+and integrity of systems. The server can itself remotely check networked services (such as web servers
+and mail servers) using simple service checks
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/server).
 
-Zabbix Server can be operated in a High Availability mode since version 6.0 which is automatically 
-enabled by this Helm chart when setting the Zabbix Server component to run more than 1 replica. 
-In this HA mode, all Zabbix Server instances periodically send a heartbeat to the Database server 
-(just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case 
-the active node does not send a heartbeat within a certain time, any of the remaining ones 
+Zabbix Server can be operated in a High Availability mode since version 6.0 which is automatically
+enabled by this Helm chart when setting the Zabbix Server component to run more than 1 replica.
+In this HA mode, all Zabbix Server instances periodically send a heartbeat to the Database server
+(just updating a timestamp in a table) as well as which of the nodes is the "active" one. In case
+the active node does not send a heartbeat within a certain time, any of the remaining ones
 automatically take over. It is every time possible to join new nodes to the HA cluster by just
 raising the amount of replicas of the Zabbix Server.
 
@@ -302,20 +302,20 @@ raising the amount of replicas of the Zabbix Server.
 > [!NOTE]
 > **zabbix-agent2** is supported in this helm chart and will be used by default.
 
-**Zabbix Agent** is deployed on a monitoring target to actively monitor local resources and 
+**Zabbix Agent** is deployed on a monitoring target to actively monitor local resources and
 applications (hard drives, memory, processor statistics etc)
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/agent).
 
 
 ## Zabbix Web (frontend)
 
-**Zabbix Web** interface is a part of Zabbix software. It is used to manage resources under 
-monitoring and view monitoring statistics 
+**Zabbix Web** interface is a part of Zabbix software. It is used to manage resources under
+monitoring and view monitoring statistics
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/web_interface).
 
 ## Zabbix Web Service
 
-**Zabbix Web Service** is a process that is used for communication with external web services 
+**Zabbix Web Service** is a process that is used for communication with external web services
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/web_service).
 
 ## Zabbix Proxy
@@ -323,10 +323,10 @@ monitoring and view monitoring statistics
 > [!NOTE]
 > This helm chart installs Zabbix Proxy with SQLite3 support
 
-**Zabbix Proxy** is a process that may collect monitoring data from one or more monitored devices 
-and send the information to the Zabbix Server, essentially working on behalf of the server. 
-All collected data is buffered locally and then transferred to the **Zabbix Server** the 
-proxy belongs to 
+**Zabbix Proxy** is a process that may collect monitoring data from one or more monitored devices
+and send the information to the Zabbix Server, essentially working on behalf of the server.
+All collected data is buffered locally and then transferred to the **Zabbix Server** the
+proxy belongs to
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/proxy).
 
 ## PostgreSQL
@@ -334,7 +334,7 @@ proxy belongs to
 A database is required for zabbix to work, in this helm chart we're using Postgresql.
 
 > [!IMPORTANT]
-> We use plain postgresql database by default WITHOUT persistence. If you want persistence or 
+> We use plain postgresql database by default WITHOUT persistence. If you want persistence or
 would like to use TimescaleDB instead, check the comments in the ``values.yaml`` file.
 
 # Thanks
@@ -360,32 +360,32 @@ The following tables lists the configurable parameters of the chart and their de
 
 ## Database access settings
 
-All settings referring to how the different components that this Chart installs access the 
-Zabbix PostgreSQL Database (either an external, already existing database or one deployed within 
-this Helm chart) are being configured centrally under the ``postgresAccess`` section of the 
+All settings referring to how the different components that this Chart installs access the
+Zabbix PostgreSQL Database (either an external, already existing database or one deployed within
+this Helm chart) are being configured centrally under the ``postgresAccess`` section of the
 ``values.yaml`` file.
 
-By default, this Chart will deploy it's own very simple PostgreSQL database. All settings 
-relevant to how to access this database will be held in one central *Secret* with the 
+By default, this Chart will deploy it's own very simple PostgreSQL database. All settings
+relevant to how to access this database will be held in one central *Secret* with the
 name of the *Helm Release*, suffixed with *-db-access* and values defined in ``values.yaml``.
 
-Instead of letting the Chart automatically generate such a secret, you can use an existing Secret. 
-Use ``postgresAccess.externalSecretName`` in such a case and read the comments 
+Instead of letting the Chart automatically generate such a secret, you can use an existing Secret.
+Use ``postgresAccess.externalSecretName`` in such a case and read the comments
 in ``values.yaml`` for how the keys inside the Secret holding the relevant values can be set.
 
-If you want to connect your Zabbix installation to a Postgres database deployed using the 
-[CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/), 
-you can use the secret that PGO/CNPG generates for your database directly to connect Zabbix to it, 
+If you want to connect your Zabbix installation to a Postgres database deployed using the
+[CrunchyData PGO Operator](https://access.crunchydata.com/documentation/postgres-operator/latest/),
+you can use the secret that PGO/CNPG generates for your database directly to connect Zabbix to it,
 by just referring to its name with the ``postgresAccess.externalSecretName`` setting to it.
 
 ## Postgresql database
 
-While the default database configuration shipped with this Chart is fine for most (very small, 
-for testing only) Zabbix installations, you will want to set some specific settings to better 
-match your setup. First of all, you should consider enabling Postgresql database persistence 
-(``postgresql.persistence.enabled``), as otherwise all your changes and historical data will 
-be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune 
-Postgresql by supplying extra postgresql runtime parameters using the 
+While the default database configuration shipped with this Chart is fine for most (very small,
+for testing only) Zabbix installations, you will want to set some specific settings to better
+match your setup. First of all, you should consider enabling Postgresql database persistence
+(``postgresql.persistence.enabled``), as otherwise all your changes and historical data will
+be gone as soon as you remove the installation of Zabbix. Additionally, you might want to tune
+Postgresql by supplying extra postgresql runtime parameters using the
 ``postgresql.extraRuntimeParameters`` dictionary:
 
 ```yaml
@@ -405,8 +405,8 @@ postgresql:
     min_wal_size: 80MB
 ```
 
-Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and 
-the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring 
+Alternatively, you can add your own configuration file for postgresql (using a ConfigMap and
+the ``postgresql.extraVolumes`` setting) to mount it into the postgresql container and referring
 to this config file with the ``postgresql.extraRuntimeParameters`` set to:
 
 ```yaml
@@ -448,9 +448,19 @@ In order to make it possible to use **Active checks** and **Active Zabbix Proxie
 ## Expose Zabbix service
 
 - **Ingress**: The ingress controller must be installed in the Kubernetes cluster.
-- **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the 
+- **ClusterIP**: Exposes the service on a cluster-internal IP. Choosing this value makes the
 service only reachable from within the cluster.
-- **NodePort**: Exposes the service on each Node's IP at a static port (the NodePort). 
-You'll be able to contact the NodePort service, from outside the cluster, by requesting 
+- **NodePort**: Exposes the service on each Node's IP at a static port (the NodePort).
+You'll be able to contact the NodePort service, from outside the cluster, by requesting
 ``NodeIP:NodePort``.
 - **LoadBalancer**: Exposes the service externally using a cloud provider's load balancer.
+
+## Multiple replicas for Zabbix Proxy statefulset
+
+In case you use proxy groups, it may be necessary to have several zabbix proxy replicas.
+you can then no longer set the ZBX_HOSTNAME value.
+This value will then take the name of each pod.
+Name that you can then give to your zabbix proxies on the zabbix server side.
+
+> [!IMPORTANT]
+> You will need to deploy proxy service per replica if you want the Active Agent checks to work.
