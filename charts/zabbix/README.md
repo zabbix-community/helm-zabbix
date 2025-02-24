@@ -526,7 +526,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.startupProbe | object | `{"failureThreshold":5,"initialDelaySeconds":15,"periodSeconds":5,"successThreshold":1,"tcpSocket":{"port":"zabbix-java-gw"},"timeoutSeconds":3}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixJavaGateway.startupProbe.tcpSocket.port | string | `"zabbix-java-gw"` | Port number/alias name of the container |
 | zabbixProxy.ZBX_DEBUGLEVEL | int | `4` |  |
-| zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname Case sensitive hostname |
+| zabbixProxy.ZBX_HOSTNAME | string | `"zabbix-proxy"` | Zabbix Proxy hostname Case sensitive hostname. If not defined the pod name will be used |
 | zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | bool | `false` | The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false. |
 | zabbixProxy.ZBX_PROXYMODE | int | `0` | The variable allows to switch Zabbix Proxy mode. By default, value is 0 - active proxy. Allowed values are 0 and 1. |
 | zabbixProxy.ZBX_SERVER_HOST | string | `"zabbix-zabbix-server"` | Zabbix Server host |
@@ -817,3 +817,15 @@ service only reachable from within the cluster.
 You'll be able to contact the NodePort service, from outside the cluster, by requesting
 ``NodeIP:NodePort``.
 - **LoadBalancer**: Exposes the service externally using a cloud provider's load balancer.
+
+## Multiple replicas for Zabbix Proxy statefulset
+
+In case you use proxy groups, it may be necessary to have several zabbix proxy replicas.
+you can then no longer set the ZBX_HOSTNAME value.
+This value will then take the name of each pod.
+Name that you can then give to your zabbix proxies on the zabbix server side.
+
+> [!IMPORTANT]
+> You will need to deploy proxy service per replica if you want the Active Agent checks to work.
+
+# If not defined the pod name will be used.
