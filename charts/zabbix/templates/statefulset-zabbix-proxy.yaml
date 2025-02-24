@@ -141,7 +141,7 @@ spec:
               value: {{ .Values.zabbixProxy.ZBX_PROXYMODE | quote }}
             {{- if .Values.zabbixProxy.ZBX_HOSTNAME }}
             - name: ZBX_HOSTNAME
-￼             value: {{ .Values.zabbixProxy.ZBX_HOSTNAME | quote }}
+              value: {{ .Values.zabbixProxy.ZBX_HOSTNAME | quote }}
             {{- else }}
             - name: ZBX_HOSTNAME
               valueFrom:
