@@ -22,6 +22,8 @@
 
 See the [charts/zabbix/README.md](charts/zabbix/README.md) file to learn more about this helm chart or access [Artifact Hub](https://artifacthub.io/packages/helm/zabbix-community/zabbix).
 
+> This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster. It supports only Postgresql/TimescaleDB as a database backend at this point in time, without any plans to extend database support towards MySQL, MariaDB, etc. Also, this Helm Chart supports [Zabbix Server High Availability](charts/zabbix/#native-zabbix-server-high-availability)
+
 ## Contributing
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn how to contribute to this helm chart.
