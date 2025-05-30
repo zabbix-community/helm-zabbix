@@ -189,7 +189,7 @@ git tag -a 7.0.7 -m "New release" #example
 git push upstream --tags
 ```
 
-- The before commands will start the pipeline and will generate a new release and tag in standad ``zabbix-7.0.1``.
+- The before commands will start the pipeline and will generate a new release and tag in standard ``zabbix-7.0.1``.
 - To keep your fork in sync with the original repository, use these commands:
 
 ```bash
