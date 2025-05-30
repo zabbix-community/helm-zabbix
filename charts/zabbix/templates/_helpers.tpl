@@ -135,17 +135,27 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
 - name: {{ $portvar }}
   value: {{ .Values.postgresAccess.port | quote }}
 {{- else }}
+{{- if and .Values.postgresAccess.existingSecretName .Values.postgresAccess.secretHostKey }}
 - name: {{ $hostvar }}
   valueFrom:
     secretKeyRef:
       name: {{ $secretName }}
       key: {{ .Values.postgresAccess.secretHostKey }}
+{{- else }}
+- name: {{ $hostvar }}
+  value: {{ .Values.postgresAccess.host | quote }}
+{{- end }}
+{{- if and .Values.postgresAccess.existingSecretName .Values.postgresAccess.secretPortKey }}
 - name: {{ $portvar }}
   valueFrom:
     secretKeyRef:
       name: {{ $secretName }}
       key: {{ .Values.postgresAccess.secretPortKey }}
       optional: true
+{{- else }}
+- name: {{ $portvar }}
+  value: {{ .Values.postgresAccess.port | quote }}
+{{- end }}
 {{- end }}
 
 {{- if and (eq $cntxt "db_init_upgrade") (not .Values.postgresAccess.existingSecretName) }}
@@ -171,12 +181,17 @@ Return the entire logic of setting PostgreSQL access related env vars for the co
     secretKeyRef:
       name: {{ $secretName }}
       key: {{ .Values.postgresAccess.secretPasswordKey }}
+{{- if and .Values.postgresAccess.existingSecretName .Values.postgresAccess.secretDBKey }}
 - name: {{ $dbvar }}
   valueFrom:
     secretKeyRef:
       name: {{ $secretName }}
       key: {{ .Values.postgresAccess.secretDBKey }}
       optional: true
+{{- else }}
+- name: {{ $dbvar }}
+  value: {{ .Values.postgresAccess.database | quote }}
+{{- end }}
   {{- if and (not .Values.postgresql.enabled) .Values.postgresAccess.secretSchemaKey }}
 - name: {{ $schemavar }}
   valueFrom:

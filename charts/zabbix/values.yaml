@@ -33,18 +33,24 @@ postgresAccess:
   # USING ONE SECRET CONTAINING ALL DB RELEVANT SETTINGS
   # PostgreSQL access details all in one existing secret (matches the structure of secrets the CrunchyData PGO operator
   # and the CNPG postgres operator generate)
+  # for Zalando Postgres operator mixed setup is needed
+  # use Username and password needs to be referenced from secret
+  # host, port and db needs to be filled below
   # if this option is chosen the below listed settings are being ignored
   # -- Name of an existing secret to use for database access. This could be one created by a Postgres operator such as CNPG or PGO
   existingSecretName: ""
   # -- key of the postgres access secret where host ip / dns name for the postgres db is found
+  # if removed postgresAccess.host is used
   secretHostKey: host
   # -- key of the postgres access secret where the port for the postgres db is found
+  # if removed postgresAccess.port is used
   secretPortKey: port
   # -- key of the postgres access secret where user name for the postgres db is found
   secretUserKey: user
   # -- key of the unified postgres access secret where password for the postgres db is found
   secretPasswordKey: password
   # -- key of the postgres access secret where database name for the postgres db is found
+  # if removed postgresAccess.database is used
   secretDBKey: dbname
   # -- key of the postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set)
   secretSchemaKey: ""
