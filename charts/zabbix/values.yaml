@@ -20,7 +20,7 @@ global:
 # See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 # When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version
 # here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbixImageTag: ubuntu-7.0.9
+zabbixImageTag: ubuntu-7.0.13
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
