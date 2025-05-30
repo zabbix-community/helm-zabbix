@@ -1,5 +1,5 @@
 # Custom values for zabbix.
-zabbixImageTag: alpine-7.2.3
+zabbixImageTag: alpine-7.2.7
 
 zabbixServer:
   enabled: true

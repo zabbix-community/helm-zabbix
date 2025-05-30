@@ -1,6 +1,6 @@
 # Helm chart for Zabbix
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.6](https://img.shields.io/badge/Version-7.0.6-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.7](https://img.shields.io/badge/Version-7.0.7-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -82,7 +82,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.6'
+export ZABBIX_CHART_VERSION='7.0.7'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -404,10 +404,10 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresAccess.password | string | `"zabbix"` | Password of database, eignored if existingSecretName is set |
 | postgresAccess.port | string | `"5432"` | Port of database host - ignored if postgresql.enabled=true or when existingSecretName is set |
 | postgresAccess.schema | string | `""` | Schema of database. Can be left empty if secretSchemaKey is not set. Only being used if external database is used (`postgresql.enabled` not set) |
-| postgresAccess.secretDBKey | string | `"dbname"` | key of the postgres access secret where database name for the postgres db is found |
-| postgresAccess.secretHostKey | string | `"host"` | key of the postgres access secret where host ip / dns name for the postgres db is found |
+| postgresAccess.secretDBKey | string | `"dbname"` | key of the postgres access secret where database name for the postgres db is found if removed postgresAccess.database is used |
+| postgresAccess.secretHostKey | string | `"host"` | key of the postgres access secret where host ip / dns name for the postgres db is found if removed postgresAccess.host is used |
 | postgresAccess.secretPasswordKey | string | `"password"` | key of the unified postgres access secret where password for the postgres db is found |
-| postgresAccess.secretPortKey | string | `"port"` | key of the postgres access secret where the port for the postgres db is found |
+| postgresAccess.secretPortKey | string | `"port"` | key of the postgres access secret where the port for the postgres db is found if removed postgresAccess.port is used |
 | postgresAccess.secretSchemaKey | string | `""` | key of the postgres access secret where schema name for the postgres db is found. Can be left empty (defaults to "public", then). Only being used if external database is used (`postgresql.enabled` not set) |
 | postgresAccess.secretUserKey | string | `"user"` | key of the postgres access secret where user name for the postgres db is found |
 | postgresAccess.user | string | `"zabbix"` | User of database, ignored if existingSecretName is set |
@@ -504,7 +504,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixBrowserMonitoring.webdriver.image.tag | string | `"127.0-chromedriver-127.0-grid-4.23.0-20240727"` | WebDriver container image tag, See https://hub.docker.com/r/selenium/standalone-chrome/tags |
 | zabbixBrowserMonitoring.webdriver.name | string | `"chrome"` | WebDriver container name |
 | zabbixBrowserMonitoring.webdriver.port | int | `4444` | WebDriver container port |
-| zabbixImageTag | string | `"ubuntu-7.0.9"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixImageTag | string | `"ubuntu-7.0.13"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixJavaGateway.ZABBIX_OPTIONS | string | `""` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. |
 | zabbixJavaGateway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` |  |
