@@ -30,7 +30,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn how to contribute to th
 
 ## Examples
 
-See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README.md/README.md) file to install this helm chart in [kind](https://kind.sigs.k8s.io) cluster.
+See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README.md) file to install this helm chart in [kind](https://kind.sigs.k8s.io) cluster.
 
 ## Important links
 
