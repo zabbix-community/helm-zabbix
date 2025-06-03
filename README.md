@@ -20,9 +20,9 @@
 
 ## About this chart
 
-See the [charts/zabbix/README.md](charts/zabbix/README.md) file to learn more about this helm chart or access [Artifact Hub](https://artifacthub.io/packages/helm/zabbix-community/zabbix).
+See the [charts/zabbix/README.md](https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/README.md) file to learn more about this helm chart or access [Artifact Hub](https://artifacthub.io/packages/helm/zabbix-community/zabbix).
 
-> This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster. It supports only Postgresql/TimescaleDB as a database backend at this point in time, without any plans to extend database support towards MySQL, MariaDB, etc. Also, this Helm Chart supports [Zabbix Server High Availability](charts/zabbix/#native-zabbix-server-high-availability)
+> This Helm chart installs [Zabbix](https://www.zabbix.com) in a Kubernetes cluster. It supports only Postgresql/TimescaleDB as a database backend at this point in time, without any plans to extend database support towards MySQL, MariaDB, etc. Also, this Helm Chart supports [Zabbix Server High Availability](https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/README.md#native-zabbix-server-high-availability)
 
 ## Contributing
 
@@ -30,30 +30,30 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn how to contribute to th
 
 ## Examples
 
-See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README.md/README.md) file to install this helm chart in [kind](https://kind.sigs.k8s.io) cluster.
+See the [charts/zabbix/docs/example/README.md](https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/README.md) file to install this helm chart in [kind](https://kind.sigs.k8s.io) cluster.
 
 ## Important links
 
 ### Related to this helm chart
 
-- Open issue, bug or feature request: https://github.com/zabbix-community/helm-zabbix/issues
-- Ask help: https://github.com/zabbix-community/helm-zabbix/discussions
-- Releases and Changelog: https://github.com/zabbix-community/helm-zabbix/releases
-- Artifact Hub: https://artifacthub.io/packages/helm/zabbix-community/zabbix
-- Closed issues: https://github.com/zabbix-community/helm-zabbix/issues?q=is%3Aissue+is%3Aclosed
-- Closed PRs: https://github.com/zabbix-community/helm-zabbix/pulls?q=is%3Apr+is%3Aclosed
-- Download statistics: https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix
+- Open issue, bug or feature request: [https://github.com/zabbix-community/helm-zabbix/issues](https://github.com/zabbix-community/helm-zabbix/issues)
+- Ask help: [https://github.com/zabbix-community/helm-zabbix/discussions](https://github.com/zabbix-community/helm-zabbix/discussions)
+- Releases and Changelog: [https://github.com/zabbix-community/helm-zabbix/releases](https://github.com/zabbix-community/helm-zabbix/releases)
+- Artifact Hub: [https://artifacthub.io/packages/helm/zabbix-community/zabbix](https://artifacthub.io/packages/helm/zabbix-community/zabbix)
+- Closed issues: [https://github.com/zabbix-community/helm-zabbix/issues?q=is%3Aissue+is%3Aclosed](https://github.com/zabbix-community/helm-zabbix/issues?q=is%3Aissue+is%3Aclosed)
+- Closed PRs: [https://github.com/zabbix-community/helm-zabbix/pulls?q=is%3Apr+is%3Aclosed](https://github.com/zabbix-community/helm-zabbix/pulls?q=is%3Apr+is%3Aclosed)
+- Download statistics: [https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 - Presentations:
   - Video: [Install and operate Zabbix in Kubernetes and OpenShift by Christian Anton / Zabbix Summit 2022](https://youtu.be/NU3FsXQp_rE?si=LjXsxjjrZd_VDEDU&t=150)
   - Slides: [Install and operate Zabbix in Kubernetes and OpenShift by Christian Anton / Zabbix Summit 2022](https://assets.zabbix.com/files/events/2022/zabbix_summit_2022/Christian_Anton_Install_and_operate_Zabbix_in_Kubernetes_and_OpenShift.pdf)
 
 ### Related to Zabbix
 
-- Official page: https://www.zabbix.com
-- Documentation: https://www.zabbix.com/manuals
-- Community support: https://www.zabbix.com/forum
-- Open issues: https://support.zabbix.com/projects/ZBX/issues/ZBX-25876?filter=allopenissues
-- Open feature requests: https://support.zabbix.com/projects/ZBXNEXT/issues/ZBXNEXT-8875?filter=allopenissues
+- Official page: [https://www.zabbix.com](https://www.zabbix.com)
+- Documentation: [https://www.zabbix.com/manuals](https://www.zabbix.com/manuals)
+- Community support: [https://www.zabbix.com/forum](https://www.zabbix.com/forum)
+- Open issues: [https://support.zabbix.com/projects/ZBX/issues/ZBX-25876?filter=allopenissues](https://support.zabbix.com/projects/ZBX/issues/ZBX-25876?filter=allopenissues)
+- Open feature requests: [https://support.zabbix.com/projects/ZBXNEXT/issues/ZBXNEXT-8875?filter=allopenissues](https://support.zabbix.com/projects/ZBXNEXT/issues/ZBXNEXT-8875?filter=allopenissues)
 
 ## Contributors
 
