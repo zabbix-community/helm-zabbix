@@ -26,7 +26,7 @@ See the [charts/zabbix/README.md](https://github.com/zabbix-community/helm-zabbi
 
 ## Contributing
 
-See the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn how to contribute to this helm chart.
+See the [CONTRIBUTING.md](https://github.com/zabbix-community/helm-zabbix/blob/main/CONTRIBUTING.md) file to learn how to contribute to this helm chart.
 
 ## Examples
 
@@ -72,7 +72,7 @@ Made with [contributors-img](https://contrib.rocks).
 
 ## History
 
-See the [HISTORY.md](HISTORY.md) file.
+See the [HISTORY.md](https://github.com/zabbix-community/helm-zabbix/blob/main/HISTORY.md) file.
 
 ## License
 
