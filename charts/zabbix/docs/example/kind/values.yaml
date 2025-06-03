@@ -1,3 +1,9 @@
+#global:
+#  imagePullSecrets:
+#    - name: my-secret
+#  commonLabels:
+#    mylabel: "my-value"
+
 # Custom values for zabbix.
 zabbixImageTag: alpine-7.2.7
 

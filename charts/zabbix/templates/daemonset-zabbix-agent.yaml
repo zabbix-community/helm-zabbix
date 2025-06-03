@@ -135,6 +135,9 @@ spec:
       {{- range .Values.zabbixAgent.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
         - name: proc
           hostPath:
