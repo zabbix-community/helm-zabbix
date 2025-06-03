@@ -185,11 +185,11 @@ git push --delete origin BRANCH_NAME
 - Create a new tag to generate a new release of the helm chart using the following commands:
 
 ```bash
-git tag -a 7.0.7 -m "New release" #example
+git tag -a 7.0.8 -m "New release" #example
 git push upstream --tags
 ```
 
-- The before commands will start the pipeline and will generate a new release and tag in standard ``zabbix-7.0.1``.
+- The before commands will start the pipeline and will generate a new release and tag in standard ``zabbix-x.y.z``.
 - To keep your fork in sync with the original repository, use these commands:
 
 ```bash
