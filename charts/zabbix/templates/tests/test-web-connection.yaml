@@ -10,6 +10,9 @@ metadata:
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-test-web-connection
     app.kubernetes.io/managed-by: {{ .Release.Service }}-test-web-connection
+    {{- if .Values.global.commonLabels}}
+    {{- toYaml .Values.global.commonLabels | nindent 4 }}
+    {{- end }}
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": "hook-succeeded,hook-failed"
@@ -39,6 +42,9 @@ spec:
       imagePullSecrets:
       {{- range .Values.helmTestJobs.webConnection.image.pullSecrets }}
         - name: {{ . | quote }}
+      {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
       restartPolicy: Never
 {{ end }}

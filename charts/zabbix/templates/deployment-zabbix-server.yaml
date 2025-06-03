@@ -260,6 +260,9 @@ spec:
       {{- range .Values.zabbixAgent.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
       {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
         - name: init-waitschema-script

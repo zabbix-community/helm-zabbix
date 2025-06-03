@@ -118,6 +118,9 @@ spec:
       {{- range .Values.zabbixJavaGateway.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
       {{- with .Values.zabbixJavaGateway.extraVolumes }}
         {{- toYaml . | nindent 8 }}
