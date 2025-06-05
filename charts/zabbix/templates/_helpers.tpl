@@ -41,7 +41,7 @@ helm.sh/chart: {{ include "zabbix.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.global.commonLabels}}
+{{- if .Values.global.commonLabels }}
 {{ toYaml .Values.global.commonLabels }}
 {{- end }}
 {{- end }}
