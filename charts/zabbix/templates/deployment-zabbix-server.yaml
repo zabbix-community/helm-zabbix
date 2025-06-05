@@ -141,7 +141,7 @@ spec:
               value: {{ .Values.zabbixJavaGateway.enabled | quote }}
             {{- if .Values.zabbixJavaGateway.enabled }}
             - name: ZBX_JAVAGATEWAY
-              value: {{ template "zabbix.fullname" . }}-{{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
+              value: {{ .Values.zabbixJavaGateway.ZBX_JAVAGATEWAY }}
             - name: ZBX_JAVAGATEWAYPORT
               value: {{ .Values.zabbixJavaGateway.service.port | quote }}
             - name: ZBX_STARTJAVAPOLLERS

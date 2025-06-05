@@ -185,7 +185,7 @@ git push --delete origin BRANCH_NAME
 - Create a new tag to generate a new release of the helm chart using the following commands:
 
 ```bash
-git tag -a 7.0.8 -m "New release" #example
+git tag -a 7.0.9 -m "New release" #example
 git push upstream --tags
 ```
 
