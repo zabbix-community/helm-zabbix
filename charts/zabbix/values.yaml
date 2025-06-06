@@ -597,6 +597,8 @@ zabbixWeb:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
+  # -- Port of the Zabbix Web application. Change to 8443 in case of HTTPS. Add certs to samlCertsSecretName.
+  port: 8080
   # -- Secret name containing certificates for SAML configuration. Example: zabbix-web-samlcerts
   samlCertsSecretName: ""
   service:

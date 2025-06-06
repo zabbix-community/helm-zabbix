@@ -82,7 +82,7 @@ spec:
           {{- end }}
         ports:
           - name: zabbix-web
-            containerPort: 8080
+            containerPort: {{ .Values.zabbixWeb.port }}
             protocol: TCP
         volumeMounts:
         {{- if .Values.zabbixWeb.samlCertsSecretName }}
