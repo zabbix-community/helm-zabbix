@@ -667,7 +667,7 @@ zabbixWeb:
   livenessProbe:
     httpGet:
       # -- Path of health check of application
-      path: /
+      path: /ping
       # -- Port number/alias name of the container
       port: zabbix-web
     initialDelaySeconds: 30
@@ -678,7 +678,7 @@ zabbixWeb:
   readinessProbe:
     httpGet:
       # -- Path of health check of application
-      path: /
+      path: /ping
       # -- Port number/alias name of the container
       port: zabbix-web
     initialDelaySeconds: 5
