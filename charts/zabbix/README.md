@@ -1,6 +1,6 @@
 # Helm chart for Zabbix
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.9](https://img.shields.io/badge/Version-7.0.9-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.10](https://img.shields.io/badge/Version-7.0.10-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
 )](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
@@ -82,7 +82,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.9'
+export ZABBIX_CHART_VERSION='7.0.10'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -683,7 +683,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.image.repository | string | `"zabbix/zabbix-web-nginx-pgsql"` | Zabbix Web Docker image name |
 | zabbixWeb.image.tag | string | `nil` | Zabbix Web Docker image tag, if you want to override zabbixImageTag |
 | zabbixWeb.livenessProbe.failureThreshold | int | `6` |  |
-| zabbixWeb.livenessProbe.httpGet.path | string | `"/"` | Path of health check of application |
+| zabbixWeb.livenessProbe.httpGet.path | string | `"/ping"` | Path of health check of application. Access logs are disabled for endpoint /ping. If needs Access logs, change for endpoint / |
 | zabbixWeb.livenessProbe.httpGet.port | string | `"zabbix-web"` | Port number/alias name of the container |
 | zabbixWeb.livenessProbe.initialDelaySeconds | int | `30` |  |
 | zabbixWeb.livenessProbe.periodSeconds | int | `10` |  |
@@ -692,7 +692,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixWeb.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
 | zabbixWeb.readinessProbe.failureThreshold | int | `6` |  |
-| zabbixWeb.readinessProbe.httpGet.path | string | `"/"` | Path of health check of application |
+| zabbixWeb.readinessProbe.httpGet.path | string | `"/ping"` | Path of health check of application. Access logs are disabled for endpoint /ping. If needs Access logs, change for endpoint / |
 | zabbixWeb.readinessProbe.httpGet.port | string | `"zabbix-web"` | Port number/alias name of the container |
 | zabbixWeb.readinessProbe.initialDelaySeconds | int | `5` |  |
 | zabbixWeb.readinessProbe.periodSeconds | int | `10` |  |

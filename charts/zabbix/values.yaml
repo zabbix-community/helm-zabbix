@@ -666,7 +666,7 @@ zabbixWeb:
   securityContext: {}
   livenessProbe:
     httpGet:
-      # -- Path of health check of application
+      # -- Path of health check of application. Access logs are disabled for endpoint /ping. If needs Access logs, change for endpoint /
       path: /ping
       # -- Port number/alias name of the container
       port: zabbix-web
@@ -677,7 +677,7 @@ zabbixWeb:
     successThreshold: 1
   readinessProbe:
     httpGet:
-      # -- Path of health check of application
+      # -- Path of health check of application. Access logs are disabled for endpoint /ping. If needs Access logs, change for endpoint /
       path: /ping
       # -- Port number/alias name of the container
       port: zabbix-web
