@@ -140,7 +140,7 @@ A **minor** is the "dot-dot" release. Example: *6.0.2* -> *6.0.3* is **minor upg
 - Change the ``version`` and ``appVersion`` parameters (helm chart and Zabbix version, respectively) in ``charts/zabbix/Chart.yaml`` and ``charts/zabbix/artifacthub-pkg.yml`` files.
 - Change the ``zabbixImageTag`` value (Zabbix version) in ``charts/zabbix/values.yaml`` file.
 - Change the ``createdAt`` parameter in ``charts/zabbix/artifacthub-pkg.yml`` file using the output of the command ``date +%Y-%m-%dT%TZ`` command.
-- Change the ``ZABBIX_CHART_VERSION`` variable in ``charts/zabbix/artifacthub-pkg.yml`` file.
+- Change the ``ZABBIX_CHART_VERSION`` variable in ``charts/zabbix/artifacthub-pkg.yml`` and ``charts/zabbix/README.md`` files.
 - Run the following commands to update the documentation of the helm chart.
 
 ```bash
@@ -185,7 +185,7 @@ git push --delete origin BRANCH_NAME
 - Create a new tag to generate a new release of the helm chart using the following commands:
 
 ```bash
-git tag -a 7.0.9 -m "New release" #example
+git tag -a 7.0.10 -m "New release" #example
 git push upstream --tags
 ```
 
