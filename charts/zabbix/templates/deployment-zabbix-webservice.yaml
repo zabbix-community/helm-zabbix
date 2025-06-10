@@ -109,7 +109,7 @@ spec:
       {{- toYaml . | nindent 6 }}
       {{- end }}
       imagePullSecrets:
-      {{- range .Values.zabbixWeb.image.pullSecrets }}
+      {{- range .Values.zabbixWebService.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
       {{- with .Values.global.imagePullSecrets }}
