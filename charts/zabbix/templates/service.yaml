@@ -153,7 +153,7 @@ spec:
   ports:
     - port: {{ .Values.zabbixWeb.service.port }}
       name: zabbix-web
-      targetPort: 8080
+      targetPort: {{ .Values.zabbixWeb.port }}
       protocol: TCP
       {{- if and (or (eq .Values.zabbixWeb.service.type "NodePort") (eq .Values.zabbixWeb.service.type "LoadBalancer" )) (not (empty .Values.zabbixWeb.service.nodePort)) }}
       nodePort: {{ .Values.zabbixWeb.service.nodePort }}

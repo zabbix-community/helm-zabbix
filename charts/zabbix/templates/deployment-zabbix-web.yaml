@@ -89,6 +89,10 @@ spec:
           - name: zabbix-web-samlcerts
             mountPath: /etc/zabbix/web/certs
         {{- end }}
+        {{- if .Values.zabbixWeb.tlsCertsSecretName }}
+          - name: zabbix-web-tlscerts
+            mountPath: /etc/ssl/nginx
+        {{- end }}        
         {{- with .Values.zabbixWeb.extraVolumeMounts }}
           {{- toYaml . | nindent 10 }}
         {{- end }}
@@ -119,6 +123,11 @@ spec:
         - name: zabbix-web-samlcerts
           secret:
             secretName: {{ .Values.zabbixWeb.samlCertsSecretName }}
+      {{- end }}
+      {{- if .Values.zabbixWeb.tlsCertsSecretName }}
+        - name: zabbix-web-tlscerts
+          secret:
+            secretName: {{ .Values.zabbixWeb.tlsCertsSecretName }}
       {{- end }}
       {{- with .Values.zabbixWeb.extraVolumes }}
         {{- toYaml . | nindent 8 }}
