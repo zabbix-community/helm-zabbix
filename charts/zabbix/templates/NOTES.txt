@@ -1,5 +1,5 @@
 Please wait for pods to be created. You can follow this with the command:
-kubectl get pods -n {{ .Release.Namespace }} --watch
+  kubectl get pods -n {{ .Release.Namespace }} --watch
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
 Your Zabbix installation should be reachable using this URL:
