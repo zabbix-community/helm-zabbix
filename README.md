@@ -59,11 +59,11 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 
 ## Contributors
 
-<a href = "https://github.com/zabbix-community/helm-zabbix/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo=zabbix-community/helm-zabbix"/>
+<a href="https://github.com/zabbix-community/helm-zabbix/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=zabbix-community/helm-zabbix" />
 </a>
 
-Made with [contributors-img](https://contrib.rocks).
+Made with [contrib.rocks](https://contrib.rocks).
 
 <!-- Reference: https://github.com/Tanu-N-Prabhu/myWebsite.io/blob/master/Docs/Displaying%20Contributors%20Image%20on%20README%20files%20with%20no%20Pain!.md#contributors-displayed-by-using-contributors-img-on-the-readmemd-file -->
 
