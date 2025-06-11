@@ -1,7 +1,8 @@
 # Helm chart for Zabbix
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.10](https://img.shields.io/badge/Version-7.0.10-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads%20All%20Releases
-)](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.11](https://img.shields.io/badge/Version-7.0.11-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads
+)](https://tooomm.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix) [![Releases ChangeLog](https://img.shields.io/badge/Changelog-8A2BE2
+)](https://github.com/zabbix-community/helm-zabbix/releases)
 
 Zabbix is a mature and effortless enterprise-class open source monitoring solution for network monitoring and application monitoring of millions of metrics.
 
@@ -82,7 +83,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.10'
+export ZABBIX_CHART_VERSION='7.0.11'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -685,15 +686,18 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.livenessProbe.failureThreshold | int | `6` |  |
 | zabbixWeb.livenessProbe.httpGet.path | string | `"/ping"` | Path of health check of application. Access logs are disabled for endpoint /ping. If needs Access logs, change for endpoint / |
 | zabbixWeb.livenessProbe.httpGet.port | string | `"zabbix-web"` | Port number/alias name of the container |
+| zabbixWeb.livenessProbe.httpGet.scheme | string | `"HTTP"` | Scheme of health check of application If scheme field is set to HTTPS, the kubelet sends an HTTPS request skipping the certificate verification. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes |
 | zabbixWeb.livenessProbe.initialDelaySeconds | int | `30` |  |
 | zabbixWeb.livenessProbe.periodSeconds | int | `10` |  |
 | zabbixWeb.livenessProbe.successThreshold | int | `1` |  |
 | zabbixWeb.livenessProbe.timeoutSeconds | int | `5` |  |
 | zabbixWeb.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixWeb.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
+| zabbixWeb.port | int | `8080` | Port of the Zabbix Web application. Change to 8443 in case of HTTPS. Add certs to tlsCertsSecretName. |
 | zabbixWeb.readinessProbe.failureThreshold | int | `6` |  |
 | zabbixWeb.readinessProbe.httpGet.path | string | `"/ping"` | Path of health check of application. Access logs are disabled for endpoint /ping. If needs Access logs, change for endpoint / |
 | zabbixWeb.readinessProbe.httpGet.port | string | `"zabbix-web"` | Port number/alias name of the container |
+| zabbixWeb.readinessProbe.httpGet.scheme | string | `"HTTP"` | Scheme of health check of application If scheme field is set to HTTPS, the kubelet sends an HTTPS request skipping the certificate verification. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes |
 | zabbixWeb.readinessProbe.initialDelaySeconds | int | `5` |  |
 | zabbixWeb.readinessProbe.periodSeconds | int | `10` |  |
 | zabbixWeb.readinessProbe.successThreshold | int | `1` |  |
@@ -713,6 +717,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
 | zabbixWeb.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixWeb.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
+| zabbixWeb.tlsCertsSecretName | string | `""` | Secret name containing certificates for TLS. Example: zabbix-web-tlscerts. Must include dhparam.pem, ssl.crt and ssl.key. |
 | zabbixWebService.enabled | bool | `true` | Enables use of **Zabbix Web Service** |
 | zabbixWebService.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web Service pod |
 | zabbixWebService.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
