@@ -675,6 +675,8 @@ zabbixWeb:
       # -- Port number/alias name of the container
       port: zabbix-web
       # -- Scheme of health check of application
+      # If scheme field is set to HTTPS, the kubelet sends an HTTPS request skipping the certificate verification.
+      # Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes
       scheme: HTTP
     initialDelaySeconds: 30
     periodSeconds: 10
@@ -688,6 +690,8 @@ zabbixWeb:
       # -- Port number/alias name of the container
       port: zabbix-web
       # -- Scheme of health check of application
+      # If scheme field is set to HTTPS, the kubelet sends an HTTPS request skipping the certificate verification.
+      # Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes
       scheme: HTTP
     initialDelaySeconds: 5
     periodSeconds: 10
