@@ -57,8 +57,8 @@ See the [charts/zabbix/docs/example/README.md](https://github.com/zabbix-communi
 
 ## Contributors
 
-<a href = "https://github.com/zabbix-community/helm-zabbix/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo=zabbix-community/helm-zabbix"/>
+<a href="https://github.com/zabbix-community/helm-zabbix/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=zabbix-community/helm-zabbix" />
 </a>
 
 Made with [contributors-img](https://contrib.rocks).
