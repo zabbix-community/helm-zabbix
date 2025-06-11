@@ -597,8 +597,12 @@ zabbixWeb:
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
     pullSecrets: []
+  # -- Port of the Zabbix Web application. Change to 8443 in case of HTTPS. Add certs to tlsCertsSecretName.
+  port: 8080
   # -- Secret name containing certificates for SAML configuration. Example: zabbix-web-samlcerts
   samlCertsSecretName: ""
+  # -- Secret name containing certificates for TLS. Example: zabbix-web-tlscerts. Must include dhparam.pem, ssl.crt and ssl.key.
+  tlsCertsSecretName: ""  
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -670,6 +674,10 @@ zabbixWeb:
       path: /ping
       # -- Port number/alias name of the container
       port: zabbix-web
+      # -- Scheme of health check of application
+      # If scheme field is set to HTTPS, the kubelet sends an HTTPS request skipping the certificate verification.
+      # Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes
+      scheme: HTTP
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -681,6 +689,10 @@ zabbixWeb:
       path: /ping
       # -- Port number/alias name of the container
       port: zabbix-web
+      # -- Scheme of health check of application
+      # If scheme field is set to HTTPS, the kubelet sends an HTTPS request skipping the certificate verification.
+      # Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes
+      scheme: HTTP
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
