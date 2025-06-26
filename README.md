@@ -54,6 +54,7 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 - Official page: https://www.zabbix.com
 - Documentation: https://www.zabbix.com/manuals
 - Community support: https://www.zabbix.com/forum
+- Community templates: https://github.com/zabbix-community/community-templates
 - Open issues: https://support.zabbix.com/projects/ZBX/issues/ZBX-25876?filter=allopenissues
 - Open feature requests: https://support.zabbix.com/projects/ZBXNEXT/issues/ZBXNEXT-8875?filter=allopenissues
 
