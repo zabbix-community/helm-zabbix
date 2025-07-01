@@ -635,7 +635,8 @@ zabbixWeb:
     # -- Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity.
     # Must be ClientIP or None. Defaults to None. More info:
     # https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
-    sessionAffinity: None  # -- Port of service in Kubernetes cluster
+    sessionAffinity: None
+    # -- Port of service in Kubernetes cluster
     port: 80
     # -- NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer)
     nodePort: 31080
