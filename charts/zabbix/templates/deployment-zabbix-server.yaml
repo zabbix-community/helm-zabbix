@@ -156,7 +156,7 @@ spec:
               value: {{ .Values.zabbixBrowserMonitoring.customWebDriverURL | quote }}
             {{- else }}
             - name: ZBX_WEBDRIVERURL
-              value: http://{{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}:{{ .Values.zabbixBrowserMonitoring.webdriver.port }}
+              value: http://{{ template "zabbix.fullname" . }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}:{{ .Values.zabbixBrowserMonitoring.service.port1 }}
             {{- end }}
           {{- with .Values.zabbixServer.extraVolumeMounts }}
           volumeMounts:

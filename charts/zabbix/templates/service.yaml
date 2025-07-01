@@ -344,13 +344,51 @@ metadata:
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: webdriver
+  {{- if .Values.zabbixBrowserMonitoring.service.annotations }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixBrowserMonitoring.service.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
 spec:
+  type: {{ .Values.zabbixBrowserMonitoring.service.type }}
+  {{- if and .Values.zabbixBrowserMonitoring.service.externalTrafficPolicy (or (eq .Values.zabbixBrowserMonitoring.service.type "NodePort") (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer" )) }}
+  externalTrafficPolicy: {{ .Values.zabbixBrowserMonitoring.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if and .Values.zabbixBrowserMonitoring.service.externalIPs (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer") }}
+  externalIPs: {{ .Values.zabbixBrowserMonitoring.service.externalIPs | toYaml | nindent 6 }}
+  {{- end }}
+  {{- if and .Values.zabbixBrowserMonitoring.service.loadBalancerIP (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer") }}
+  loadBalancerIP: {{ .Values.zabbixBrowserMonitoring.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and .Values.zabbixBrowserMonitoring.service.clusterIP (eq .Values.zabbixBrowserMonitoring.service.type "ClusterIP") }}
+  clusterIP: {{ .Values.zabbixBrowserMonitoring.service.clusterIP }}
+  {{- end }}
+  {{- if .Values.zabbixBrowserMonitoring.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.zabbixBrowserMonitoring.service.sessionAffinity }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer") (not (empty .Values.zabbixBrowserMonitoring.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.zabbixBrowserMonitoring.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer") .Values.zabbixBrowserMonitoring.service.loadBalancerClass }}
+  loadBalancerClass: {{ .Values.zabbixBrowserMonitoring.service.loadBalancerClass }}
+  {{- end }}
   ports:
-    - port: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
-      targetPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
+    - port: {{ .Values.zabbixBrowserMonitoring.service.port1 }}
+      name: zabbix-webdriver1
+      targetPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port1 }}
       protocol: TCP
+      {{- if and (or (eq .Values.zabbixBrowserMonitoring.service.type "NodePort") (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer" )) (not (empty .Values.zabbixBrowserMonitoring.service.nodePort2)) }}
+      nodePort: {{ .Values.zabbixBrowserMonitoring.service.nodePort1 }}
+      {{- end }}
+    - port: {{ .Values.zabbixBrowserMonitoring.service.port2 }}
+      name: zabbix-webdriver2
+      targetPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port2 }}
+      protocol: TCP
+      {{- if and (or (eq .Values.zabbixBrowserMonitoring.service.type "NodePort") (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer" )) (not (empty .Values.zabbixBrowserMonitoring.service.nodePort2)) }}
+      nodePort: {{ .Values.zabbixBrowserMonitoring.service.nodePort2 }}
+      {{- end }}
   selector:
     {{- include "zabbix.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: webdriver
-  type: ClusterIP
 {{- end }}

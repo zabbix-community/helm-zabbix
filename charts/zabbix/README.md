@@ -1,6 +1,6 @@
 # Helm chart for Zabbix
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.11](https://img.shields.io/badge/Version-7.0.11-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.12](https://img.shields.io/badge/Version-7.0.12-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads
 )](https://somsubhra.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix&page=1&per_page=500#) [![Releases ChangeLog](https://img.shields.io/badge/Changelog-8A2BE2
 )](https://github.com/zabbix-community/helm-zabbix/releases)
 
@@ -83,7 +83,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.11'
+export ZABBIX_CHART_VERSION='7.0.12'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -297,7 +297,7 @@ possible is possible, while still obtaining a good level of security.
 - This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
 - But by default this helm chart will install the latest LTS version (example: 7.0.x).
 See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-- When you want use a non-LTS version (example: 7.2.x), you have to set this in ``values.yaml`` yourself. This Helm Chart is actively being tested with the current non-LTS major releases, so it will be most probably working without any problem just setting `zabbixImageTag`, for example to the value of `ubuntu-7.2.1` or `alpine-7.2-latest`.
+- When you want use a non-LTS version (example: 7.4.x), you have to set this in ``values.yaml`` yourself. This Helm Chart is actively being tested with the current non-LTS major releases, so it will be most probably working without any problem just setting `zabbixImageTag`, for example to the value of `ubuntu-7.4.0` or `alpine-7.4-latest`.
 
 ## Zabbix Server
 
@@ -414,7 +414,7 @@ The following tables lists the configurable parameters of the chart and their de
 | postgresAccess.user | string | `"zabbix"` | User of database, ignored if existingSecretName is set |
 | postgresql.enabled | bool | `true` | Create a database using Postgresql. Not usable in combination with ``zabbixserver.zabbixServerHA=true`` |
 | postgresql.extraContainers | list | `[]` | Additional containers to start within the postgresql pod |
-| postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. |
+| postgresql.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. See: https://www.postgresql.org/docs/16/libpq-envars.html |
 | postgresql.extraInitContainers | list | `[]` | Additional init containers to start within the postgresql pod |
 | postgresql.extraPodAnnotations | object | `{}` | Annotations to add to the pod |
 | postgresql.extraPodLabels | object | `{}` | Labels to add to the pod |
@@ -461,7 +461,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.extraDaemonSetAnnotations | object | `{}` | Annotations to add to the daemonSet |
 | zabbixAgent.extraDaemonSetLabels | object | `{}` | Labels to add to the daemonSet |
 | zabbixAgent.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
-| zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixAgent.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixAgent.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
 | zabbixAgent.extraPodLabels | object | `{}` | Labels to add to the pods |
@@ -496,16 +496,46 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.startupProbe.tcpSocket.port | string | `"zabbix-agent"` | Port number/alias name of the container |
 | zabbixBrowserMonitoring.customWebDriverURL | string | `""` | Custom WebDriver URL. If set, it overrides the default internal WebDriver service URL. Set zabbixBrowserMonitoring.webdriver.enabled to false when setting this. |
 | zabbixBrowserMonitoring.enabled | bool | `false` | Enable browser pollers |
+| zabbixBrowserMonitoring.extraContainers | list | `[]` | Additional containers to start within the Zabbix WebDriver pod |
+| zabbixBrowserMonitoring.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
+| zabbixBrowserMonitoring.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
+| zabbixBrowserMonitoring.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://www.selenium.dev/documentation/grid/configuration |
+| zabbixBrowserMonitoring.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix WebDriver pod |
+| zabbixBrowserMonitoring.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
+| zabbixBrowserMonitoring.extraPodLabels | object | `{}` | Labels to add to the pods |
+| zabbixBrowserMonitoring.extraPodSpecs | object | `{}` | Additional specifications to the Zabbix WebDriver pod |
+| zabbixBrowserMonitoring.extraVolumeMounts | list | `[]` | Additional volumeMounts to the Zabbix WebDriver container |
+| zabbixBrowserMonitoring.extraVolumes | list | `[]` | Additional volumes to make available to the Zabbix WebDriver pod |
+| zabbixBrowserMonitoring.livenessProbe | object | `{}` |  |
 | zabbixBrowserMonitoring.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixBrowserMonitoring.pollers | int | `1` | Number of browser pollers to start |
+| zabbixBrowserMonitoring.readinessProbe | object | `{}` |  |
+| zabbixBrowserMonitoring.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
+| zabbixBrowserMonitoring.service.annotations | object | `{}` | Annotations for the Zabbix WebDriver |
+| zabbixBrowserMonitoring.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
+| zabbixBrowserMonitoring.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. These IPs are not managed by Kubernetes. |
+| zabbixBrowserMonitoring.service.loadBalancerClass | string | `""` | loadBalancerClass is the class of the load balancer implementation this Service belongs to. If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. "internal-vip" or "example.com/internal-vip". Unprefixed names are reserved for end-users. This field can only be set when the Service type is 'LoadBalancer'. If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration, but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field. This field can only be set when creating or updating a Service to type 'LoadBalancer'. Once set, it can not be changed. This field will be wiped when a service is updated to a non 'LoadBalancer' type. |
+| zabbixBrowserMonitoring.service.loadBalancerIP | string | `""` | Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixBrowserMonitoring.service.loadBalancerSourceRanges | list | `[]` | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. |
+| zabbixBrowserMonitoring.service.nodePort1 | int | `31444` | NodePort port 1 to allocate on each node (only if service.type = NodePort or Loadbalancer) |
+| zabbixBrowserMonitoring.service.nodePort2 | int | `31900` | NodePort port 2 to allocate on each node (only if service.type = NodePort or Loadbalancer) |
+| zabbixBrowserMonitoring.service.port1 | int | `4444` | Port 1 of service in Kubernetes cluster |
+| zabbixBrowserMonitoring.service.port2 | int | `7900` | Port 2 of service in Kubernetes cluster |
+| zabbixBrowserMonitoring.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
+| zabbixBrowserMonitoring.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
+| zabbixBrowserMonitoring.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixBrowserMonitoring.webdriver.enabled | bool | `true` | Enable webdriver |
 | zabbixBrowserMonitoring.webdriver.image.pullPolicy | string | `"IfNotPresent"` | Pull policy of Docker image |
 | zabbixBrowserMonitoring.webdriver.image.pullSecrets | list | `[]` | List of dockerconfig secrets names to use when pulling images |
 | zabbixBrowserMonitoring.webdriver.image.repository | string | `"selenium/standalone-chrome"` | WebDriver container image |
-| zabbixBrowserMonitoring.webdriver.image.tag | string | `"127.0-chromedriver-127.0-grid-4.23.0-20240727"` | WebDriver container image tag, See https://hub.docker.com/r/selenium/standalone-chrome/tags |
+| zabbixBrowserMonitoring.webdriver.image.tag | string | `"124.0-chromedriver-124.0-grid-4.33.0-20250606"` | WebDriver container image tag, See https://hub.docker.com/r/selenium/standalone-chrome/tags |
 | zabbixBrowserMonitoring.webdriver.name | string | `"chrome"` | WebDriver container name |
-| zabbixBrowserMonitoring.webdriver.port | int | `4444` | WebDriver container port |
-| zabbixImageTag | string | `"ubuntu-7.0.13"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.2.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixBrowserMonitoring.webdriver.podAntiAffinity | bool | `true` | set permissive podAntiAffinity to spread replicas over cluster nodes if replicaCount>1 |
+| zabbixBrowserMonitoring.webdriver.port1 | int | `4444` | WebDriver container port 1 |
+| zabbixBrowserMonitoring.webdriver.port2 | int | `7900` | WebDriver container port 2 |
+| zabbixBrowserMonitoring.webdriver.replicaCount | int | `1` | Number of replicas of ``zabbixWebDriver`` module |
+| zabbixBrowserMonitoring.webdriver.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
+| zabbixImageTag | string | `"ubuntu-7.0.16"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixJavaGateway.ZABBIX_OPTIONS | string | `""` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. |
 | zabbixJavaGateway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` |  |
@@ -516,7 +546,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixJavaGateway.extraContainers | list | `[]` | Additional containers to start within the Zabbix Java Gateway pod |
 | zabbixJavaGateway.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixJavaGateway.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
-| zabbixJavaGateway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixJavaGateway.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/java-gateway/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixJavaGateway.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Java Gateway pod |
 | zabbixJavaGateway.extraPodAnnotations | object | `{}` | Annotations to add to the pod |
 | zabbixJavaGateway.extraPodLabels | object | `{}` | Labels to add to the pod |
@@ -557,7 +587,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixProxy.extraContainers | list | `[]` | Additional containers to start within the Zabbix Proxy pod |
-| zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixProxy.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraPodAnnotations | object | `{}` | Annotations to add to the pod |
 | zabbixProxy.extraPodLabels | object | `{}` | Labels to add to the pod |
@@ -593,7 +623,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixServer.extraContainers | list | `[]` | Additional containers to start within the Zabbix Server pod |
 | zabbixServer.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixServer.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
-| zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixServer.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixServer.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Server pod |
 | zabbixServer.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
 | zabbixServer.extraPodLabels | object | `{}` | Labels to add to the pods |
@@ -672,7 +702,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web pod |
 | zabbixWeb.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixWeb.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
-| zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixWeb.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/web-apache-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWeb.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web pod |
 | zabbixWeb.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
 | zabbixWeb.extraPodLabels | object | `{}` | Labels to add to the pods |
@@ -713,7 +743,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWeb.service.loadBalancerIP | string | `""` | Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. |
 | zabbixWeb.service.loadBalancerSourceRanges | list | `[]` | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. |
 | zabbixWeb.service.nodePort | int | `31080` | NodePort port to allocate on each node (only if service.type = NodePort or Loadbalancer) |
-| zabbixWeb.service.port | int | `80` |  |
+| zabbixWeb.service.port | int | `80` | Port of service in Kubernetes cluster |
 | zabbixWeb.service.sessionAffinity | string | `"None"` | Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
 | zabbixWeb.service.type | string | `"ClusterIP"` | Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. More details: https://kubernetes.io/docs/concepts/services-networking/service/ |
 | zabbixWeb.startupProbe | object | `{}` | The kubelet uses startup probes to know when a container application has started.  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
@@ -722,7 +752,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.extraContainers | list | `[]` | Additional containers to start within the Zabbix Web Service pod |
 | zabbixWebService.extraDeploymentAnnotations | object | `{}` | Annotations to add to the deployment |
 | zabbixWebService.extraDeploymentLabels | object | `{}` | Labels to add to the deployment |
-| zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/6.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
+| zabbixWebService.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/web-service/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
 | zabbixWebService.extraInitContainers | list | `[]` | Additional init containers to start within the Zabbix Web Service pod |
 | zabbixWebService.extraPodAnnotations | object | `{}` | Annotations to add to the pods |
 | zabbixWebService.extraPodLabels | object | `{}` | Labels to add to the pods |
