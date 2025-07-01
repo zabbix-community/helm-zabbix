@@ -7,33 +7,109 @@ metadata:
   labels:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: webdriver
+    {{- if .Values.zabbixBrowserMonitoring.extraDeploymentLabels }}
+    {{- toYaml .Values.zabbixBrowserMonitoring.extraDeploymentLabels | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- range $key,$value := .Values.zabbixBrowserMonitoring.extraDeploymentAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.zabbixBrowserMonitoring.webdriver.replicaCount }}
   selector:
     matchLabels:
       {{- include "zabbix.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: webdriver
   template:
     metadata:
+      annotations:
+        {{- range $key,$value := .Values.zabbixBrowserMonitoring.extraPodAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       labels:
         {{- include "zabbix.labels" . | nindent 8 }}
         app.kubernetes.io/component: webdriver
+        {{- if .Values.zabbixBrowserMonitoring.extraPodLabels }}
+        {{- toYaml .Values.zabbixBrowserMonitoring.extraPodLabels | nindent 8 }}
+        {{- end }}
     spec:
+      serviceAccountName: {{ template "zabbix.serviceAccountName" . }}
+      {{- with .Values.zabbixBrowserMonitoring.extraPodSpecs }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.zabbixBrowserMonitoring.extraInitContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.zabbixBrowserMonitoring.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if gt (len .Values.affinity) 0 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      {{- else if .Values.zabbixBrowserMonitoring.webdriver.podAntiAffinity }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: {{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+        resources:
+          {{- toYaml .Values.zabbixBrowserMonitoring.webdriver.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.zabbixBrowserMonitoring.securityContext | nindent 10 }}
         imagePullPolicy: {{ .Values.zabbixBrowserMonitoring.webdriver.image.pullPolicy }}
         image: {{ .Values.zabbixBrowserMonitoring.webdriver.image.repository }}:{{ .Values.zabbixBrowserMonitoring.webdriver.image.tag }}
+        env:
+          {{- with .Values.zabbixBrowserMonitoring.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
         ports:
-        - containerPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port }}
+        - containerPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port1 }}
+          name: webdriver1
+          protocol: TCP
+        - containerPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port2 }}
+          name: webdriver2
+          protocol: TCP
+        volumeMounts:
+        {{- with .Values.zabbixBrowserMonitoring.extraVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.zabbixBrowserMonitoring.livenessProbe }}
+        livenessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.zabbixBrowserMonitoring.readinessProbe }}
+        readinessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.zabbixBrowserMonitoring.startupProbe }}
+        startupProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- with .Values.zabbixBrowserMonitoring.extraContainers }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       imagePullSecrets:
       {{- range .Values.zabbixBrowserMonitoring.webdriver.image.pullSecrets }}
         - name: {{ . | quote }}
       {{- end }}
       {{- with .Values.global.imagePullSecrets }}
       {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- with .Values.zabbixBrowserMonitoring.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}

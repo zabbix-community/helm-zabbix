@@ -5,7 +5,7 @@
 #    mylabel: "my-value"
 
 # Custom values for zabbix.
-zabbixImageTag: alpine-7.2.7
+zabbixImageTag: alpine-7.4.0
 
 zabbixServer:
   enabled: true
@@ -18,10 +18,10 @@ zabbixServer:
       # Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
       repository: postgres
       #repository: timescale/timescaledb
-      # -- Tag of Docker image of Postgresql server, choice "17" for postgres "2.17.2-pg16" for timescaledb
-      # (Zabbix supports TimescaleDB. More info: https://www.zabbix.com/documentation/7.2/en/manual/installation/requirements)
+      # -- Tag of Docker image of Postgresql server, choice "17" for postgres "2.19.3-pg17" for timescaledb
+      # (Zabbix supports TimescaleDB. More info: https://www.zabbix.com/documentation/7.4/en/manual/installation/requirements)
       tag: 17
-      #tag: 2.17.2-pg16
+      #tag: 2.19.3-pg17
   service:
     type: NodePort
     port: 10051
@@ -178,4 +178,7 @@ zabbixWeb:
 #          - linux
 
 #zabbixJavaGateway:
+#  enabled: true
+
+#zabbixBrowserMonitoring:
 #  enabled: true
