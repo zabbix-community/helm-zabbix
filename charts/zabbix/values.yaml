@@ -374,6 +374,21 @@ zabbixProxy:
   ZBX_JAVAGATEWAY_ENABLE: false
   # -- Cache size
   ZBX_VMWARECACHESIZE: 128M
+  #	-- Option: TLSConnect. How the proxy should connect to Zabbix server. Used for an active proxy, ignored on a passive proxy.
+  # ZBX_TLSCONNECT: psk
+  #	-- Option: TLSAccept. What incoming connections to accept from Zabbix server. Used for a passive proxy, ignored on an active proxy.
+  # ZBX_TLSACCEPT: psk
+  #	-- Option: TLSPSKIdentity. Unique, case sensitive string used to identify the pre-shared key.
+  # ZBX_TLSPSKIDENTITY: tlsidentity
+  #	-- Option: TLSPSKFile. Full pathname of a file containing the pre-shared key.
+  # ZBX_TLSPSKFILE: /etc/psk/key
+  # -- Defines additional mounts with secrets for proxy tls keys. Secrets must be manually created in the namespace.
+  # extraSecretMounts:
+  # - name: secret-files
+  #   mountPath: /etc/psk
+  #   secretName: zabbix-secret-files
+  #   readOnly: true
+  #   defaultMode: 0444
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/

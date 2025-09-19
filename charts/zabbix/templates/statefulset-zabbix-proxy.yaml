@@ -162,6 +162,22 @@ spec:
               value: {{ .Values.zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | quote }}
             - name: ZBX_VMWARECACHESIZE
               value: {{ .Values.zabbixProxy.ZBX_VMWARECACHESIZE | quote }}
+            {{- if .Values.zabbixProxy.ZBX_TLSCONNECT }}
+            - name: ZBX_TLSCONNECT
+              value: {{ .Values.zabbixProxy.ZBX_TLSCONNECT | quote }}
+            {{- end }}
+            {{- if .Values.zabbixProxy.ZBX_TLSACCEPT }}
+            - name: ZBX_TLSACCEPT
+              value: {{ .Values.zabbixProxy.ZBX_TLSACCEPT | quote }}
+            {{- end }}
+            {{- if .Values.zabbixProxy.ZBX_TLSPSKIDENTITY }}
+            - name: ZBX_TLSPSKIDENTITY
+              value: {{ .Values.zabbixProxy.ZBX_TLSPSKIDENTITY | quote }}
+            {{- end }}
+            {{- if .Values.zabbixProxy.ZBX_TLSPSKFILE }}
+            - name: ZBX_TLSPSKFILE
+              value: {{ .Values.zabbixProxy.ZBX_TLSPSKFILE | quote }}
+            {{- end }}
             {{- with .Values.zabbixProxy.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -169,10 +185,17 @@ spec:
             - name: zabbix-proxy
               containerPort: 10051
               protocol: TCP
-          {{- with .Values.zabbixProxy.extraVolumeMounts }}
           volumeMounts:
+            {{- with .Values.zabbixProxy.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- end }}
+            {{- if .Values.zabbixProxy.extraSecretMounts }}
+            {{- range .Values.zabbixProxy.extraSecretMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: {{ .readOnly }}
+            {{- end }}
+            {{- end }}
           {{- with .Values.zabbixProxy.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -205,6 +228,14 @@ spec:
       volumes:
       {{- with .Values.zabbixProxy.extraVolumes }}
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.zabbixProxy.extraSecretMounts }}
+      {{- range .Values.zabbixProxy.extraSecretMounts }}
+      - name: {{ .name }}
+        secret:
+          secretName: {{ .secretName }}
+          defaultMode: {{ .defaultMode | default 420 }}
+      {{- end }}
       {{- end }}
       {{- with .Values.zabbixAgent.extraVolumes }}
         {{- toYaml . | nindent 8 }}

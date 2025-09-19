@@ -348,6 +348,19 @@ All collected data is buffered locally and then transferred to the **Zabbix Serv
 proxy belongs to
 [Official documentation](https://www.zabbix.com/documentation/current/en/manual/concepts/proxy).
 
+To securely store TLS keys, create a secret in your namespace (in this case zabbix) with data key:value in base64 encoding.
+
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: zabbix-secret-files
+  namespace: zabbix
+type: Opaque
+data:
+  key: U3VwZXJTZWNyZXRQU0trZXk=
+```
+
 ## PostgreSQL
 
 A database is required for zabbix to work, in this helm chart we're using Postgresql.
@@ -585,6 +598,11 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixProxy.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixProxy.ZBX_TIMEOUT | int | `4` |  |
 | zabbixProxy.ZBX_VMWARECACHESIZE | string | `"128M"` | Cache size |
+| zabbixProxy.ZBX_TLSCONNECT | string | `[]` | How the proxy should connect to Zabbix server. Used for an active proxy, ignored on a passive proxy. Only one value can be specified: unencrypted - connect without encryption; psk         - connect using TLS and a pre-shared key; cert        - connect using TLS and a certificate |
+| zabbixProxy.ZBX_TLSACCEPT | string | `[]` | What incoming connections to accept from Zabbix server. Used for a passive proxy, ignored on an active proxy. Multiple values can be specified, separated by comma: unencrypted - accept connections without encryption; psk         - accept connections secured with TLS and a pre-shared key; cert        - accept connections secured with TLS and a certificate |
+| zabbixProxy.ZBX_TLSPSKIDENTITY | string | `[]` | Unique, case sensitive string used to identify the pre-shared key |
+| zabbixProxy.ZBX_TLSPSKFILE | string | `[]` | Full pathname of a file containing the pre-shared key. |
+| zabbixProxy.extraSecretMounts | object | `[]` | Defines additional mounts with secrets for proxy tls keys. Secrets must be manually created in the namespace. |
 | zabbixProxy.enabled | bool | `false` | Enables use of **Zabbix Proxy** |
 | zabbixProxy.extraContainers | list | `[]` | Additional containers to start within the Zabbix Proxy pod |
 | zabbixProxy.extraEnv | list | `[]` | Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/proxy-sqlite3/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml |
