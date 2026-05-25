@@ -25,6 +25,9 @@ zabbixImageTag: ubuntu-7.0.16
 # -- Zabbix components (server and web frontend) DB-type for repository to use.
 # Supported types are:
 #      pgsql, mysql
+#      In case of: mysql
+#         Set  postgresql.enabled: false
+#              zabbixServerHA.enabled: false
 zabbixDBType: pgsql
 
 # **Zabbix Postgresql access / credentials** configurations
