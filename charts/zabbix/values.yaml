@@ -486,6 +486,8 @@ zabbixAgent:
   ZBX_DEBUGLEVEL: 3
   # -- The variable is used to specify timeout for processing checks. By default, value is 4.
   ZBX_TIMEOUT: 4
+  # -- If set, this item will be used to dynamically determine the agent hostname instead of using the Kubernetes node name. Example: "system.hostname"
+  # ZBX_HOSTNAMEITEM: "system.hostname"
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/
