@@ -83,10 +83,15 @@ spec:
           securityContext:
             {{- toYaml .Values.zabbixAgent.securityContext | nindent 12 }}
           env:
+            {{- if .Values.zabbixAgent.ZBX_HOSTNAMEITEM }}
+            - name: ZBX_HOSTNAMEITEM
+              value: {{ .Values.zabbixAgent.ZBX_HOSTNAMEITEM | quote }}
+            {{- else }}
             - name: ZBX_HOSTNAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            {{- end }}
             - name: ZBX_SERVER_HOST
               value: {{ .Values.zabbixAgent.ZBX_SERVER_HOST | quote }}
             - name: ZBX_SERVER_PORT
