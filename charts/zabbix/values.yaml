@@ -456,7 +456,17 @@ zabbixAgent:
   # -- Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet
   runAsSidecar: true
   # -- Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false.
-  runAsDaemonSet: false
+  runAsDaemonSet: true
+  # -- Configures the parallelism of the zabbixAgent rollouts when deployed as DaemonSet
+  #daemonSetUpdateStrategy: null
+  #  type: RollingUpdate
+  #  rollingUpdate:
+  #    maxUnavailable: 5 # you can also use a percentage
+  daemonSetUpdateStrategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 5 # you can also use a percentage
+
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:

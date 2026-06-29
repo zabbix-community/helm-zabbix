@@ -19,6 +19,10 @@ spec:
     matchLabels:
       {{- include "zabbix.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: agent
+  {{- if .Values.zabbixAgent.daemonSetUpdateStrategy }}
+  updateStrategy: {{ toYaml .Values.zabbixAgent.daemonSetUpdateStrategy | nindent 8 }}
+  {{- end }}
+
   template:
     metadata:
       annotations:
