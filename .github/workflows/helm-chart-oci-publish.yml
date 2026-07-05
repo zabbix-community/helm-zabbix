@@ -1,0 +1,51 @@
+name: Publish Chart to OCI (ghcr.io)
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release-oci:
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.13.2
+
+      - name: Extract chart version
+        id: chart_meta
+        run: |
+          CHART_VERSION=$(grep '^version:' charts/zabbix/Chart.yaml | awk '{print $2}')
+          echo "chart_version=${CHART_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | helm registry login ghcr.io \
+                --username "${{ github.actor }}" \
+                --password-stdin
+
+      - name: Package Helm chart
+        run: helm package charts/zabbix --destination /tmp/helm-packages
+
+      - name: Push chart to ghcr.io
+        run: |
+          helm push \
+            /tmp/helm-packages/zabbix-${{ steps.chart_meta.outputs.chart_version }}.tgz \
+            oci://ghcr.io/${{ github.repository_owner }}
+
+      - name: Verify push
+        run: |
+          helm show chart \
+            oci://ghcr.io/${{ github.repository_owner }}/zabbix \
+            --version ${{ steps.chart_meta.outputs.chart_version }}
