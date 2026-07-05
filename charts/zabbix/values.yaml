@@ -455,7 +455,7 @@ zabbixAgent:
   # -- Enables use of **Zabbix Agent**
   enabled: true
   # -- Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet
-  runAsSidecar: true
+  runAsSidecar: false
   # -- Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false.
   runAsDaemonSet: true
   # -- Configures the parallelism of the zabbixAgent rollouts when deployed as DaemonSet
