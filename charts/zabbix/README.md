@@ -1,6 +1,6 @@
 # Helm chart for Zabbix
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.0.12](https://img.shields.io/badge/Version-7.0.12-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 7.1.0](https://img.shields.io/badge/Version-7.1.0-informational?style=flat-square)  [![Downloads](https://img.shields.io/github/downloads/zabbix-community/helm-zabbix/total?label=Downloads
 )](https://somsubhra.github.io/github-release-stats/?username=zabbix-community&repository=helm-zabbix&page=1&per_page=500#) [![Releases ChangeLog](https://img.shields.io/badge/Changelog-8A2BE2
 )](https://github.com/zabbix-community/helm-zabbix/releases)
 
@@ -83,7 +83,7 @@ helm search repo zabbix-community/zabbix -l
 Set the helm chart version you want to use. Example:
 
 ```bash
-export ZABBIX_CHART_VERSION='7.0.12'
+export ZABBIX_CHART_VERSION='7.1.0'
 ```
 
 Export default values of ``zabbix`` chart to ``$HOME/zabbix_values.yaml`` file:
@@ -456,6 +456,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.ZBX_SERVER_HOST | string | `"0.0.0.0/0"` | Zabbix Server host |
 | zabbixAgent.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixAgent.ZBX_TIMEOUT | int | `4` | The variable is used to specify timeout for processing checks. By default, value is 4. |
+| zabbixAgent.daemonSetHostIPC | bool | `false` | allows the pod to share the host's IPC namespace in DaemonSet mode (e.g., shared memory) |
+| zabbixAgent.daemonSetHostPID | bool | `false` | allows the pod to see the processes on the host system in DaemonSet mode |
+| zabbixAgent.daemonSetUpdateStrategy | object | `{"rollingUpdate":{"maxUnavailable":5},"type":"RollingUpdate"}` | Configures the parallelism of the zabbixAgent rollouts when deployed as DaemonSet daemonSetUpdateStrategy: null  type: RollingUpdate  rollingUpdate:    maxUnavailable: 5 # you can also use a percentage |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
 | zabbixAgent.extraContainers | list | `[]` | Additional containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraDaemonSetAnnotations | object | `{}` | Annotations to add to the daemonSet |
@@ -535,7 +538,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixBrowserMonitoring.webdriver.port2 | int | `7900` | WebDriver container port 2 |
 | zabbixBrowserMonitoring.webdriver.replicaCount | int | `1` | Number of replicas of ``zabbixWebDriver`` module |
 | zabbixBrowserMonitoring.webdriver.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixImageTag | string | `"ubuntu-7.0.16"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixImageTag | string | `"ubuntu-7.0.23"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixJavaGateway.ZABBIX_OPTIONS | string | `""` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. |
 | zabbixJavaGateway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` |  |
@@ -770,7 +773,6 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.replicaCount | int | `1` | Number of replicas of ``zabbixWebService`` module |
 | zabbixWebService.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixWebService.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixWebService.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | Set the IgnoreURLCertErrors configuration setting of Zabbix Web Service ignoreURLCertErrors=1 |
 | zabbixWebService.service.annotations | object | `{}` | Annotations for the Zabbix Web Service |
 | zabbixWebService.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
 | zabbixWebService.service.port | int | `10053` | Port of service in Kubernetes cluster |
