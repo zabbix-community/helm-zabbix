@@ -485,7 +485,6 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.runAsDaemonSet | bool | `true` | Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false. |
 | zabbixAgent.runAsSidecar | bool | `true` | Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet |
 | zabbixAgent.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixAgent.service | object | `{"annotations":{},"clusterIP":null,"externalIPs":[],"loadBalancerClass":"","loadBalancerIP":"","loadBalancerSourceRanges":[],"nodePort":31050,"port":10050,"sessionAffinity":"None","type":"ClusterIP"}` | If set, this item will be used to dynamically determine the agent hostname instead of using the Kubernetes node name. Example: "system.hostname" ZBX_HOSTNAMEITEM: "system.hostname" |
 | zabbixAgent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
 | zabbixAgent.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
 | zabbixAgent.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. These IPs are not managed by Kubernetes. |
@@ -774,7 +773,6 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixWebService.replicaCount | int | `1` | Number of replicas of ``zabbixWebService`` module |
 | zabbixWebService.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
 | zabbixWebService.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
-| zabbixWebService.service | object | `{"annotations":{},"clusterIP":null,"port":10053,"type":"ClusterIP"}` | Set the IgnoreURLCertErrors configuration setting of Zabbix Web Service ignoreURLCertErrors=1 |
 | zabbixWebService.service.annotations | object | `{}` | Annotations for the Zabbix Web Service |
 | zabbixWebService.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
 | zabbixWebService.service.port | int | `10053` | Port of service in Kubernetes cluster |
