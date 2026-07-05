@@ -50,6 +50,13 @@ cd charts/zabbix
 make lint
 ```
 
+Run ``make help`` to list all available ``make`` targets (``lint``, ``package``, ``gen-docs``, etc.) with a short description of each:
+
+```bash
+cd charts/zabbix
+make help
+```
+
 - Method using locally installed ``helm`` command:
 
 ```bash

@@ -456,6 +456,9 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.ZBX_SERVER_HOST | string | `"0.0.0.0/0"` | Zabbix Server host |
 | zabbixAgent.ZBX_SERVER_PORT | int | `10051` | Zabbix Server port |
 | zabbixAgent.ZBX_TIMEOUT | int | `4` | The variable is used to specify timeout for processing checks. By default, value is 4. |
+| zabbixAgent.daemonSetHostIPC | bool | `false` | allows the pod to share the host's IPC namespace in DaemonSet mode (e.g., shared memory) |
+| zabbixAgent.daemonSetHostPID | bool | `false` | allows the pod to see the processes on the host system in DaemonSet mode |
+| zabbixAgent.daemonSetUpdateStrategy | object | `{"rollingUpdate":{"maxUnavailable":5},"type":"RollingUpdate"}` | Configures the parallelism of the zabbixAgent rollouts when deployed as DaemonSet daemonSetUpdateStrategy: null  type: RollingUpdate  rollingUpdate:    maxUnavailable: 5 # you can also use a percentage |
 | zabbixAgent.enabled | bool | `true` | Enables use of **Zabbix Agent** |
 | zabbixAgent.extraContainers | list | `[]` | Additional containers to start within the Zabbix Agent pod |
 | zabbixAgent.extraDaemonSetAnnotations | object | `{}` | Annotations to add to the daemonSet |
@@ -479,9 +482,10 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixAgent.nodeSelector | object | `{}` | nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | zabbixAgent.readinessProbe | object | `{}` | The kubelet uses readiness probes to know when a container is ready to start accepting traffic. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | zabbixAgent.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixAgent.runAsDaemonSet | bool | `false` | Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false. |
+| zabbixAgent.runAsDaemonSet | bool | `true` | Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false. |
 | zabbixAgent.runAsSidecar | bool | `true` | Its is a default mode. Zabbix-agent will run as sidecar in zabbix-server and zabbix-proxy pods. Disable this mode if you want to run zabbix-agent as daemonSet |
 | zabbixAgent.securityContext | object | `{}` | Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
+| zabbixAgent.service | object | `{"annotations":{},"clusterIP":null,"externalIPs":[],"loadBalancerClass":"","loadBalancerIP":"","loadBalancerSourceRanges":[],"nodePort":31050,"port":10050,"sessionAffinity":"None","type":"ClusterIP"}` | If set, this item will be used to dynamically determine the agent hostname instead of using the Kubernetes node name. Example: "system.hostname" ZBX_HOSTNAMEITEM: "system.hostname" |
 | zabbixAgent.service.annotations | object | `{}` | Annotations for the zabbix-agent service |
 | zabbixAgent.service.clusterIP | string | `nil` | clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service. |
 | zabbixAgent.service.externalIPs | list | `[]` | externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service. These IPs are not managed by Kubernetes. |
@@ -535,7 +539,7 @@ The following tables lists the configurable parameters of the chart and their de
 | zabbixBrowserMonitoring.webdriver.port2 | int | `7900` | WebDriver container port 2 |
 | zabbixBrowserMonitoring.webdriver.replicaCount | int | `1` | Number of replicas of ``zabbixWebDriver`` module |
 | zabbixBrowserMonitoring.webdriver.resources | object | `{}` | Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers) |
-| zabbixImageTag | string | `"ubuntu-7.0.16"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
+| zabbixImageTag | string | `"ubuntu-7.0.23"` | Zabbix components (server, agent, web frontend, ...) image tag to use. This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities. But by default this helm chart will install the latest LTS version (example: 7.0.x). See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page When you want use a non-LTS version (example: 7.4.x), you have to set this yourself. You can change version here or overwrite in each component (example: zabbixserver.image.tag, etc). |
 | zabbixJavaGateway.ZABBIX_OPTIONS | string | `""` | Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features. |
 | zabbixJavaGateway.ZBX_DEBUGLEVEL | int | `3` | The variable is used to specify debug level, from 0 to 5 |
 | zabbixJavaGateway.ZBX_JAVAGATEWAY | string | `"zabbix-java-gateway"` |  |
