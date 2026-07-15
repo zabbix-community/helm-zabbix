@@ -48,7 +48,7 @@ spec:
             env:
             {{- include "zabbix.postgresAccess.variables" (list $ . "db_client") | nindent 12 }}
             {{- with .Values.zabbixServer.haNodesAutoClean.extraEnv }}
-              {{- toYaml . | nindent 14 }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- with .Values.zabbixServer.haNodesAutoClean.extraVolumeMounts }}
             volumeMounts:
