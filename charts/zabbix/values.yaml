@@ -347,6 +347,23 @@ zabbixProxy:
   enabled: false
   # -- Number of replicas of ``zabbixProxy`` module
   replicaCount: 1
+  # -- Minimum seconds a newly created Zabbix Proxy pod must stay Ready before the
+  # StatefulSet controller treats it as available and proceeds to the next replica
+  # during a rolling update. A Zabbix Proxy reports Ready as soon as it starts, but
+  # it still has to download its configuration from the Zabbix Server before it polls
+  # anything, so with the default of 0 all replicas can be restarted back to back and
+  # leave a window where none of them is collecting data. Reference:
+  # [https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#minimum-ready-seconds](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#minimum-ready-seconds)
+  minReadySeconds: 0
+  # updateStrategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     partition: 1
+  # -- Update strategy of the Zabbix Proxy StatefulSet. Left empty, the Kubernetes
+  # default (``RollingUpdate`` with ``partition: 0``) applies. Set ``rollingUpdate.partition``
+  # to stage a rollout across replicas manually, or ``OnDelete`` to restart proxies by hand.
+  # Reference: [https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies)
+  updateStrategy: {}
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
