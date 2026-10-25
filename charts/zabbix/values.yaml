@@ -20,7 +20,7 @@ global:
 # See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
 # When you want use a non-LTS version (example: 7.4.x), you have to set this yourself. You can change version
 # here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbixImageTag: ubuntu-7.0.16
+zabbixImageTag: ubuntu-7.0.23
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
@@ -294,6 +294,7 @@ postgresql:
     # claim_access_mode: "ReadWriteOnce"
     # -- Storage PVC storageclass to use
     # storageClass: my-storage-class
+
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -457,6 +458,16 @@ zabbixAgent:
   runAsSidecar: true
   # -- Enable this mode if you want to run zabbix-agent as daemonSet. The 'zabbixAgent.runAsSidecar' option must be false.
   runAsDaemonSet: false
+  # -- Configures the parallelism of the zabbixAgent rollouts when deployed as DaemonSet
+  #daemonSetUpdateStrategy: null
+  #  type: RollingUpdate
+  #  rollingUpdate:
+  #    maxUnavailable: 5 # you can also use a percentage
+  daemonSetUpdateStrategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 5 # you can also use a percentage
+
   # -- Requests and limits of pod resources. See: [https://kubernetes.io/docs/concepts/configuration/manage-resources-containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
   resources: {}
   image:
@@ -486,6 +497,9 @@ zabbixAgent:
   ZBX_DEBUGLEVEL: 3
   # -- The variable is used to specify timeout for processing checks. By default, value is 4.
   ZBX_TIMEOUT: 4
+  # -- If set, this item will be used to dynamically determine the agent hostname instead of using the Kubernetes node name. Example: "system.hostname"
+  # ZBX_HOSTNAMEITEM: "system.hostname"
+
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -528,6 +542,10 @@ zabbixAgent:
     # metallb.universe.tf/address-pool: production-public-ips
   # -- set whether zabbix agent / agent2 in DaemonSet mode should use hostNetwork. Usually the right option if using zabbix agent for node monitoring. Only applies if `zabbixAgent.runAsDaemonSet=true`
   hostNetwork: true
+  # -- allows the pod to share the host's IPC namespace in DaemonSet mode (e.g., shared memory)
+  daemonSetHostIPC: false
+  # -- allows the pod to see the processes on the host system in DaemonSet mode
+  daemonSetHostPID: false
   # -- If true, agent pods mounts host / at /host/root
   hostRootFsMount: true
   # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/agent2/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml
@@ -602,7 +620,8 @@ zabbixWeb:
   # -- Secret name containing certificates for SAML configuration. Example: zabbix-web-samlcerts
   samlCertsSecretName: ""
   # -- Secret name containing certificates for TLS. Example: zabbix-web-tlscerts. Must include dhparam.pem, ssl.crt and ssl.key.
-  tlsCertsSecretName: ""  
+  tlsCertsSecretName: ""
+
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -725,6 +744,7 @@ zabbixWebService:
     pullSecrets: []
   # -- Set the IgnoreURLCertErrors configuration setting of Zabbix Web Service
   # ignoreURLCertErrors=1
+
   service:
     # -- Type of service to expose the application. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
     # More details: https://kubernetes.io/docs/concepts/services-networking/service/

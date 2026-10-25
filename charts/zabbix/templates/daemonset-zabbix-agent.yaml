@@ -19,6 +19,10 @@ spec:
     matchLabels:
       {{- include "zabbix.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: agent
+  {{- if .Values.zabbixAgent.daemonSetUpdateStrategy }}
+  updateStrategy: {{ toYaml .Values.zabbixAgent.daemonSetUpdateStrategy | nindent 8 }}
+  {{- end }}
+
   template:
     metadata:
       annotations:
@@ -32,6 +36,8 @@ spec:
         {{- toYaml .Values.zabbixAgent.extraPodLabels | nindent 8 }}
         {{- end }}
     spec:
+      hostPID: {{ .Values.zabbixAgent.daemonSetHostPID }}
+      hostIPC: {{ .Values.zabbixAgent.daemonSetHostIPC }}
       {{- if .Values.zabbixAgent.hostNetwork }}
       hostNetwork: {{ .Values.zabbixAgent.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
@@ -83,10 +89,15 @@ spec:
           securityContext:
             {{- toYaml .Values.zabbixAgent.securityContext | nindent 12 }}
           env:
+            {{- if .Values.zabbixAgent.ZBX_HOSTNAMEITEM }}
+            - name: ZBX_HOSTNAMEITEM
+              value: {{ .Values.zabbixAgent.ZBX_HOSTNAMEITEM | quote }}
+            {{- else }}
             - name: ZBX_HOSTNAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            {{- end }}
             - name: ZBX_SERVER_HOST
               value: {{ .Values.zabbixAgent.ZBX_SERVER_HOST | quote }}
             - name: ZBX_SERVER_PORT

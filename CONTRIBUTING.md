@@ -50,6 +50,13 @@ cd charts/zabbix
 make lint
 ```
 
+Run ``make help`` to list all available ``make`` targets (``lint``, ``package``, ``gen-docs``, etc.) with a short description of each:
+
+```bash
+cd charts/zabbix
+make help
+```
+
 - Method using locally installed ``helm`` command:
 
 ```bash
@@ -107,6 +114,9 @@ References:
 
 ## For code mainteners only
 
+> [!TIP]
+> If you're using an AI coding assistant that supports skills (e.g. Claude Code), the `release-chart` skill at [.agents/skills/release-chart/SKILL.md](.agents/skills/release-chart/SKILL.md) automates the steps below end-to-end, including the exact files to bump and explicit confirmation points before any push/tag. Point your assistant at that file, or ask it to "release a new chart version", instead of following each step manually.
+
 To generate a new release of the helm chart, follow these instructions:
 
 - Review and merge the opened PRs
@@ -140,7 +150,7 @@ A **minor** is the "dot-dot" release. Example: *6.0.2* -> *6.0.3* is **minor upg
 - Change the ``version`` and ``appVersion`` parameters (helm chart and Zabbix version, respectively) in ``charts/zabbix/Chart.yaml`` and ``charts/zabbix/artifacthub-pkg.yml`` files.
 - Change the ``zabbixImageTag`` value (Zabbix version) in ``charts/zabbix/values.yaml`` file.
 - Change the ``createdAt`` parameter in ``charts/zabbix/artifacthub-pkg.yml`` file using the output of the command ``date +%Y-%m-%dT%TZ`` command.
-- Change the ``ZABBIX_CHART_VERSION`` variable in ``charts/zabbix/artifacthub-pkg.yml`` and ``charts/zabbix/README.md`` files.
+- Change the ``ZABBIX_CHART_VERSION`` variable in ``charts/zabbix/artifacthub-pkg.yml``.
 - Run the following commands to update the documentation of the helm chart.
 
 ```bash
