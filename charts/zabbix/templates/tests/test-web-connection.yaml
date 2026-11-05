@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: test-web-connection
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-test-web-connection
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-test-web-connection
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
     {{- if .Values.global.commonLabels}}
     {{- toYaml .Values.global.commonLabels | nindent 4 }}
     {{- end }}

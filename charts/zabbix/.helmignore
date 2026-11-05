@@ -26,6 +26,9 @@
 
 docs/
 
+# Output of "make package"
+packages/
+
 # Makefile and other stuff
 Makefile
 CONTRIBUTING.md

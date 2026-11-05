@@ -16,8 +16,10 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ template "zabbix.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
 - kind: ServiceAccount
   name: {{ template "zabbix.fullname" . }}-ha-helper
+  namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
   name: {{ template "zabbix.fullname" . }}-ha-helper

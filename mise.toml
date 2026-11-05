@@ -1,0 +1,13 @@
+# Versions of the tools used to develop and test this Helm chart.
+# See: charts/zabbix/docs/requirements.md
+[tools]
+argocd = "3.6.1"
+helm = "4.3.1"
+helm-docs = "1.14.2"
+kind = "0.33.0"
+kubectl = "1.37.2"
+
+[env]
+# Version of the argo/argo-cd Helm chart, which installs Argo CD v3.6.1.
+# See: charts/zabbix/docs/example/argocd/README.md
+ARGOCD_CHART_VERSION = "10.14.0"

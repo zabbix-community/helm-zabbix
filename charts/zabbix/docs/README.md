@@ -19,6 +19,8 @@ Install the [requirements](requirements.md).
 
 See the installation example in [kind](https://kind.sigs.k8s.io) cluster in this [tutorial](example/README.md).
 
+To test the local chart with [Argo CD](https://argo-cd.readthedocs.io) in a kind cluster, see this [tutorial](example/argocd/README.md).
+
 # More information
 
 See [README.md](../README.md).

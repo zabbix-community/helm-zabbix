@@ -246,6 +246,29 @@ spec:
   selector:
     {{- include "zabbix.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: proxy
+---
+# Headless Service of the StatefulSet: it gives a stable DNS name to each pod
+# (<pod>.<release>-zabbix-proxy-headless.<namespace>.svc)
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-zabbix-proxy-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: proxy
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - port: 10051
+      name: zabbix-proxy
+      targetPort: 10051
+      protocol: TCP
+  selector:
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: proxy
 {{- end }}
 
 
@@ -272,6 +295,29 @@ spec:
   {{- end }}
   ports:
     - port: {{ .Values.postgresql.service.port }}
+      name: db
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    {{- include "zabbix.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+---
+# Headless Service of the StatefulSet: it gives a stable DNS name to each pod
+# (<pod>.<release>-postgresql-headless.<namespace>.svc)
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zabbix.fullname" . }}-postgresql-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - port: 5432
       name: db
       targetPort: 5432
       protocol: TCP
@@ -325,7 +371,7 @@ spec:
       name: zabbix-java-gw
       targetPort: 10052
       protocol: TCP
-      {{- if ( and (eq .Values.zabbixJavaGateway.service.type "NodePort" ) (not (empty .Values.zabbixJavaGateway.service.nodePort)) ) }}
+      {{- if and (or (eq .Values.zabbixJavaGateway.service.type "NodePort") (eq .Values.zabbixJavaGateway.service.type "LoadBalancer" )) (not (empty .Values.zabbixJavaGateway.service.nodePort)) }}
       nodePort: {{ .Values.zabbixJavaGateway.service.nodePort }}
       {{- end }}
   selector:
@@ -378,7 +424,7 @@ spec:
       name: zabbix-webdriver1
       targetPort: {{ .Values.zabbixBrowserMonitoring.webdriver.port1 }}
       protocol: TCP
-      {{- if and (or (eq .Values.zabbixBrowserMonitoring.service.type "NodePort") (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer" )) (not (empty .Values.zabbixBrowserMonitoring.service.nodePort2)) }}
+      {{- if and (or (eq .Values.zabbixBrowserMonitoring.service.type "NodePort") (eq .Values.zabbixBrowserMonitoring.service.type "LoadBalancer" )) (not (empty .Values.zabbixBrowserMonitoring.service.nodePort1)) }}
       nodePort: {{ .Values.zabbixBrowserMonitoring.service.nodePort1 }}
       {{- end }}
     - port: {{ .Values.zabbixBrowserMonitoring.service.port2 }}

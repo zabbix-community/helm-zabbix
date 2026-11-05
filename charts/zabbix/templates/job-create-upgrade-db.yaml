@@ -11,7 +11,7 @@ metadata:
     {{- include "zabbix.labels" . | nindent 4 }}
     app.kubernetes.io/component: create-upgrade-db
     {{- if .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels }}
-    {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels | nindent 6 }}
+    {{- toYaml .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobLabels | nindent 4 }}
     {{- end }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
@@ -33,6 +33,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraInitContainers }}
+      initContainers:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
@@ -43,9 +44,9 @@ spec:
       serviceAccountName: {{ template "zabbix.fullname" . }}-ha-helper
       {{- end }}
       containers:
-        {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+      {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       - name: create-upgrade-db
         {{- $pattern := "[0-9]+\\.[0-9]+" -}}
         {{- $tag := "" -}}
@@ -98,8 +99,11 @@ spec:
         args:
           - init_and_upgrade_db
       imagePullSecrets:
-      {{- range .Values.zabbixServer.image.pullSecrets }}
+      {{- range .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.pullSecrets }}
         - name: {{ . | quote }}
+      {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
       restartPolicy: Never
       {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraVolumes }}

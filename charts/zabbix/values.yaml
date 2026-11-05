@@ -16,11 +16,10 @@ global:
 
 # -- Zabbix components (server, agent, web frontend, ...) image tag to use.
 # This helm chart is compatible with non-LTS version of Zabbix, that include important changes and functionalities.
-# But by default this helm chart will install the latest LTS version (example: 7.0.x).
+# But by default this helm chart will install the latest LTS version (example: 8.0.x).
 # See more info in [Zabbix Life Cycle & Release Policy](https://www.zabbix.com/life_cycle_and_release_policy) page
-# When you want use a non-LTS version (example: 7.4.x), you have to set this yourself. You can change version
-# here or overwrite in each component (example: zabbixserver.image.tag, etc).
-zabbixImageTag: ubuntu-7.0.23
+# You can change the version here or overwrite in each component (example: zabbixServer.image.tag, etc).
+zabbixImageTag: ubuntu-8.0.0
 
 # **Zabbix Postgresql access / credentials** configurations
 # with this dict, you can set unified PostgreSQL access credentials, IP and so on for both Zabbix Server and Zabbix web frontend
@@ -99,10 +98,10 @@ zabbixServer:
         # -- Image repository for the database initialization / upgrade job
         repository: ghcr.io/zabbix-community/zabbix-server-create-upgrade-db
         # -- Tag of the image to use for the dbCreateUpgradeJob. Don't override this if you don't have a specific reason.
-        # -- it is going to be chosen based of the zabbix_server pod container otherwise
+        # If empty, it is going to be chosen based on the major release of the zabbix_server image and tagSuffix.
         tag: ""
         # -- The tag suffix used for the dbCreateUpgradeJob's image when not explicitly specifying a tag for the image. The tag name will be concatenated with major release of zabbix_server image if specified
-        tagSuffix: "20241230222241"
+        tagSuffix: "20261009150714"
         # -- Pull policy for the db initialization / upgrade job
         pullPolicy: IfNotPresent
         # -- Pull secrets for the db initialization / upgrade job
@@ -167,9 +166,9 @@ zabbixServer:
     image:
       # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
       repository: postgres
-      # -- Tag of Docker image of Postgresql server, choice "16" for postgres "2.17.2-pg16" for timescaledb
-      # (Zabbix supports TimescaleDB. More info: https://www.zabbix.com/documentation/7.0/en/manual/installation/requirements)
-      tag: 16
+      # -- Tag of Docker image of Postgresql server, choice "18" for postgres "2.29.2-pg18" for timescaledb
+      # (Zabbix 8.0 supports PostgreSQL 15 to 18 and TimescaleDB 2.20 to 2.29. More info: https://www.zabbix.com/documentation/8.0/en/manual/installation/requirements)
+      tag: 18
       pullPolicy: IfNotPresent
       pullSecrets: []
     schedule: "0 1 * * *"
@@ -274,9 +273,9 @@ postgresql:
   image:
     # -- Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
     repository: postgres
-    # -- Tag of Docker image of Postgresql server, choice "16" for postgres "2.17.2-pg16" for timescaledb
-    # (Zabbix supports TimescaleDB. More info: https://www.zabbix.com/documentation/7.0/en/manual/installation/requirements)
-    tag: 16
+    # -- Tag of Docker image of Postgresql server, choice "18" for postgres "2.29.2-pg18" for timescaledb
+    # (Zabbix 8.0 supports PostgreSQL 15 to 18 and TimescaleDB 2.20 to 2.29. More info: https://www.zabbix.com/documentation/8.0/en/manual/installation/requirements)
+    tag: 18
     # -- Pull policy of Docker image
     pullPolicy: IfNotPresent
     # -- List of dockerconfig secrets names to use when pulling images
@@ -367,11 +366,11 @@ zabbixProxy:
   # -- Zabbix Server port
   ZBX_SERVER_PORT: 10051
   # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
-  # The variable is used to specify debug level, from 0 to 5
-  ZBX_DEBUGLEVEL: 4
+  # The variable is used to specify debug level, from 0 to 5. Don't use 4 or 5 with Alpine images: the Zabbix Proxy 8.0.0 Alpine image crashes with debug level 4
+  ZBX_DEBUGLEVEL: 3
   # The variable is used to specify timeout for processing checks. By default, value is 4.
   ZBX_TIMEOUT: 4
-  # -- The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
+  # -- The variable enable communication with the Zabbix Java Gateway of this helm chart (zabbixJavaGateway.enabled) to collect Java related checks. By default, value is false.
   ZBX_JAVAGATEWAY_ENABLE: false
   # -- Cache size
   ZBX_VMWARECACHESIZE: 128M
@@ -809,14 +808,14 @@ zabbixJavaGateway:
     pullSecrets: []
   # -- This variable is specified amount of pollers. By default, value is 5
   ZBX_START_POLLERS: 5
+  # -- Number of Java pollers started in Zabbix Server and in Zabbix Proxy to use the Java Gateway
+  ZBX_STARTJAVAPOLLERS: 5
   # -- Name of properties file. Can be used to set additional properties using a key-value format in such a way that they are not visible on a command line or to overwrite existing ones.
   ZBX_PROPERTIES_FILE: ""
   # -- The variable is used to specify debug level, from 0 to 5
   ZBX_DEBUGLEVEL: 3
   # -- This variable is used to specify timeout for outgoing connections. By default, value is 3.
   ZBX_TIMEOUT: 3
-  # -- Additional arguments for Zabbix Java Gateway. Useful to enable additional libraries and features.
-  ZABBIX_OPTIONS: ""
   # Java Gateway Service Name
   ZBX_JAVAGATEWAY: zabbix-java-gateway
   service:

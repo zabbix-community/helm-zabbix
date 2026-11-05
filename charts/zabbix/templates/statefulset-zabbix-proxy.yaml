@@ -22,7 +22,7 @@ metadata:
     {{- end }}
 spec:
   replicas: {{ .Values.zabbixProxy.replicaCount }}
-  serviceName: {{ template "zabbix.fullname" . }}
+  serviceName: {{ template "zabbix.fullname" . }}-zabbix-proxy-headless
   selector:
     matchLabels:
       {{- include "zabbix.selectorLabels" . | nindent 6 }}
@@ -149,17 +149,21 @@ spec:
                   fieldPath: metadata.name
             {{- end }}
             - name: ZBX_SERVER_HOST
-              value: {{ .Values.zabbixProxy.ZBX_SERVER_HOST | quote }}
-            - name: ZBX_SERVER_PORT
-              value: {{ .Values.zabbixProxy.ZBX_SERVER_PORT | quote }}
+              value: {{ printf "%s:%v" .Values.zabbixProxy.ZBX_SERVER_HOST .Values.zabbixProxy.ZBX_SERVER_PORT | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixProxy.ZBX_LOADMODULE | quote }}
             - name: ZBX_DEBUGLEVEL
               value: {{ .Values.zabbixProxy.ZBX_DEBUGLEVEL | quote }}
             - name: ZBX_TIMEOUT
               value: {{ .Values.zabbixProxy.ZBX_TIMEOUT | quote }}
-            - name: ZBX_JAVAGATEWAY_ENABLE
-              value: {{ .Values.zabbixProxy.ZBX_JAVAGATEWAY_ENABLE | quote }}
+            {{- if .Values.zabbixProxy.ZBX_JAVAGATEWAY_ENABLE }}
+            - name: ZBX_JAVAGATEWAY
+              value: {{ template "zabbix.fullname" . }}-java-gateway
+            - name: ZBX_JAVAGATEWAYPORT
+              value: {{ .Values.zabbixJavaGateway.service.port | quote }}
+            - name: ZBX_STARTJAVAPOLLERS
+              value: {{ .Values.zabbixJavaGateway.ZBX_STARTJAVAPOLLERS | quote }}
+            {{- end }}
             - name: ZBX_VMWARECACHESIZE
               value: {{ .Values.zabbixProxy.ZBX_VMWARECACHESIZE | quote }}
             {{- with .Values.zabbixProxy.extraEnv }}
@@ -206,8 +210,10 @@ spec:
       {{- with .Values.zabbixProxy.extraVolumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if and .Values.zabbixAgent.enabled .Values.zabbixAgent.runAsSidecar }}
       {{- with .Values.zabbixAgent.extraVolumes }}
         {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- end }}
   {{- with .Values.zabbixProxy.extraVolumeClaimTemplate }}
   volumeClaimTemplates:

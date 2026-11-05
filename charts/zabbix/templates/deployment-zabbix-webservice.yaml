@@ -53,7 +53,8 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-webservice
+                  {{- include "zabbix.selectorLabels" . | nindent 18 }}
+                  app.kubernetes.io/component: webservice
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
@@ -78,7 +79,7 @@ spec:
         env:
           {{- if .Values.zabbixWebService.ignoreURLCertErrors }}
           - name: ZBX_IGNOREURLCERTERRORS
-            value: {{ .Values.zabbixWebService.ignoreURLCertErrors }}
+            value: {{ .Values.zabbixWebService.ignoreURLCertErrors | quote }}
           {{- end }}
           {{- with .Values.zabbixWebService.extraEnv }}
           {{- toYaml . | nindent 10 }}
@@ -91,7 +92,7 @@ spec:
             protocol: TCP
         {{- with .Values.zabbixWebService.extraVolumeMounts }}
         volumeMounts:
-          {{ toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with .Values.zabbixWebService.livenessProbe }}
         livenessProbe:
