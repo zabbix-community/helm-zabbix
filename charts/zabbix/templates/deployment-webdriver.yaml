@@ -57,7 +57,8 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.zabbixBrowserMonitoring.webdriver.name }}
+                  {{- include "zabbix.selectorLabels" . | nindent 18 }}
+                  app.kubernetes.io/component: webdriver
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:

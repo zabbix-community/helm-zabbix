@@ -57,7 +57,8 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/instance: {{ .Release.Name }}-zabbix-web
+                  {{- include "zabbix.selectorLabels" . | nindent 18 }}
+                  app.kubernetes.io/component: web
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:

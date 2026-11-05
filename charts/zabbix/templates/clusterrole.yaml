@@ -37,10 +37,9 @@ rules:
       - jobs
       - cronjobs
     verbs: ["get", "list"]
-  - apiGroups: ["extensions"]
+  - apiGroups: ["discovery.k8s.io"]
     resources:
-      - deployments
-      - daemonsets
+      - endpointslices
     verbs: ["get", "list"]
   - apiGroups: ["apps"]
     resources:

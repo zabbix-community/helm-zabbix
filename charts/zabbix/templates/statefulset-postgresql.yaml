@@ -37,7 +37,7 @@ spec:
   {{- end }}
   {{- end }}
   replicas: 1
-  serviceName: {{ template "zabbix.fullname" . }}
+  serviceName: {{ template "zabbix.fullname" . }}-postgresql-headless
   selector:
     matchLabels:
       {{- include "zabbix.selectorLabels" . | nindent 6 }}

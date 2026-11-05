@@ -30,6 +30,7 @@ No symlink is strictly required to benefit from this file: `CLAUDE.md` already t
 
 - Confirm with the user (if not already given):
   - The new chart `version` (and whether `appVersion`/`zabbixImageTag` — the Zabbix version — is also changing).
+  - Whether this bump changes the first digit, which follows the major version of Zabbix (e.g. `7.1.0` → `8.0.0` for Zabbix 8.0) and is always a breaking change.
   - Whether this is a **major** bump (the middle digit, e.g. `7.0.12` → `7.1.0` — signals a change that may require users to update their `values.yaml`) or a **minor** bump (the last digit, e.g. `7.0.12` → `7.0.13` — no API/interface changes).
 - Verify all PRs intended for this release are already merged into `main`, and local `main` is up to date.
 - Never bump versions or tag directly on `main` — always use a release branch.
@@ -59,8 +60,8 @@ Fix any lint errors before continuing.
    - `version:` and `appVersion:` fields near the top.
    - `createdAt:` — set to the output of `date +%Y-%m-%dT%TZ`.
    - The hardcoded `export ZABBIX_CHART_VERSION='...'` line inside the `install:` block. This file is plain YAML (not Go-templated), so this string must be edited by hand.
-3. `charts/zabbix/values.yaml` — `zabbixImageTag:` if the Zabbix version (`appVersion`) changed.
-4. If this is a **major** release: add a new subsection under "Breaking changes of this helm chart" in `charts/zabbix/README.md.gotmpl`, explaining what changed and what users need to check in their own `values.yaml`.
+3. `charts/zabbix/values.yaml` — `zabbixImageTag:` if the Zabbix version (`appVersion`) changed. If the Zabbix major version changed, also check the PostgreSQL/TimescaleDB versions against the Zabbix requirements page, `kubeVersion` in `Chart.yaml`, the image tags in `.github/workflows/tests.yaml` and `docs/example/kind/values.yaml`, and `zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image` (its image must be published for that major version first).
+4. If this is a **major** release or the first digit changed: add a new subsection under "Breaking changes of this helm chart" in `charts/zabbix/README.md.gotmpl`, explaining what changed and what users need to check in their own `values.yaml`.
 
 **Do not hand-edit** `charts/zabbix/README.md`, and do not touch the `export ZABBIX_CHART_VERSION=...` line inside `README.md.gotmpl` — that one is templated from `Chart.yaml`'s `version` via `{{ template "chart.version" . }}` and regenerates automatically in the next step. Only `artifacthub-pkg.yml`'s copy of that line is a plain hardcoded string.
 
@@ -71,7 +72,7 @@ cd charts/zabbix
 make gen-docs
 ```
 
-Confirm the resulting diff to `charts/zabbix/README.md` only touches the version number and (if `values.yaml` changed) the values table — nothing else should move.
+Confirm the resulting diff to `charts/zabbix/README.md` only touches the version number, the values table (if `values.yaml` changed) and the text changed in `README.md.gotmpl` — nothing else should move.
 
 ## 5. Commit, push, and open a PR
 

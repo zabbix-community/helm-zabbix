@@ -4,10 +4,13 @@
 - [General Packages](#general-packages)
 - [Kubernetes cluster](#kubernetes-cluster)
 - [Docker](#docker)
-- [asdf](#asdf)
-- [Helm](#helm)
-- [Helm Docs](#helm-docs)
-- [Kubectl](#kubectl)
+  - [Docker on Linux](#docker-on-linux)
+  - [Colima on macOS](#colima-on-macos)
+- [mise](#mise)
+- [Helm, Helm Docs, Kind, Kubectl and Argo CD CLI](#helm-helm-docs-kind-kubectl-and-argo-cd-cli)
+- [Using make](#using-make)
+  - [Checking the requirements](#checking-the-requirements)
+  - [Testing the chart in a cluster](#testing-the-chart-in-a-cluster)
 
 <!-- TOC -->
 
@@ -28,12 +31,15 @@ Or use Kubernetes cluster in [EKS](https://aws.amazon.com/eks), [GKE](https://cl
 
 # Docker
 
+Docker is not installed by ``mise``. Install it according to your operating system.
+
+## Docker on Linux
+
 Follow instructions of page for install Docker-CE.
 
 - Ubuntu: https://docs.docker.com/engine/install/ubuntu/
 - Debian: https://docs.docker.com/engine/install/debian/
 - CentOS: https://docs.docker.com/engine/install/centos/
-- MacOS: https://docs.docker.com/desktop/mac/install/
 
 Start the Docker service, configure Docker to boot up with the OS and add your user to the Docker group.
 
@@ -51,86 +57,202 @@ sudo setfacl -m user:$USER:rw /var/run/docker.sock
 
 Source: https://docs.docker.com/engine/install/linux-postinstall/#configure-docker-to-start-on-boot
 
-# asdf
+## Colima on macOS
 
-> Attention!!!
-> To update ``asdf``, ONLY use the following command. If you try to reinstall or update by changing the version in the following commands, it will be necessary to reinstall all plugins/commands installed before, so it is very important to back up the ``$HOME/.asdf`` directory.
+[Colima](https://github.com/abiosoft/colima) runs Docker in a virtual machine on macOS, on both arm64 and amd64. Install [Homebrew](https://brew.sh) and run the following command to install Colima and the Docker client:
 
 ```bash
-asdf update
+brew install colima docker
 ```
 
-Run the following commands:
+Start Colima. The CPU, memory (GiB) and disk (GiB) values are an example, adjust them according to your computer. Colima also configures itself as the active Docker context.
 
 ```bash
-ASDF_VERSION="v0.15.0"
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch $ASDF_VERSION
+colima start --cpu 4 --memory 8 --disk 60
 
-echo ". \"\$HOME/.asdf/asdf.sh\"" >> ~/.bashrc
-echo ". \"\$HOME/.asdf/completions/asdf.bash\"" >> ~/.bashrc
+# Check
+colima status
+docker run --rm hello-world
+```
+
+**Permissions**: the ``usermod`` and ``setfacl`` commands of the Linux section are not needed. The Docker socket is in your home directory, at ``$HOME/.colima/default/docker.sock``, and your user already has access to it.
+
+If an application shows the error ``Cannot connect to the Docker daemon at unix:///var/run/docker.sock``, it is not using the Docker context. Point it to the Colima socket:
+
+```bash
+echo 'export DOCKER_HOST="unix://$HOME/.colima/default/docker.sock"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+If you also have another Docker installation, select Colima with ``docker context use colima``.
+
+**Start and stop manually**:
+
+```bash
+colima start
+colima stop
+```
+
+**Start automatically**: Colima runs as a service of your user, so it starts when you log in to macOS and not when the computer boots.
+
+```bash
+# Start Colima now and at every login
+brew services start colima
+
+# Check the service
+brew services list
+
+# Stop Colima and remove it from the login
+brew services stop colima
+```
+
+While the service is enabled, use ``brew services stop colima`` instead of ``colima stop``, because the service can start Colima again after it stops.
+
+Documentation: https://github.com/abiosoft/colima/blob/main/docs/FAQ.md
+
+# mise
+
+[mise](https://mise.jdx.dev) installs the tools used in this repository, in the versions defined in the [mise.toml](../../../mise.toml) file. These instructions work on Ubuntu 22.04, 24.04 and 26.04 (amd64) and on macOS (arm64 and amd64).
+
+Run the following commands to install ``mise`` on Ubuntu or macOS:
+
+```bash
+curl -fsSL https://mise.run | sh
+```
+
+If your shell is ``bash`` (default on Ubuntu), run:
+
+```bash
+echo 'eval "$($HOME/.local/bin/mise activate bash)"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Reference: https://asdf-vm.com/guide/introduction.html
-
-# Helm
-
-Execute these commands to install helm.
+If your shell is ``zsh`` (default on macOS), run:
 
 ```bash
-VERSION="3.21.2"
-
-asdf plugin list all | grep helm
-asdf plugin add helm https://github.com/Antiarchitect/asdf-helm.git
-asdf latest helm
-
-asdf install helm $VERSION
-asdf list helm
-
-asdf global helm $VERSION
-asdf list helm
+echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-# Helm Docs
-
-Run the following commands to install ``helm-docs``.
+To update ``mise``, run:
 
 ```bash
-VERSION="1.14.2"
-
-asdf plugin list all | grep helm-docs
-asdf plugin add helm-docs https://github.com/sudermanjr/asdf-helm-docs.git
-asdf latest helm-docs
-
-asdf install helm-docs $VERSION
-asdf list helm-docs
-
-asdf global helm-docs $VERSION
-asdf list helm-docs
+mise self-update
 ```
 
-Documentation: https://github.com/norwoodj/helm-docs 
+Documentation: https://mise.jdx.dev/getting-started.html
+
+# Helm, Helm Docs, Kind, Kubectl and Argo CD CLI
+
+Run the following commands in the root directory of this repository to install ``helm``, ``helm-docs``, ``kind``, ``kubectl`` and ``argocd``:
+
+```bash
+mise trust
+mise install
+```
+
+Check the installed versions:
+
+```bash
+mise list --current
+helm version
+helm-docs --version
+kind version
+kubectl version --client
+argocd version --client
+```
+
+These versions are only active inside this repository directory. To change a version, edit the ``mise.toml`` file or run the following commands:
+
+```bash
+# Show the tools with a newer version available
+mise outdated --bump
+
+# Set the version of a tool in the mise.toml file and install it
+mise use helm@VERSION
+```
+
+Documentation:
+
+- Helm: https://helm.sh/docs
+- Helm Docs: https://github.com/norwoodj/helm-docs
+- Kind: https://kind.sigs.k8s.io
+- Kubectl: https://kubernetes.io/docs/reference/kubectl/overview/
+- Argo CD CLI: https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/
 
 The documentation generated by ``helm-docs`` is based on the contents of the ``values.yaml``, ``README.md.gotmpl`` and ``Chart.yaml`` file. It tries to overwrite the contents of the ``README.md`` file within the chart directory.
 
-# Kubectl
+# Using make
 
-Simple shell function for Kubectl installation in Linux 64 bits. Copy and paste this code:
+Run the following commands in the ``charts/zabbix`` directory. Use ``make help`` to list all targets.
+
+The Docker images used by the ``lint``, ``package`` and ``gen-docs`` targets use the versions of ``helm`` and ``helm-docs`` defined in the ``mise.toml`` file.
+
+## Checking the requirements
 
 ```bash
-VERSION_OPTION_1="1.36.2"
+# Check if the operating system is supported
+make check-os
 
-asdf plugin list all | grep kubectl
-asdf plugin add kubectl https://github.com/asdf-community/asdf-kubectl.git
-asdf latest kubectl
+# Check if the dependencies are installed and show the missing ones
+make check-deps
 
-asdf install kubectl $VERSION_OPTION_1
-asdf list kubectl
-
-asdf global kubectl $VERSION_OPTION_1
-asdf list kubectl
+# Install mise and the tools of the mise.toml file (Docker is installed separately)
+make install-deps
 ```
 
-Kubectl documentation:
+The ``make install-deps`` command installs ``mise`` if needed and runs ``mise trust`` and ``mise install``. It only runs on a supported operating system: Ubuntu 22.04, 24.04 and 26.04 (amd64) and macOS (arm64 and amd64). If it installs ``mise``, activate it in your shell as described in the [mise](#mise) section.
 
-https://kubernetes.io/docs/reference/kubectl/overview/
+## Testing the chart in a cluster
+
+```bash
+# Create only the kind cluster and select it as the current cluster
+make kind-create
+
+# Install or upgrade the helm chart in the current cluster
+make deploy
+
+# Uninstall the helm chart from the current cluster
+make undeploy
+
+# Install or upgrade only Argo CD in the current cluster
+make argocd-install
+
+# Deploy or remove the local chart using Argo CD in the current cluster (for tests only)
+make argocd-deploy
+make argocd-undeploy
+
+# Create the kind cluster, install Argo CD and deploy the helm chart with helm
+make stack-up
+
+# Remove the complete stack by deleting the kind cluster
+make stack-down
+```
+
+See more about Argo CD in this [tutorial](example/argocd/README.md).
+
+> Attention!!!
+> The ``deploy``, ``undeploy`` and ``argocd-*`` targets act on the current cluster of ``kubectl``, whichever it is. Check it with ``kubectl config current-context`` before running them.
+
+The ``kind-create`` target creates a cluster with 3 nodes using the [kind-3nodes.yaml](example/kind/kind-3nodes.yaml) file. This file maps the ports ``80`` and ``443`` of the computer to the cluster, so these ports must be free.
+
+The ``undeploy`` target keeps the volumes (PVC) of the PostgreSQL database, if any. The ``stack-down`` target deletes the kind cluster and all its data.
+
+The ``deploy`` target uses the default values of the chart and ``stack-up`` uses the [kind example values](example/kind/values.yaml). These variables can be changed in the command line:
+
+| Variable | Default | Used by |
+|---|---|---|
+| ``KIND_CLUSTER_NAME`` | ``helm-zabbix`` | ``kind-create``, ``stack-up``, ``stack-down`` |
+| ``KIND_CONFIG`` | ``docs/example/kind/kind-3nodes.yaml`` | ``kind-create``, ``stack-up`` |
+| ``RELEASE_NAME`` | ``zabbix`` | ``deploy``, ``undeploy``, ``stack-up`` |
+| ``NAMESPACE`` | ``monitoring`` | ``deploy``, ``undeploy``, ``stack-up`` |
+| ``DEPLOY_TIMEOUT`` | ``10m`` | ``deploy``, ``stack-up`` |
+| ``VALUES_FILE`` | (empty) | ``deploy`` |
+| ``STACK_VALUES_FILE`` | ``docs/example/kind/values.yaml`` | ``stack-up`` |
+| ``ARGOCD_TIMEOUT`` | ``15m`` | ``argocd-install``, ``argocd-deploy``, ``argocd-undeploy``, ``stack-up`` |
+
+Example:
+
+```bash
+make deploy NAMESPACE=zabbix VALUES_FILE=$HOME/zabbix_values.yaml
+```

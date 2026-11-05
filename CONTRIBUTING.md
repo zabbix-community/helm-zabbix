@@ -145,6 +145,8 @@ make lint
 
 A **major** version" should be the "dot-release". Example: *6.0.2* -> *6.1.0* is be a **major release update**. Users have to check whether they have to modify their values.yaml, and we need to write a short explanation of what has changed in the ``chart/zabbix/README.md.gotmpl``.
 
+The first digit follows the major version of Zabbix supported by the helm chart. Example: *7.1.0* -> *8.0.0* for Zabbix 8.0. It is always a breaking change, written in the same section.
+
 A **minor** is the "dot-dot" release. Example: *6.0.2* -> *6.0.3* is **minor upgrade**, no changes in any APIs, interfaces etc. should be necessary.
 
 - Change the ``version`` and ``appVersion`` parameters (helm chart and Zabbix version, respectively) in ``charts/zabbix/Chart.yaml`` and ``charts/zabbix/artifacthub-pkg.yml`` files.

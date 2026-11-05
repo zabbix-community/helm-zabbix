@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: test-server-connection
     helm.sh/chart: {{ include "zabbix.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-test-server-connection
-    app.kubernetes.io/managed-by: {{ .Release.Service }}-test-server-connection
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
     {{- if .Values.global.commonLabels}}
     {{- toYaml .Values.global.commonLabels | nindent 4 }}
     {{- end }}
@@ -28,7 +28,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}      
       containers:
-      - name: test-web-connection
+      - name: test-server-connection
         image: {{ .Values.helmTestJobs.serverConnection.image.repository }}:{{ .Values.helmTestJobs.serverConnection.image.tag }}
         {{- if .Values.helmTestJobs.serverConnection.image.pullPolicy }}
         imagePullPolicy: {{ .Values.helmTestJobs.serverConnection.image.pullPolicy }}

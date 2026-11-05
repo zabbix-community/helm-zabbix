@@ -1,0 +1,41 @@
+# Argo CD Application to test the local Zabbix chart. Don't use it in production.
+#
+# The repoURL is not a real remote repository. It is a snapshot of the local chart
+# copied to the repo-server pod by the "make argocd-deploy" command.
+# See: charts/zabbix/docs/example/argocd/README.md
+#
+# References:
+#
+# https://argo-cd.readthedocs.io/en/stable/user-guide/helm/
+# https://github.com/zabbix-community/helm-zabbix
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zabbix
+  namespace: argocd
+  finalizers:
+    # https://argo-cd.readthedocs.io/en/stable/user-guide/app_deletion/
+    - resources-finalizer.argocd.argoproj.io
+# https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  # https://argo-cd.readthedocs.io/en/stable/user-guide/projects/
+  project: default
+  source:
+    repoURL: file:///tmp/helm-zabbix.git
+    targetRevision: main
+    path: charts/zabbix
+    helm:
+      # Same values of the kind example. The path is relative to the chart directory
+      valueFiles:
+        - docs/example/kind/values.yaml
+  # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    # https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/
+    syncOptions:
+      - CreateNamespace=true

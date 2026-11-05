@@ -68,7 +68,11 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 │   └── zabbix                             # The Helm chart itself
 │       ├── docs
 │       │   ├── example
+│       │   │   ├── argocd
+│       │   │   │   ├── application.yaml   # Argo CD Application that deploys the local chart, for tests only
+│       │   │   │   └── README.md          # Tutorial to test the local chart with Argo CD in a kind cluster
 │       │   │   ├── kind
+│       │   │   │   ├── kind-3nodes.yaml   # Config of the kind cluster with 3 nodes, used by the Makefile
 │       │   │   │   └── values.yaml        # Example values.yaml to install this chart in a kind cluster
 │       │   │   └── README.md               # Tutorial to install this chart in a kind cluster
 │       │   ├── README.md                   # Index of docs
@@ -102,7 +106,7 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 │       ├── artifacthub-pkg.yml             # Artifact Hub metadata
 │       ├── artifacthub-repo.yml            # Artifact Hub repository metadata
 │       ├── Chart.yaml                      # Chart name, version and appVersion
-│       ├── Makefile                        # Dockerized helm/helm-docs targets: lint, package, gen-docs
+│       ├── Makefile                        # Targets to lint, package and generate docs (Dockerized), check/install requirements and deploy (kind, helm, Argo CD)
 │       ├── README.md                       # Generated chart documentation (do not edit directly)
 │       ├── README.md.gotmpl                # Source template used to generate README.md via helm-docs
 │       └── values.yaml                     # Chart default configuration values
@@ -120,6 +124,7 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 ├── CONTRIBUTING.md                         # How to contribute and how to release new chart versions
 ├── HISTORY.md                              # Repository history
 ├── LICENSE
+├── mise.toml                               # Versions of the development tools (helm, helm-docs, kind, kubectl, argocd), installed via mise
 └── README.md                               # This file
 ```
 
@@ -127,7 +132,7 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 
 Publishing a new version of this Helm chart is restricted to the code maintainers (see [CONTRIBUTING.md](CONTRIBUTING.md#for-code-mainteners-only) for the full step-by-step, including exact commands). At a high level:
 
-- The `version` field in `charts/zabbix/Chart.yaml` follows a `major.minor.patch` convention where, in practice, only the last two digits are used: a `major` ("dot-release", e.g. `6.0.2` → `6.1.0`) signals a change that may require users to update their `values.yaml`, and a `minor` ("dot-dot-release", e.g. `6.0.2` → `6.0.3`) is a safe, no-API-change upgrade.
+- The `version` field in `charts/zabbix/Chart.yaml` follows a `major.minor.patch` convention where, in practice, only the last two digits are used: a `major` ("dot-release", e.g. `6.0.2` → `6.1.0`) signals a change that may require users to update their `values.yaml`, and a `minor` ("dot-dot-release", e.g. `6.0.2` → `6.0.3`) is a safe, no-API-change upgrade. The first digit follows the major version of Zabbix supported by the chart (e.g. `7.1.0` → `8.0.0` for Zabbix 8.0) and is always a breaking change.
 - Bumping `version`/`appVersion` in `Chart.yaml` and `artifacthub-pkg.yml`, and regenerating `charts/zabbix/README.md` via `make gen-docs`, only happens on the release branch/PR, right before merging to `main`.
 - A release is actually cut by pushing a git tag (`x.y.z`) to the upstream repository, which triggers [.github/workflows/helm-chart-releaser.yml](.github/workflows/helm-chart-releaser.yml) to package and publish the chart as a GitHub Release named `zabbix-x.y.z`.
 

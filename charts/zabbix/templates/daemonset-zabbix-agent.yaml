@@ -115,7 +115,7 @@ spec:
             - name: ZBX_TIMEOUT
               value: {{ .Values.zabbixAgent.ZBX_TIMEOUT | quote }}
             - name: ZBX_LOADMODULE
-              value: {{ .Values.zabbixAgent.ZBX_LOADMODULE }}
+              value: {{ .Values.zabbixAgent.ZBX_LOADMODULE | quote }}
             {{- with .Values.zabbixAgent.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
