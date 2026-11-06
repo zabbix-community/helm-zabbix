@@ -149,7 +149,11 @@ spec:
                   fieldPath: metadata.name
             {{- end }}
             - name: ZBX_SERVER_HOST
+              {{- if eq (int .Values.zabbixProxy.ZBX_PROXYMODE) 1 }}
+              value: {{ .Values.zabbixProxy.ZBX_SERVER_HOST | quote }}
+              {{- else }}
               value: {{ printf "%s:%v" .Values.zabbixProxy.ZBX_SERVER_HOST .Values.zabbixProxy.ZBX_SERVER_PORT | quote }}
+              {{- end }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixProxy.ZBX_LOADMODULE | quote }}
             - name: ZBX_DEBUGLEVEL
