@@ -448,6 +448,23 @@ zabbixProxy:
   lifecycle: {}
   # -- nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
   nodeSelector: {}
+  # affinity:
+  #   podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       - topologyKey: kubernetes.io/hostname
+  #         labelSelector:
+  #           matchLabels:
+  #             app.kubernetes.io/name: zabbix
+  #             app.kubernetes.io/component: proxy
+  # -- Affinity for the Zabbix Proxy pods specifically. Takes precedence over the
+  # global ``affinity`` value when set, so proxy placement can be constrained without
+  # affecting every other component. Unlike the Deployment-based components, the Zabbix
+  # Proxy StatefulSet has no ``podAntiAffinity`` toggle of its own, so without this the
+  # only way to place proxies is the global ``affinity`` value — which replaces the
+  # permissive anti-affinity that ``zabbixServer``/``zabbixWeb``/``zabbixWebService``/
+  # ``zabbixJavaGateway``/``zabbixBrowserMonitoring`` would otherwise render for
+  # themselves. Reference: [https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+  affinity: {}
 
 # **Zabbix Agent** configurations
 zabbixAgent:
