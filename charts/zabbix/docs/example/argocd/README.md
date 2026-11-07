@@ -11,6 +11,7 @@
   - [Accessing the Argo CD web interface](#accessing-the-argo-cd-web-interface)
 - [Deploy Zabbix using Argo CD](#deploy-zabbix-using-argo-cd)
   - [Testing a change in the chart](#testing-a-change-in-the-chart)
+  - [Using other values files](#using-other-values-files)
   - [Accessing the Zabbix web interface](#accessing-the-zabbix-web-interface)
   - [Registering the Zabbix proxy](#registering-the-zabbix-proxy)
 - [Cleanup](#cleanup)
@@ -163,6 +164,16 @@ Change the files in the ``charts/zabbix`` directory and send a new snapshot. The
 ```bash
 make argocd-deploy
 ```
+
+## Using other values files
+
+By default, the Application uses the [kind example values](../kind/values.yaml). The ``ARGOCD_VALUES_FILES`` variable sets other values files, separated by spaces, in order. They are copied to the snapshot, in the ``.argocd-values`` directory, so they can be outside the chart directory. Use absolute paths:
+
+```bash
+make argocd-deploy ARGOCD_VALUES_FILES="$PWD/docs/example/kind/values.yaml $HOME/my-values.yaml"
+```
+
+To test Zabbix Server High Availability with Argo CD, see the [HA tutorial](../ha/README.md#using-argo-cd).
 
 ## Accessing the Zabbix web interface
 

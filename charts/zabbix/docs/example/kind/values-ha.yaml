@@ -1,0 +1,178 @@
+#global:
+#  imagePullSecrets:
+#    - name: my-secret
+#  commonLabels:
+#    mylabel: "my-value"
+
+# Custom values to test Zabbix Server High Availability in a kind cluster.
+# Requires the external database of the external-postgresql.yaml file, created by "make external-db-create".
+# See: charts/zabbix/docs/example/ha/README.md
+zabbixImageTag: alpine-8.0.0
+
+# The external database of the external-postgresql.yaml file
+postgresAccess:
+  existingSecretName: zabbix-external-db
+
+zabbixServer:
+  enabled: true
+  # Two Zabbix Server pods: one active and one standby HA node
+  replicaCount: 2
+  zabbixServerHA:
+    enabled: true
+  # Removes the HA nodes that are not running anymore from the database
+  haNodesAutoClean:
+    enabled: true
+    image:
+      # Postgresql Docker image name: chose one of "postgres" or "timescale/timescaledb"
+      repository: postgres
+      #repository: timescale/timescaledb
+      # -- Tag of Docker image of Postgresql server, choice "18" for postgres "2.29.2-pg18" for timescaledb
+      # (Zabbix 8.0 supports PostgreSQL 15 to 18 and TimescaleDB 2.20 to 2.29. More info: https://www.zabbix.com/documentation/8.0/en/manual/installation/requirements)
+      tag: 18
+      #tag: 2.29.2-pg18
+  service:
+    type: NodePort
+    port: 10051
+    nodePort: 31051
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_1"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_2"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_3"
+      value: "100"
+#    - name: MY_USERNAME
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: user
+#    - name: MY_PASSWORD
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: password
+# Example of readinessProbe when zabbix-server has two or more replicas in HA mode
+#  readinessProbe:
+#    exec:
+#      command:
+#      - /bin/sh
+#      - -c
+#      - |-
+#       test $(zabbix_server -R ha_status | awk /$ZBX_NODEADDRESS:10051/'{print $5}') = active
+#    initialDelaySeconds: 60
+#    periodSeconds: 10
+#    timeoutSeconds: 5
+#    successThreshold: 1
+#    failureThreshold: 6
+
+# HA can't be used with the database of this chart
+postgresql:
+  enabled: false
+
+zabbixProxy:
+  enabled: true
+  replicaCount: 1
+  ZBX_PROXYMODE: 0 # The variable allows to switch Zabbix proxy mode. By default, value is 0 - active proxy. Allowed values are 0 - active proxy and 1 - passive proxy.
+  ZBX_HOSTNAME: zabbix-proxy # Case sensitive hostname. If not defined the pod name will be used
+  ZBX_SERVER_HOST: zabbix-zabbix-server
+  ZBX_SERVER_PORT: 10051
+  # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
+  # ZBX_DEBUGLEVEL: 4 # The variable is used to specify debug level, from 0 to 5
+  # ZBX_TIMEOUT: 4 # The variable is used to specify timeout for processing checks. By default, value is 4.
+  # ZBX_JAVAGATEWAY_ENABLE: false # The variable enable communication with Zabbix Java Gateway to collect Java related checks. By default, value is false.
+  ZBX_VMWARECACHESIZE: 128M
+  service:
+    type: NodePort
+    port: 10051
+    nodePort: 31053
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_4"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_5"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_6"
+      value: "100"
+#    - name: MY_USERNAME
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: user
+#    - name: MY_PASSWORD
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: password
+
+zabbixAgent:
+  enabled: true
+  runAsSidecar: true
+  runAsDaemonSet: false
+  ZBX_HOSTNAME: zabbix-agent
+  ZBX_SERVER_HOST: 0.0.0.0/0
+  ZBX_SERVER_PORT: 10051
+  ZBX_PASSIVE_ALLOW: true # This variable is boolean (true or false) and enables or disables feature of passive checks. By default, value is true
+  ZBX_ACTIVE_ALLOW: false # This variable is boolean (true or false) and enables or disables feature of active checks
+  ZBX_DEBUGLEVEL: 3 # The variable is used to specify debug level, from 0 to 5
+  ZBX_TIMEOUT: 4 # The variable is used to specify timeout for processing checks. By default, value is 4.
+  ZBX_VMWARECACHESIZE: 128M
+  service:
+    type: ClusterIP
+    port: 10050
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_7"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_8"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_9"
+      value: "100"
+#    - name: MY_USERNAME
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: user
+#    - name: MY_PASSWORD
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: password
+
+
+zabbixWeb:
+  enabled: true
+  service:
+    type: ClusterIP
+    port: 80
+  extraEnv:
+    - name: "ZBX_EXAMPLE_MY_ENV_10"
+      value: "true"
+    - name: "ZBX_EXAMPLE_MY_ENV_11"
+      value: "false"
+    - name: "ZBX_EXAMPLE_MY_ENV_12"
+      value: "100"
+#    - name: MY_USERNAME
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: user
+#    - name: MY_PASSWORD
+#      valueFrom:
+#        secretKeyRef:
+#          name: my-envs
+#          key: password
+
+#affinity:
+#  nodeAffinity:
+#    preferredDuringSchedulingIgnoredDuringExecution:
+#    - weight: 1
+#      preference:
+#        matchExpressions:
+#        - key: kubernetes.io/o
+#          operator: In
+#          values:
+#          - linux
+
+#zabbixJavaGateway:
+#  enabled: true
+
+#zabbixBrowserMonitoring:
+#  enabled: true

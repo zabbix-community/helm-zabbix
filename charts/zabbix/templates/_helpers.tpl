@@ -185,3 +185,38 @@ Usage:
   {{- $value }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Value of ZBX_SERVER_HOST of Zabbix Proxy.
+A passive proxy (ZBX_PROXYMODE=1) accepts only addresses, without port, in the "Server" parameter:
+the value is used as is.
+An active proxy accepts a list of Zabbix Server HA nodes separated by ";": zabbixProxy.ZBX_SERVER_PORT
+is appended to each node that has no port yet, including IPv6 addresses in brackets (e.g. "[2001:db8::1]").
+*/}}
+{{- define "zabbix.proxy.serverHost" -}}
+{{- $proxy := .Values.zabbixProxy }}
+{{- $host := toString $proxy.ZBX_SERVER_HOST | trim }}
+{{- if eq (int $proxy.ZBX_PROXYMODE) 1 }}
+{{- $host }}
+{{- else }}
+{{- $nodes := list }}
+{{- range $node := splitList ";" $host }}
+{{- $node = trim $node }}
+{{- if $node }}
+{{- $hasPort := false }}
+{{- if hasPrefix "[" $node }}
+{{- $hasPort = regexMatch "\\]:[0-9]+$" $node }}
+{{- else }}
+{{- /* "host:port" has a port. A bare IPv6 address (more than one ":") is used as is */}}
+{{- $hasPort = contains ":" $node }}
+{{- end }}
+{{- if $hasPort }}
+{{- $nodes = append $nodes $node }}
+{{- else }}
+{{- $nodes = append $nodes (printf "%s:%v" $node $proxy.ZBX_SERVER_PORT) }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- join ";" $nodes }}
+{{- end }}
+{{- end -}}

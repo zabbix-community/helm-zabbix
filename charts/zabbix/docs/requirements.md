@@ -225,11 +225,21 @@ make argocd-undeploy
 # Create the kind cluster, install Argo CD and deploy the helm chart with helm
 make stack-up
 
+# Create or remove the external PostgreSQL used to test Zabbix Server HA
+make external-db-create
+make external-db-delete
+
+# Create the kind cluster and the external database and deploy the helm chart with Zabbix Server HA
+make stack-up-ha
+
+# Load local images into the kind cluster, e.g. the images of the HA job and sidecar
+make kind-load IMAGES="zabbix-server-create-upgrade-db:8.0-local zabbix-server-ha-label-manager:local"
+
 # Remove the complete stack by deleting the kind cluster
 make stack-down
 ```
 
-See more about Argo CD in this [tutorial](example/argocd/README.md).
+See more about Argo CD in this [tutorial](example/argocd/README.md) and about Zabbix Server HA in this [tutorial](example/ha/README.md).
 
 > Attention!!!
 > The ``deploy``, ``undeploy`` and ``argocd-*`` targets act on the current cluster of ``kubectl``, whichever it is. Check it with ``kubectl config current-context`` before running them.
@@ -242,13 +252,17 @@ The ``deploy`` target uses the default values of the chart and ``stack-up`` uses
 
 | Variable | Default | Used by |
 |---|---|---|
-| ``KIND_CLUSTER_NAME`` | ``helm-zabbix`` | ``kind-create``, ``stack-up``, ``stack-down`` |
-| ``KIND_CONFIG`` | ``docs/example/kind/kind-3nodes.yaml`` | ``kind-create``, ``stack-up`` |
-| ``RELEASE_NAME`` | ``zabbix`` | ``deploy``, ``undeploy``, ``stack-up`` |
-| ``NAMESPACE`` | ``monitoring`` | ``deploy``, ``undeploy``, ``stack-up`` |
-| ``DEPLOY_TIMEOUT`` | ``10m`` | ``deploy``, ``stack-up`` |
+| ``KIND_CLUSTER_NAME`` | ``helm-zabbix`` | ``kind-create``, ``kind-load``, ``stack-up``, ``stack-up-ha``, ``stack-down`` |
+| ``KIND_CONFIG`` | ``docs/example/kind/kind-3nodes.yaml`` | ``kind-create``, ``stack-up``, ``stack-up-ha`` |
+| ``RELEASE_NAME`` | ``zabbix`` | ``deploy``, ``undeploy``, ``stack-up``, ``stack-up-ha`` |
+| ``NAMESPACE`` | ``monitoring`` | ``deploy``, ``undeploy``, ``external-db-create``, ``external-db-delete``, ``stack-up``, ``stack-up-ha`` |
+| ``DEPLOY_TIMEOUT`` | ``10m`` | ``deploy``, ``external-db-create``, ``stack-up``, ``stack-up-ha`` |
 | ``VALUES_FILE`` | (empty) | ``deploy`` |
 | ``STACK_VALUES_FILE`` | ``docs/example/kind/values.yaml`` | ``stack-up`` |
+| ``STACK_HA_VALUES_FILE`` | ``docs/example/kind/values-ha.yaml`` | ``stack-up-ha`` |
+| ``EXTERNAL_DB_FILE`` | ``docs/example/kind/external-postgresql.yaml`` | ``external-db-create``, ``external-db-delete``, ``stack-up-ha`` |
+| ``IMAGES`` | (empty) | ``kind-load`` |
+| ``ARGOCD_VALUES_FILES`` | ``docs/example/kind/values.yaml`` | ``argocd-deploy`` |
 | ``ARGOCD_TIMEOUT`` | ``15m`` | ``argocd-install``, ``argocd-deploy``, ``argocd-undeploy``, ``stack-up`` |
 
 Example:

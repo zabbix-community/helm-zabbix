@@ -47,6 +47,8 @@ helm upgrade --install zabbix \
  $HOME/mygit/helm-zabbix/charts/zabbix -n monitoring --debug
 ```
 
+To test Zabbix Server High Availability, with an external database, see this [tutorial](ha/README.md).
+
 # How to access Zabbix
 
 See [README.md](../../README.md#how-to-access-zabbix).

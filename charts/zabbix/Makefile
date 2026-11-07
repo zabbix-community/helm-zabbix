@@ -32,7 +32,16 @@ DEPLOY_TIMEOUT?=10m
 VALUES_FILE?=
 # Values file used by the stack-up target
 STACK_VALUES_FILE?=$(CHART_DIR)/docs/example/kind/values.yaml
+# Values file used by the stack-up-ha target (Zabbix Server High Availability with an external database)
+STACK_HA_VALUES_FILE?=$(CHART_DIR)/docs/example/kind/values-ha.yaml
+# Manifest of the external database used to test Zabbix Server High Availability, created in NAMESPACE
+EXTERNAL_DB_FILE?=$(CHART_DIR)/docs/example/kind/external-postgresql.yaml
+# Local images loaded into the kind cluster by the kind-load target, separated by spaces
+IMAGES?=
 ARGOCD_TIMEOUT?=15m
+# Values files of the Argo CD Application, separated by spaces, in this order. They are copied to the snapshot of
+# the chart, so they can be outside the chart directory
+ARGOCD_VALUES_FILES?=$(CHART_DIR)/docs/example/kind/values.yaml
 
 # These values are the same defined in the docs/example/argocd/application.yaml file
 ARGOCD_NAMESPACE:=argocd
@@ -41,7 +50,7 @@ ARGOCD_APP_NAMESPACE:=monitoring
 ARGOCD_APP_FILE:=$(CHART_DIR)/docs/example/argocd/application.yaml
 ARGOCD_SNAPSHOT_DIR:=/tmp/helm-zabbix.git
 
-.PHONY: requirements check-mise check-os check-deps install-deps helm lint package gen-docs kind-create deploy undeploy argocd-install argocd-deploy argocd-undeploy stack-up stack-down help
+.PHONY: requirements check-mise check-os check-deps install-deps helm lint package gen-docs kind-create kind-load external-db-create external-db-delete deploy undeploy argocd-install argocd-deploy argocd-undeploy stack-up stack-up-ha stack-down help
 
 #----------------------------------------------------------------------------------------------------------
 
@@ -195,6 +204,29 @@ kind-create: requirements check-mise ## Create only the kind cluster (KIND_CLUST
 		$(MISE_EXEC) kind create cluster --name "$(KIND_CLUSTER_NAME)" --config "$(abspath $(KIND_CONFIG))" --wait 180s; \
 	fi
 
+# Load local images into the kind cluster, e.g. images of the HA job and sidecar built from their repositories
+kind-load: requirements check-mise ## Load local images (IMAGES, separated by spaces) into the kind cluster (KIND_CLUSTER_NAME)
+	@if [ -z "$(IMAGES)" ]; then \
+		echo "ERROR: set the IMAGES variable. Example: make kind-load IMAGES=zabbix-server-create-upgrade-db:8.0-local" >&2; \
+		exit 1; \
+	fi
+	@for image in $(IMAGES); do \
+		$(MISE_EXEC) kind load docker-image "$$image" --name "$(KIND_CLUSTER_NAME)" || exit 1; \
+	done
+
+# Create the external database used to test Zabbix Server High Availability. For tests only
+external-db-create: check-mise ## Create the external PostgreSQL used to test Zabbix Server HA in the current cluster (NAMESPACE)
+	@echo "Creating the external database in namespace $(NAMESPACE) of the cluster: $$($(MISE_EXEC) kubectl config current-context)"
+	@$(MISE_EXEC) kubectl create namespace "$(NAMESPACE)" --dry-run=client -o yaml | ( $(MISE_EXEC) kubectl apply -f - )
+	@$(MISE_EXEC) kubectl apply --namespace "$(NAMESPACE)" -f "$(abspath $(EXTERNAL_DB_FILE))"
+	@$(MISE_EXEC) kubectl rollout status statefulset/zabbix-external-db --namespace "$(NAMESPACE)" --timeout="$(DEPLOY_TIMEOUT)"
+
+# Remove the external database and its data
+external-db-delete: check-mise ## Remove the external PostgreSQL used to test Zabbix Server HA and its data (NAMESPACE)
+	@echo "Removing the external database in namespace $(NAMESPACE) of the cluster: $$($(MISE_EXEC) kubectl config current-context)"
+	@$(MISE_EXEC) kubectl delete --namespace "$(NAMESPACE)" -f "$(abspath $(EXTERNAL_DB_FILE))" --ignore-not-found --wait
+	@$(MISE_EXEC) kubectl delete pvc --namespace "$(NAMESPACE)" -l app.kubernetes.io/name=zabbix-external-db --ignore-not-found --wait
+
 # Install or upgrade the helm chart in the current cluster
 deploy: check-mise ## Install or upgrade the helm chart in the current cluster (RELEASE_NAME, NAMESPACE, VALUES_FILE)
 	@echo "Deploying release $(RELEASE_NAME) in namespace $(NAMESPACE) of the cluster: $$($(MISE_EXEC) kubectl config current-context)"
@@ -221,7 +253,7 @@ argocd-install: check-mise ## Install or upgrade only Argo CD in the current clu
 # Argo CD reads charts from repositories and can't see the local files, so this target commits the
 # current files of the chart (including uncommitted changes) to a temporary Git repository and
 # copies it to the repo-server pod, without changing the Git repository of this project.
-argocd-deploy: check-mise ## Deploy the local chart with Argo CD in the current cluster (for tests only)
+argocd-deploy: check-mise ## Deploy the local chart with Argo CD in the current cluster (ARGOCD_VALUES_FILES, for tests only)
 	@set -e; \
 	echo "Deploying Application $(ARGOCD_APP_NAME) in namespace $(ARGOCD_APP_NAMESPACE) of the cluster: $$($(MISE_EXEC) kubectl config current-context)"; \
 	if ! $(MISE_EXEC) kubectl get crd applications.argoproj.io >/dev/null 2>&1; then \
@@ -236,6 +268,15 @@ argocd-deploy: check-mise ## Deploy the local chart with Argo CD in the current 
 	trap 'rm -rf "$$tmp"' EXIT; \
 	mkdir -p "$$tmp/charts"; \
 	cp -R "$(CHART_DIR)" "$$tmp/charts/zabbix"; \
+	mkdir -p "$$tmp/charts/zabbix/.argocd-values"; \
+	value_files=""; index=0; \
+	for file in $(ARGOCD_VALUES_FILES); do \
+		if [ ! -f "$$file" ]; then echo "ERROR: values file not found: $$file" >&2; exit 1; fi; \
+		index=$$((index + 1)); \
+		name=".argocd-values/$$index-$$(basename "$$file")"; \
+		cp "$$file" "$$tmp/charts/zabbix/$$name"; \
+		value_files="$$value_files $$name"; \
+	done; \
 	git -C "$$tmp" init -q -b main; \
 	git -C "$$tmp" add -A; \
 	git -C "$$tmp" -c user.name=make -c user.email=make@localhost -c commit.gpgsign=false commit -q -m "Snapshot of the local chart"; \
@@ -244,7 +285,10 @@ argocd-deploy: check-mise ## Deploy the local chart with Argo CD in the current 
 	pod="$$($(MISE_EXEC) kubectl -n "$(ARGOCD_NAMESPACE)" get pods -l app.kubernetes.io/name=argocd-repo-server -o jsonpath='{.items[0].metadata.name}')"; \
 	COPYFILE_DISABLE=1 tar -C "$$tmp/.git" -cf - . | ( $(MISE_EXEC) kubectl -n "$(ARGOCD_NAMESPACE)" exec -i "$$pod" -c repo-server -- \
 		sh -c 'rm -rf "$(ARGOCD_SNAPSHOT_DIR)" && mkdir -p "$(ARGOCD_SNAPSHOT_DIR)" && tar -xf - -C "$(ARGOCD_SNAPSHOT_DIR)"' ); \
-	$(MISE_EXEC) kubectl apply -f "$(ARGOCD_APP_FILE)"; \
+	awk -v files="$$value_files" ' \
+		/^      valueFiles:$$/ { print; n = split(files, list, " "); for (i = 1; i <= n; i++) print "        - " list[i]; skip = 1; next } \
+		skip && /^        - / { next } \
+		{ skip = 0; print }' "$(ARGOCD_APP_FILE)" | ( $(MISE_EXEC) kubectl apply -f - ); \
 	$(MISE_EXEC) kubectl -n "$(ARGOCD_NAMESPACE)" annotate application "$(ARGOCD_APP_NAME)" argocd.argoproj.io/refresh=hard --overwrite; \
 	for condition in "{.status.sync.revision}=$$revision" "{.status.sync.status}=Synced" "{.status.health.status}=Healthy"; do \
 		echo "Waiting for $$condition"; \
@@ -262,10 +306,16 @@ stack-up: ## Create the kind cluster, install Argo CD and deploy the helm chart 
 	@$(MAKE) argocd-install
 	@$(MAKE) deploy VALUES_FILE="$(STACK_VALUES_FILE)"
 
+# Create the kind cluster, the external database and deploy the helm chart with Zabbix Server High Availability
+stack-up-ha: ## Create the kind cluster and the external database and deploy the helm chart with Zabbix Server HA (STACK_HA_VALUES_FILE)
+	@$(MAKE) kind-create
+	@$(MAKE) external-db-create
+	@$(MAKE) deploy VALUES_FILE="$(STACK_HA_VALUES_FILE)"
+
 # Remove the kind cluster and everything deployed on it
 stack-down: requirements check-mise ## Remove the complete stack by deleting the kind cluster (KIND_CLUSTER_NAME)
 	@$(MISE_EXEC) kind delete cluster --name "$(KIND_CLUSTER_NAME)"
 
 # Show this help message
 help: ## Show this help message
-	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'

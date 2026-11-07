@@ -22,6 +22,13 @@ metadata:
     {{- end }}
 spec:
   replicas: {{ .Values.zabbixProxy.replicaCount }}
+  {{- with .Values.zabbixProxy.minReadySeconds }}
+  minReadySeconds: {{ . }}
+  {{- end }}
+  {{- with .Values.zabbixProxy.updateStrategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   serviceName: {{ template "zabbix.fullname" . }}-zabbix-proxy-headless
   selector:
     matchLabels:
@@ -57,7 +64,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with (.Values.zabbixProxy.affinity | default .Values.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -149,7 +156,7 @@ spec:
                   fieldPath: metadata.name
             {{- end }}
             - name: ZBX_SERVER_HOST
-              value: {{ printf "%s:%v" .Values.zabbixProxy.ZBX_SERVER_HOST .Values.zabbixProxy.ZBX_SERVER_PORT | quote }}
+              value: {{ include "zabbix.proxy.serverHost" . | quote }}
             - name: ZBX_LOADMODULE
               value: {{ .Values.zabbixProxy.ZBX_LOADMODULE | quote }}
             - name: ZBX_DEBUGLEVEL

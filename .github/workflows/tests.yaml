@@ -38,6 +38,51 @@ jobs:
           helm version
           helm lint --strict ./charts/zabbix
 
+      # The images of the HA database job and of the HA labels sidecar are built in other repositories
+      # (helm-zabbix-image-db-init-upgrade-job and helm-zabbix-image-ha-labels-sidecar). Their tags in values.yaml
+      # must be published, otherwise the installation with zabbixServer.zabbixServerHA.enabled=true fails
+      - name: Check that the default images of Zabbix Server HA are published
+        run: |
+          images=$(helm template ./charts/zabbix --set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true \
+            | grep -oE 'image: "?ghcr\.io/zabbix-community/[^" ]+' | sed -E 's/image: "?//' | sort -u)
+          [ -n "$images" ] || { echo "::error::no image of ghcr.io/zabbix-community found in the rendered chart"; exit 1; }
+          for image in $images; do
+            echo "Checking $image"
+            docker manifest inspect "$image" >/dev/null || { echo "::error::the image $image is not published"; exit 1; }
+          done
+
+      # A passive Zabbix Proxy refuses to start with a port in ZBX_SERVER_HOST, and an active Zabbix Proxy
+      # needs the port in each Zabbix Server HA node
+      - name: Check ZBX_SERVER_HOST of Zabbix Proxy
+        run: |
+          proxy_server_host() {
+            helm template ./charts/zabbix --set zabbixProxy.enabled=true "$@" \
+              | grep -A1 -E '^ +- name: ZBX_SERVER_HOST$' | sed -n 's/^ *value: "\(.*\)"$/\1/p' | tail -1
+          }
+          check() {
+            if [ "$1" = "$2" ]; then echo "OK: $1"; else echo "::error::expected '$2', got '$1'"; exit 1; fi
+          }
+          check "$(proxy_server_host)" "zabbix-zabbix-server:10051"
+          check "$(proxy_server_host --set zabbixProxy.ZBX_PROXYMODE=1 --set zabbixProxy.ZBX_SERVER_HOST=10.42.0.0/16)" "10.42.0.0/16"
+          check "$(proxy_server_host --set 'zabbixProxy.ZBX_SERVER_HOST=zabbix-1;zabbix-2:10052;[2001:db8::1]')" "zabbix-1:10051;zabbix-2:10052;[2001:db8::1]:10051"
+
+      # A tagSuffix without quotes is a number (int64 with --set, float64 in a values file) and must still render the
+      # digits in the image tag of the HA database job (issue #2 of helm-zabbix-image-db-init-upgrade-job)
+      - name: Check the image tag of the HA database job with a numeric tagSuffix
+        run: |
+          job_image() {
+            helm template ./charts/zabbix --set postgresql.enabled=false --set zabbixServer.zabbixServerHA.enabled=true "$@" \
+              | grep -oE 'zabbix-server-create-upgrade-db:[^"]+'
+          }
+          check() {
+            if [ "$1" = "$2" ]; then echo "OK: $1"; else echo "::error::expected '$2', got '$1'"; exit 1; fi
+          }
+          values_file="${RUNNER_TEMP}/numeric-tag-suffix.yaml"
+          printf 'zabbixServer:\n  zabbixServerHA:\n    dbCreateUpgradeJob:\n      image:\n        tagSuffix: 20261107172746\n' > "$values_file"
+          check "$(job_image --set zabbixImageTag=ubuntu-8.0.0 --set zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix=20261107172746)" "zabbix-server-create-upgrade-db:8.0-20261107172746"
+          check "$(job_image --set zabbixImageTag=ubuntu-8.0.0 -f "$values_file")" "zabbix-server-create-upgrade-db:8.0-20261107172746"
+          check "$(job_image --set zabbixImageTag=ubuntu-8.0.0 --set-string zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix=20261107172746)" "zabbix-server-create-upgrade-db:8.0-20261107172746"
+
 
   test_intdb_noha_noextsecret:
     runs-on: ubuntu-latest
@@ -245,6 +290,75 @@ jobs:
       - name: Run helm test AppVersion after upgrades
         run: |
           kubectl --namespace zabbix get pods -o ${{ env.COLUMN_OPTIONS }}
+          helm test --namespace zabbix zabbix
+
+      - name: Run helm uninstall
+        run: |
+          helm uninstall --wait zabbix --namespace zabbix
+
+
+  # Transition from a standalone Zabbix Server to Zabbix Server HA with "helm upgrade" (issues #201 and #231): the
+  # pre-upgrade job must have its service account before the regular resources exist, scale the standalone Zabbix
+  # Server down and remove its row from the ha_node table
+  test_extdb_standalone_to_ha:
+    runs-on: ubuntu-latest
+    needs: [codespell, lint]
+    env:
+      COLUMN_OPTIONS: 'custom-columns="NAME:.metadata.name,READY:.status.containerStatuses[*].ready,STATUS:.status.phase,RESTARTS:.status.containerStatuses[*].restartCount,IP:.status.podIP,ROLE:.metadata.labels.zabbix\.com/server-ha-role,IMAGE:.spec.containers[*].image"'
+      VALUES_SET: '--set postgresAccess.existingSecretName=db-access --set postgresql.enabled=false'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Kind
+        uses: helm/kind-action@v1.15.2
+
+      - name: Install Helm and kubectl with mise
+        uses: jdx/mise-action@v5
+
+      - name: Show tool versions
+        run: |
+          helm version
+          kubectl version --client
+
+      - name: Create Namespace in Kind
+        run: |
+          kubectl create namespace zabbix
+
+      - name: Create simple postgresql database for testing
+        run: |
+          kubectl --namespace zabbix run postgres --image=postgres:18 --env="POSTGRES_PASSWORD=zabbix123" --env="POSTGRES_DB=zabbix" --env="POSTGRES_USER=zabbix" --port=5432
+          kubectl --namespace zabbix wait --for=condition=ready pod -l run=postgres --timeout=60s
+          kubectl --namespace zabbix expose pod postgres
+
+      - name: Create postgres secret (existingSecret)
+        run: |
+          kubectl --namespace zabbix create secret generic db-access --from-literal host=postgres --from-literal port=5432 --from-literal user=zabbix --from-literal password=zabbix123 --from-literal dbname=zabbix
+
+      - name: Run Helm install without HA (standalone Zabbix Server)
+        run: |
+          helm install --wait --namespace zabbix zabbix ${{ env.VALUES_SET }} ./charts/zabbix
+
+      - name: Wait for the standalone Zabbix Server in the ha_node table
+        run: |
+          # The command runs in a new shell: the single quotes are intentional
+          # shellcheck disable=SC2016
+          timeout 120 bash -c 'until [ "$(kubectl --namespace zabbix exec postgres -- psql -U zabbix -d zabbix -tAc "SELECT COUNT(*) FROM ha_node WHERE name='"''"' AND status=3")" = 1 ]; do sleep 3; done'
+
+      - name: Run Helm upgrade enabling HA
+        run: |
+          helm upgrade --wait --namespace zabbix zabbix ${{ env.VALUES_SET }} --set zabbixServer.zabbixServerHA.enabled=true --set zabbixServer.replicaCount=2 ./charts/zabbix
+
+      - name: Check the active and standby Zabbix Server pods
+        run: |
+          # The command runs in a new shell: the single quotes are intentional
+          # shellcheck disable=SC2016
+          timeout 180 bash -c 'until [ "$(kubectl --namespace zabbix get pods -l zabbix.com/server-ha-role=active -o name | wc -l)" = 1 ] && [ "$(kubectl --namespace zabbix get pods -l zabbix.com/server-ha-role=standby -o name | wc -l)" = 1 ]; do sleep 3; done'
+          kubectl --namespace zabbix get pods -o ${{ env.COLUMN_OPTIONS }}
+          kubectl --namespace zabbix exec postgres -- psql -U zabbix -d zabbix -c "SELECT name, address, status FROM ha_node"
+
+      - name: Run helm test after the transition to HA
+        run: |
           helm test --namespace zabbix zabbix
 
       - name: Run helm uninstall

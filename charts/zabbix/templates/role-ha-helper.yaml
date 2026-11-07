@@ -1,4 +1,8 @@
 {{ if and .Values.zabbixServer.enabled .Values.zabbixServer.zabbixServerHA.enabled }}
+{{- /*
+Permissions of the HA labels sidecar of the Zabbix Server pods, which sets the label of its own pod. The database
+initialization/upgrade job has its own role (role-create-upgrade-db.yaml)
+*/}}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -14,12 +18,6 @@ metadata:
     {{- end }}
   {{- end }}
 rules:
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["patch", "get", "list"]
-- apiGroups: ["apps"]
-  resources: ["deployments/scale"]
-  verbs: ["get", "update", "patch"]
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["patch", "get", "list"]

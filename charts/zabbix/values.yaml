@@ -79,15 +79,15 @@ zabbixServer:
   zabbixServerHA:
     # -- Enables support for Zabbix Server High Availability. If disabled, replicaCount will always be 1. Can not be combined with ``postgresql.enabled=true``
     enabled: false
-    # -- K8S Role being used for database initialization and upgrade job, which needs access to certain Kubernetes resources
+    # -- K8S Roles of the HA labels sidecar (``<fullname>-ha-helper``) and of the database initialization and upgrade job (``<fullname>-create-upgrade-db``, a pre-install/pre-upgrade hook)
     role:
-      # -- Extra annotations for the role needed to give the HA related sidecars and the DB job API permissions
+      # -- Extra annotations for the roles needed to give the HA related sidecars and the DB job API permissions
       annotations: {}
-    # -- Rolebinding being used for the database initialization and upgrade job
+    # -- Rolebindings of the HA labels sidecar and of the database initialization and upgrade job
     roleBinding:
-      # -- Extra annotations for the roleBinding needed to give the HA related DB init and upgrade job
+      # -- Extra annotations for the roleBindings of the HA labels sidecar and of the DB init and upgrade job
       annotations: {}
-    # -- Serviceaccount for the database initialization and upgrade job
+    # -- Serviceaccount for the database initialization and upgrade job (``<fullname>-create-upgrade-db``, a pre-install/pre-upgrade hook)
     serviceAccount:
       # -- Extra annotations for the serviceAccount needed to give the DB job API permissions
       annotations: {}
@@ -101,11 +101,18 @@ zabbixServer:
         # If empty, it is going to be chosen based on the major release of the zabbix_server image and tagSuffix.
         tag: ""
         # -- The tag suffix used for the dbCreateUpgradeJob's image when not explicitly specifying a tag for the image. The tag name will be concatenated with major release of zabbix_server image if specified
-        tagSuffix: "20261009150714"
+        tagSuffix: "20261107172746"
         # -- Pull policy for the db initialization / upgrade job
         pullPolicy: IfNotPresent
         # -- Pull secrets for the db initialization / upgrade job
         pullSecrets: []
+      # -- How the job knows whether it runs in an installation or in an upgrade. ``auto`` checks if the Zabbix Server deployment exists, which also works with Argo CD and other tools that render the chart with ``helm template``. Use ``install`` or ``upgrade`` only to force a behavior
+      hookType: auto
+      # -- Maximum time, in seconds, of each wait of the job (e.g. for the Zabbix Server pods to stop). When it expires, the job fails with a message instead of waiting forever
+      waitTimeout: 900
+      # -- (int) Maximum duration, in seconds, of the job (``activeDeadlineSeconds``). Empty means no limit. Attention: a schema upgrade of a big database between Zabbix major versions can take hours and is interrupted when this limit is reached. Helm also waits for the job only during ``--timeout`` (5 minutes by default)
+      # @default -- empty (no limit)
+      activeDeadlineSeconds:
       # -- Additional init containers to start within the dbCreateUpgradeJob pod
       extraInitContainers: []
       # -- Additional containers to start within the dbCreateUpgradeJob pod
@@ -118,8 +125,7 @@ zabbixServer:
       extraVolumes: []
       # -- Resource requests and limits for the dbCreateUpgradeJob pod
       resources: {}
-      # -- Security context for the HA labels sidecar
-      # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+      # -- Security context of the database initialization / upgrade job. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
       securityContext: {}
     # -- The HA labels sidecar checks for the current pod whether it is the active Zabbix Server HA node and sets labels on it, accordingly
     haLabelsSidecar:
@@ -128,7 +134,7 @@ zabbixServer:
         # -- Repository where to get the image for the HA labels sidecar container
         repository: ghcr.io/zabbix-community/zabbix-server-ha-label-manager
         # -- Tag of the HA labels sidecar container image
-        tag: "20241230230305"
+        tag: "20261107173134"
         # -- Pull policy for the HA labels sidecar image
         pullPolicy: IfNotPresent
         # -- Pull secrets for the HA labels sidecar image
@@ -361,9 +367,11 @@ zabbixProxy:
   ZBX_PROXYMODE: 0
   # -- Zabbix Proxy hostname. Case sensitive hostname. If not defined the pod name will be used
   ZBX_HOSTNAME: zabbix-proxy  # This variable is unique, case sensitive hostname.
-  # -- Zabbix Server host
+  # -- Zabbix Server host. Active proxy (``ZBX_PROXYMODE: 0``): address of Zabbix Server, or the addresses of the
+  # Zabbix Server HA nodes separated by ``;`` (e.g. ``zabbix-1;zabbix-2:10052``). Passive proxy (``ZBX_PROXYMODE: 1``):
+  # comma separated list of addresses or CIDRs allowed to connect to the proxy (e.g. ``10.42.0.0/16``), without port
   ZBX_SERVER_HOST: zabbix-zabbix-server
-  # -- Zabbix Server port
+  # -- Zabbix Server port. Appended to each address of ``ZBX_SERVER_HOST`` that has no port. Ignored by a passive proxy
   ZBX_SERVER_PORT: 10051
   # ZBX_LOADMODULE: dummy1.so,dummy2.so # The variable is list of comma separated loadable Zabbix modules. It works with volume /var/lib/zabbix/modules.
   # The variable is used to specify debug level, from 0 to 5. Don't use 4 or 5 with Alpine images: the Zabbix Proxy 8.0.0 Alpine image crashes with debug level 4
@@ -448,6 +456,30 @@ zabbixProxy:
   lifecycle: {}
   # -- nodeSelector configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
   nodeSelector: {}
+  # Example: spread the replicas of Zabbix Proxy (e.g. of a proxy group) across the nodes
+  # affinity:
+  #   podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       - topologyKey: kubernetes.io/hostname
+  #         labelSelector:
+  #           matchLabels:
+  #             app.kubernetes.io/instance: zabbix
+  #             app.kubernetes.io/component: proxy
+  # -- Affinity of the Zabbix Proxy pods. When set, it is used instead of the global ``affinity``, which is used by
+  # the other components too. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  affinity: {}
+  # -- Minimum number of seconds that a new Zabbix Proxy pod must be ready before the next replica is updated.
+  # The proxy is ready before it gets its configuration from Zabbix Server, so a value like ``60`` avoids restarting
+  # all the replicas of a proxy group at once. Reference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#minimum-ready-seconds
+  minReadySeconds: 0
+  # Example: update only the replicas with ordinal >= 1, keeping the replica 0 with the old version
+  # updateStrategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     partition: 1
+  # -- Update strategy of the Zabbix Proxy StatefulSet. Empty uses the default of Kubernetes (``RollingUpdate``).
+  # Reference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+  updateStrategy: {}
 
 # **Zabbix Agent** configurations
 zabbixAgent:
@@ -1041,7 +1073,7 @@ ingress:
 # -- Tolerations configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
 
-# -- Affinity configurations. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+# -- Affinity configurations of all the components. ``zabbixProxy.affinity`` replaces it for Zabbix Proxy. Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 affinity: {}
 
 # -- Security Context configurations. Reference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/

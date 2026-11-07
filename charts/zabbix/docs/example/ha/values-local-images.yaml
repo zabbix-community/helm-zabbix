@@ -1,0 +1,18 @@
+# Uses the images of the database initialization/upgrade job and of the HA labels sidecar built locally from their
+# repositories and loaded into the kind cluster, instead of the published ones. For tests only.
+# Use it after the values-ha.yaml file. See: charts/zabbix/docs/example/ha/README.md
+zabbixServer:
+  zabbixServerHA:
+    dbCreateUpgradeJob:
+      image:
+        # Built by "make build" in https://github.com/zabbix-community/helm-zabbix-image-db-init-upgrade-job
+        repository: zabbix-server-create-upgrade-db
+        tag: 8.0-local
+        # The image only exists in the nodes of the kind cluster
+        pullPolicy: Never
+    haLabelsSidecar:
+      image:
+        # Built by "make build" in https://github.com/zabbix-community/helm-zabbix-image-ha-labels-sidecar
+        repository: zabbix-server-ha-label-manager
+        tag: local
+        pullPolicy: Never
