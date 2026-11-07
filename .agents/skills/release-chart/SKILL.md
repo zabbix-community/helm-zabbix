@@ -97,7 +97,16 @@ git tag -a x.y.z -m "New release"
 git push upstream --tags
 ```
 
-Pushing the tag triggers `.github/workflows/helm-chart-releaser.yml`, which packages the chart and publishes a GitHub Release named `zabbix-x.y.z`. This is the point of no easy return for this process — do not run it without the user explicitly confirming the exact tag/version first.
+Pushing the tag triggers `.github/workflows/helm-chart-releaser.yml`, which packages the chart, publishes a GitHub Release named `zabbix-x.y.z` (Helm repository) and then pushes the same version to the OCI registry `oci://ghcr.io/zabbix-community/charts/zabbix` (skipped when that version is already there). This is the point of no easy return for this process — do not run it without the user explicitly confirming the exact tag/version first.
+
+After the workflow finishes, verify both publications:
+
+```bash
+helm repo update && helm search repo zabbix-community/zabbix --version x.y.z
+helm show chart oci://ghcr.io/zabbix-community/charts/zabbix --version x.y.z
+```
+
+If the OCI step fails with `denied`/`unauthorized` on the first release with OCI, the package `charts/zabbix` must be made public and connected to the repository in the GitHub organization settings (one-time manual step, see `CONTRIBUTING.md`); tell the user instead of retrying.
 
 ## 7. Finalize release notes
 

@@ -1,0 +1,98 @@
+# External PostgreSQL database to test Zabbix Server High Availability in a kind cluster. For tests only: it is a
+# single PostgreSQL pod, without high availability, backups or TLS. In production use a highly available database,
+# for example managed by the CNPG (https://cloudnative-pg.io) or PGO (https://github.com/CrunchyData/postgres-operator)
+# operators.
+#
+# Zabbix Server HA can't be used with postgresql.enabled=true, because the database must exist before the
+# pre-install/pre-upgrade hook job that prepares the schema. See the "Native Zabbix Server High Availability" section
+# of charts/zabbix/README.md.
+#
+# Created by "make external-db-create" in the namespace of the chart (NAMESPACE, default: monitoring). The
+# values-ha.yaml file uses the Secret below (postgresAccess.existingSecretName).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: zabbix-external-db
+  labels:
+    app.kubernetes.io/name: zabbix-external-db
+type: Opaque
+stringData:
+  # Keys read by the Zabbix chart (postgresAccess.secret*Key)
+  host: zabbix-external-db
+  port: "5432"
+  user: zabbix
+  password: zabbix123
+  dbname: zabbix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zabbix-external-db
+  labels:
+    app.kubernetes.io/name: zabbix-external-db
+spec:
+  selector:
+    app.kubernetes.io/name: zabbix-external-db
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zabbix-external-db
+  labels:
+    app.kubernetes.io/name: zabbix-external-db
+spec:
+  serviceName: zabbix-external-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zabbix-external-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: zabbix-external-db
+    spec:
+      containers:
+        - name: postgresql
+          # Zabbix 8.0 supports PostgreSQL 15 to 18 and TimescaleDB 2.20 to 2.29.
+          # More info: https://www.zabbix.com/documentation/8.0/en/manual/installation/requirements
+          image: postgres:18
+          ports:
+            - name: postgresql
+              containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: zabbix-external-db
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: zabbix-external-db
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: zabbix-external-db
+                  key: dbname
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi

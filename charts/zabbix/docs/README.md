@@ -21,6 +21,8 @@ See the installation example in [kind](https://kind.sigs.k8s.io) cluster in this
 
 To test the local chart with [Argo CD](https://argo-cd.readthedocs.io) in a kind cluster, see this [tutorial](example/argocd/README.md).
 
+To test Zabbix Server High Availability in a kind cluster, with Helm or Argo CD, see this [tutorial](example/ha/README.md).
+
 # More information
 
 See [README.md](../README.md).

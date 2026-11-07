@@ -1,4 +1,5 @@
 {{ if and .Values.zabbixServer.enabled .Values.zabbixServer.zabbixServerHA.enabled }}
+{{- /* Binds the role of the HA labels sidecar to the service account of the Zabbix Server pods */}}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -16,9 +17,6 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ template "zabbix.serviceAccountName" . }}
-  namespace: {{ .Release.Namespace }}
-- kind: ServiceAccount
-  name: {{ template "zabbix.fullname" . }}-ha-helper
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role

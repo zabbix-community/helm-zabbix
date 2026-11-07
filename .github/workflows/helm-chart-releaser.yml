@@ -5,6 +5,13 @@ name: Release Charts
 # https://github.com/helm/chart-releaser-action
 # https://helm.sh/docs/howto/chart_releaser_action/
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+# https://helm.sh/docs/topics/registries/
+#
+# The release publishes the chart in two places:
+# - the Helm repository https://zabbix-community.github.io/helm-zabbix (GitHub Release "zabbix-x.y.z" and gh-pages),
+#   via chart-releaser;
+# - the OCI registry oci://ghcr.io/zabbix-community/charts/zabbix, after chart-releaser succeeds, so both
+#   always publish the same versions.
 
 on:
   push:
@@ -21,6 +28,8 @@ jobs:
     # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
     permissions:
       contents: write
+      # Push the chart to the OCI registry ghcr.io
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,3 +55,21 @@ jobs:
           charts_dir: charts
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Publish the chart to the OCI registry
+        env:
+          OCI_REPOSITORY: "oci://ghcr.io/${{ github.repository_owner }}/charts"
+          REGISTRY_USER: "${{ github.actor }}"
+          REGISTRY_PASSWORD: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          set -euo pipefail
+          chart_version="$(helm show chart charts/zabbix | sed -n 's/^version: *//p')"
+          echo "${REGISTRY_PASSWORD}" | helm registry login ghcr.io --username "${REGISTRY_USER}" --password-stdin
+          # Published versions are immutable: never overwrite one
+          if helm show chart "${OCI_REPOSITORY}/zabbix" --version "${chart_version}" >/dev/null 2>&1; then
+            echo "The version ${chart_version} is already published in ${OCI_REPOSITORY}/zabbix"
+            exit 0
+          fi
+          helm package charts/zabbix --destination "${RUNNER_TEMP}/oci"
+          helm push "${RUNNER_TEMP}/oci/zabbix-${chart_version}.tgz" "${OCI_REPOSITORY}"
+          helm show chart "${OCI_REPOSITORY}/zabbix" --version "${chart_version}"

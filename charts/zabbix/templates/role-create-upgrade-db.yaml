@@ -1,0 +1,32 @@
+{{- if and .Values.zabbixServer.enabled .Values.zabbixServer.zabbixServerHA.enabled }}
+{{- /*
+Permissions of the database initialization/upgrade job: read the Zabbix Server deployment and its pods and scale the
+deployment down before a schema upgrade or the transition from a standalone to an HA setup. Hook, like the service account.
+*/}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "zabbix.fullname" . }}-create-upgrade-db
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "zabbix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: create-upgrade-db
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    {{- range $key,$value := .Values.zabbixServer.zabbixServerHA.role.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list"]
+- apiGroups: ["apps"]
+  resources: ["deployments/scale"]
+  verbs: ["get", "update", "patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+{{- end }}

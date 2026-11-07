@@ -197,11 +197,17 @@ git push --delete origin BRANCH_NAME
 - Create a new tag to generate a new release of the helm chart using the following commands:
 
 ```bash
-git tag -a 7.0.12 -m "New release" #example
+git tag -a 8.0.1 -m "New release" #example
 git push upstream --tags
 ```
 
-- The before commands will start the pipeline and will generate a new release and tag in standard ``zabbix-x.y.z``.
+- The before commands will start the pipeline and will generate a new release and tag in standard ``zabbix-x.y.z``. After that, the same pipeline pushes the chart to the OCI registry ``oci://ghcr.io/zabbix-community/charts/zabbix``. Check it with:
+
+```bash
+helm show chart oci://ghcr.io/zabbix-community/charts/zabbix --version 8.0.1 #example
+```
+
+- Only once, after the first push to the OCI registry: in the GitHub organization, open the package ``charts/zabbix`` (Packages tab), change its visibility to public and connect it to the ``helm-zabbix`` repository (Package settings). Without that, users can't pull the chart without authentication.
 - To keep your fork in sync with the original repository, use these commands:
 
 ```bash

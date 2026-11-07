@@ -71,8 +71,13 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 │       │   │   ├── argocd
 │       │   │   │   ├── application.yaml   # Argo CD Application that deploys the local chart, for tests only
 │       │   │   │   └── README.md          # Tutorial to test the local chart with Argo CD in a kind cluster
+│       │   │   ├── ha
+│       │   │   │   ├── README.md                 # Tutorial to test Zabbix Server HA in a kind cluster, with Helm or Argo CD
+│       │   │   │   └── values-local-images.yaml  # Uses local images of the HA job and sidecar, for tests only
 │       │   │   ├── kind
+│       │   │   │   ├── external-postgresql.yaml  # External PostgreSQL to test Zabbix Server HA, for tests only
 │       │   │   │   ├── kind-3nodes.yaml   # Config of the kind cluster with 3 nodes, used by the Makefile
+│       │   │   │   ├── values-ha.yaml     # Example values.yaml to test Zabbix Server HA in a kind cluster
 │       │   │   │   └── values.yaml        # Example values.yaml to install this chart in a kind cluster
 │       │   │   └── README.md               # Tutorial to install this chart in a kind cluster
 │       │   ├── README.md                   # Index of docs
@@ -95,10 +100,12 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 │       │   ├── ingress.yaml
 │       │   ├── job-create-upgrade-db.yaml  # Pre-install/pre-upgrade hook Job that prepares/migrates the DB schema
 │       │   ├── NOTES.txt                   # Post-install usage notes shown by helm
-│       │   ├── rolebinding-ha-helper.yaml
-│       │   ├── role-ha-helper.yaml
+│       │   ├── role-create-upgrade-db.yaml        # Hook: permissions of the job-create-upgrade-db.yaml Job
+│       │   ├── rolebinding-create-upgrade-db.yaml # Hook: binds the role above to the service account below
+│       │   ├── rolebinding-ha-helper.yaml         # Binds the role below to the service account of the Zabbix Server pods
+│       │   ├── role-ha-helper.yaml                # Permissions of the HA labels sidecar (labels its own pod)
 │       │   ├── secret-db-access.yaml
-│       │   ├── serviceaccount-ha-helper.yaml
+│       │   ├── serviceaccount-create-upgrade-db.yaml  # Hook: service account of the job-create-upgrade-db.yaml Job
 │       │   ├── serviceaccount.yaml
 │       │   ├── service.yaml
 │       │   ├── statefulset-postgresql.yaml
@@ -106,7 +113,7 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 │       ├── artifacthub-pkg.yml             # Artifact Hub metadata
 │       ├── artifacthub-repo.yml            # Artifact Hub repository metadata
 │       ├── Chart.yaml                      # Chart name, version and appVersion
-│       ├── Makefile                        # Targets to lint, package and generate docs (Dockerized), check/install requirements and deploy (kind, helm, Argo CD)
+│       ├── Makefile                        # Targets to lint, package and generate docs (Dockerized), check/install requirements and deploy (kind, helm, Argo CD, Zabbix Server HA)
 │       ├── README.md                       # Generated chart documentation (do not edit directly)
 │       ├── README.md.gotmpl                # Source template used to generate README.md via helm-docs
 │       └── values.yaml                     # Chart default configuration values
@@ -115,8 +122,8 @@ See the [charts/zabbix/docs/example/README.md](charts/zabbix/docs/example/README
 │   │   ├── bug_report.md
 │   │   └── feature_request.md
 │   ├── workflows
-│   │   ├── helm-chart-releaser.yml         # Publishes chart releases on tag push
-│   │   └── tests.yaml                      # Lints and tests the chart against kind clusters
+│   │   ├── helm-chart-releaser.yml         # Publishes chart releases (Helm repository and OCI registry) on tag push
+│   │   └── tests.yaml                      # Lints the chart, checks the HA images are published and tests the chart against kind clusters
 │   ├── CODEOWNERS
 │   ├── dependabot.yml
 │   └── PULL_REQUEST_TEMPLATE.md
@@ -134,7 +141,7 @@ Publishing a new version of this Helm chart is restricted to the code maintainer
 
 - The `version` field in `charts/zabbix/Chart.yaml` follows a `major.minor.patch` convention where, in practice, only the last two digits are used: a `major` ("dot-release", e.g. `6.0.2` → `6.1.0`) signals a change that may require users to update their `values.yaml`, and a `minor` ("dot-dot-release", e.g. `6.0.2` → `6.0.3`) is a safe, no-API-change upgrade. The first digit follows the major version of Zabbix supported by the chart (e.g. `7.1.0` → `8.0.0` for Zabbix 8.0) and is always a breaking change.
 - Bumping `version`/`appVersion` in `Chart.yaml` and `artifacthub-pkg.yml`, and regenerating `charts/zabbix/README.md` via `make gen-docs`, only happens on the release branch/PR, right before merging to `main`.
-- A release is actually cut by pushing a git tag (`x.y.z`) to the upstream repository, which triggers [.github/workflows/helm-chart-releaser.yml](.github/workflows/helm-chart-releaser.yml) to package and publish the chart as a GitHub Release named `zabbix-x.y.z`.
+- A release is actually cut by pushing a git tag (`x.y.z`) to the upstream repository, which triggers [.github/workflows/helm-chart-releaser.yml](.github/workflows/helm-chart-releaser.yml) to package and publish the chart as a GitHub Release named `zabbix-x.y.z` (Helm repository `https://zabbix-community.github.io/helm-zabbix`) and then push it to the OCI registry `oci://ghcr.io/zabbix-community/charts/zabbix`. A version already published in the OCI registry is never overwritten.
 
 ```mermaid
 flowchart TD
@@ -155,7 +162,8 @@ flowchart TD
     N --> O["Push tag (git push upstream --tags)"]
     O --> P["helm-chart-releaser.yml workflow runs"]
     P --> Q["chart-releaser packages the chart and publishes GitHub Release 'zabbix-x.y.z'"]
-    Q --> R[Edit and adjust the auto-generated release notes on GitHub]
+    Q --> Q2["helm push of the same version to oci://ghcr.io/zabbix-community/charts/zabbix"]
+    Q2 --> R[Edit and adjust the auto-generated release notes on GitHub]
 ```
 
 ## Contributors

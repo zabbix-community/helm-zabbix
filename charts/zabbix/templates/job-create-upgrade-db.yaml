@@ -16,13 +16,17 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded
+    # before-hook-creation: a job of a failed run doesn't block the next "helm upgrade" with "already exists"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
     {{- range $key,$value := .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.jobAnnotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   backoffLimit: 0
   ttlSecondsAfterFinished: 120
+  {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.activeDeadlineSeconds }}
+  activeDeadlineSeconds: {{ . }}
+  {{- end }}
   template:
     spec:
       {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraPodSpecs }}
@@ -40,9 +44,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}      
-      {{- if .Release.IsUpgrade }}
-      serviceAccountName: {{ template "zabbix.fullname" . }}-ha-helper
-      {{- end }}
+      # always set, also on install: under Argo CD (helm template) .Release.IsUpgrade is always false
+      serviceAccountName: {{ template "zabbix.fullname" . }}-create-upgrade-db
       containers:
       {{- with .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.extraContainers }}
       {{- toYaml . | nindent 6 }}
@@ -50,23 +53,31 @@ spec:
       - name: create-upgrade-db
         {{- $pattern := "[0-9]+\\.[0-9]+" -}}
         {{- $tag := "" -}}
+        {{- /* A tagSuffix without quotes (e.g. --set ...tagSuffix=20261107172746) is a number: int64 with --set and
+        float64 in a values file. Convert it to a string of digits, never "%!s(int64=...)" or "2.02e+13" (issue #2 of
+        helm-zabbix-image-db-init-upgrade-job) */ -}}
+        {{- $suffix := .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix -}}
+        {{- if or (kindIs "float64" $suffix) (kindIs "int64" $suffix) (kindIs "int" $suffix) -}}
+          {{- $suffix = int64 $suffix -}}
+        {{- end -}}
+        {{- $suffix = toString $suffix -}}
         {{- if .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag }}
           {{- $tag = .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag }}
         {{- else if .Values.zabbixServer.image.tag }}
           {{- $zabbixTag := .Values.zabbixServer.image.tag -}}
           {{- $match := regexFind $pattern $zabbixTag -}}
           {{- if $match }}
-            {{- $tag = printf "%s-%s" $match .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix -}}
+            {{- $tag = printf "%s-%s" $match $suffix -}}
           {{- end }}
         {{- else }}
           {{- $globalTag := .Values.zabbixImageTag -}}
           {{- $match := regexFind $pattern $globalTag -}}
           {{- if $match }}
-            {{- $tag = printf "%s-%s" $match .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix -}}
+            {{- $tag = printf "%s-%s" $match $suffix -}}
           {{- end }}
         {{- end }}
         {{- if eq $tag "" }}
-          {{- fail "Failed to generate tag: Ensure the input values match the expected pattern." -}}
+          {{- fail (printf "Could not get the Zabbix major version (e.g. 8.0) from the image tag %q to choose the image of the database initialization/upgrade job. Set zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tag explicitly. Development (trunk) images are not supported with Zabbix Server HA." (default .Values.zabbixImageTag .Values.zabbixServer.image.tag)) -}}
         {{- else }}
         image: "{{ .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.repository }}:{{ $tag }}"
         {{- end }}
@@ -80,14 +91,12 @@ spec:
         env:
           - name: ZBX_SERVER_DEPLOYMENT_NAME
             value: {{ template "zabbix.fullname" . }}-zabbix-server
+          # auto: the job checks whether the Zabbix Server deployment exists to know if it is an install or an upgrade.
+          # .Release.IsUpgrade can't be used, because it is always false under Argo CD and "helm template"
           - name: HELM_HOOK_TYPE
-            {{- if .Release.IsUpgrade }}
-            value: upgrade
-            {{- else if .Release.IsInstall }}
-            value: install
-            {{- else }}
-            value: unknown
-            {{- end }}
+            value: {{ .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.hookType | default "auto" | quote }}
+          - name: JOB_WAIT_TIMEOUT
+            value: {{ .Values.zabbixServer.zabbixServerHA.dbCreateUpgradeJob.waitTimeout | default 900 | quote }}
           {{- include "zabbix.postgresAccess.variables" (list $ . "db_init_upgrade") | nindent 10 }}
           {{- with .Values.zabbixServer.extraEnv }}
           {{- toYaml . | nindent 10 }}
