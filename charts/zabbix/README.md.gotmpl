@@ -628,6 +628,30 @@ Notes:
 - A schema upgrade between Zabbix major versions can take a long time in big databases. Increase the `--timeout` of Helm (5 minutes by default), which is also the time Helm waits for the job. Don't set `zabbixServer.zabbixServerHA.dbCreateUpgradeJob.activeDeadlineSeconds` to a value lower than the duration of the upgrade.
 - The image of the job is chosen by the Zabbix major version of the image tag (`zabbixImageTag` or `zabbixServer.image.tag`) and `zabbixServer.zabbixServerHA.dbCreateUpgradeJob.image.tagSuffix`. Development (trunk) images are not supported in HA mode: their schema version changes between builds.
 
+### Node address of the HA nodes
+
+Each Zabbix Server pod registers itself in the `ha_node` table with a node name and a node address. By default, the chart sets `ZBX_AUTOHANODENAME=hostname` (the pod name is the node name) and `ZBX_NODEADDRESS` to the pod IP. Zabbix Web reads the address of the active node from the `ha_node` table to connect to Zabbix Server.
+
+The pod IP is not reachable when Zabbix Web runs in another network, e.g. HA nodes spread over two Kubernetes clusters (one release per cluster) sharing one external PostgreSQL. Set `ZBX_NODEADDRESS` (or `ZBX_AUTONODEADDRESS`) in `zabbixServer.extraEnv` to replace the default. The chart then doesn't render its own `ZBX_NODEADDRESS`. The value is used as is (`NodeAddress` of Zabbix Server), the port is optional and defaults to 10051. The same applies to `ZBX_HANODENAME` (or `ZBX_AUTOHANODENAME`), which replaces `ZBX_AUTOHANODENAME=hostname`.
+
+Example for one of the clusters: the Service of Zabbix Server selects only the `active` pod, so a LoadBalancer per cluster always routes to the active node of that cluster, also with several replicas:
+
+```yaml
+fullnameOverride: zabbix-cluster-a  # the node names show the cluster
+zabbixServer:
+  replicaCount: 2
+  zabbixServerHA:
+    enabled: true
+  service:
+    type: LoadBalancer
+  extraEnv:
+    - name: ZBX_NODEADDRESS
+      value: "zabbix-cluster-a.example.org:10051"
+```
+
+> [!NOTE]
+> All replicas of the deployment share the same environment variables. Don't set a fixed `ZBX_HANODENAME` with more than one replica, or during a rolling update: two pods would use the same node name. Keep the default node names and use `zabbixServer.haNodesAutoClean` to remove the old nodes.
+
 ### Using Argo CD
 
 Argo CD runs the hooks of the chart as `PreSync` hooks, in the order of the Helm hook weights, and deletes them with the same policies (`before-hook-creation,hook-succeeded`). The job runs on each sync. No extra configuration is needed. To test it locally, see the [HA example](docs/example/ha/README.md#using-argo-cd).
