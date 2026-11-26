@@ -239,7 +239,7 @@ zabbixServer:
     # -- Annotations for the zabbix-server service
     annotations: {}
     # metallb.universe.tf/address-pool: production-public-ips
-  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml
+  # -- Extra environment variables. A list of additional environment variables. List can be extended with other environment variables listed here: https://github.com/zabbix/zabbix-docker/tree/7.0/Dockerfiles/server-pgsql/alpine#environment-variables. See example: https://github.com/zabbix-community/helm-zabbix/blob/main/charts/zabbix/docs/example/kind/values.yaml. Setting ``ZBX_NODEADDRESS`` or ``ZBX_AUTONODEADDRESS``, ``ZBX_HANODENAME`` or ``ZBX_AUTOHANODENAME`` here replaces the default of the chart (pod IP and pod hostname). See the "Native Zabbix Server High Availability" section of the README
   extraEnv: []
   # - name: ENABLE_TIMESCALEDB
   #   value: "true"

@@ -123,14 +123,20 @@ spec:
             {{- with .Values.zabbixServer.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{- if .Values.zabbixServer.zabbixServerHA.enabled }}
+            {{- $extraEnvNames := list }}
+            {{- range .Values.zabbixServer.extraEnv }}
+            {{- $extraEnvNames = append $extraEnvNames .name }}
+            {{- end }}
+            {{- if and .Values.zabbixServer.zabbixServerHA.enabled (not (has "ZBX_HANODENAME" $extraEnvNames)) (not (has "ZBX_AUTOHANODENAME" $extraEnvNames)) }}
             - name: ZBX_AUTOHANODENAME
               value: "hostname"
             {{- end }}
+            {{- if and (not (has "ZBX_NODEADDRESS" $extraEnvNames)) (not (has "ZBX_AUTONODEADDRESS" $extraEnvNames)) }}
             - name: ZBX_NODEADDRESS
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            {{- end }}
             {{- if .Values.zabbixWebService.enabled }}
             - name: ZBX_WEBSERVICEURL
               value: "http://{{ template "zabbix.fullname" . }}-zabbix-webservice:{{ .Values.zabbixWebService.service.port }}/report"
